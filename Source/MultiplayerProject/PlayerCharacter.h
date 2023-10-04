@@ -26,7 +26,7 @@ public:
 
 	virtual void Move_Implementation(const FInputActionValue& Value) override;
 	virtual void Look_Implementation(const FInputActionValue& Value) override;
-	virtual void Jumping_Implementation() override;
+	virtual void Jumping_Implementation(const FInputActionValue& Value) override;
 	virtual void StopJump_Implementation() override;
 
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

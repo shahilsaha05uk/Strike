@@ -66,13 +66,13 @@ void AInputController::Look_Implementation(const FInputActionValue& Value)
 	}
 }
 
-void AInputController::Jumping_Implementation()
+void AInputController::Jumping_Implementation(const FInputActionValue& Value)
 {
 	APawn* pawn = GetPawn();
 
 	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
 	{
-		IPlayerInputInterface::Execute_Jumping(pawn);
+		IPlayerInputInterface::Execute_Jumping(pawn, Value);
 	}
 }
 

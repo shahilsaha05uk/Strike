@@ -30,7 +30,7 @@ public:
 	void Look(const FInputActionValue& Value);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Jumping();
+	void Jumping(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopJump();
 };

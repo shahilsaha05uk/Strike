@@ -84,7 +84,7 @@ void APlayerCharacter::Look_Implementation(const FInputActionValue& Value)
 	}
 }
 
-void APlayerCharacter::Jumping_Implementation()
+void APlayerCharacter::Jumping_Implementation(const FInputActionValue& Value)
 {
 	Jump();
 }

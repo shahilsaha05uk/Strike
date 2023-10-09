@@ -48,7 +48,10 @@ void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* Prim
 	}
 }
 
-void ABaseWeapon::EquipWeapon_Implementation()
+ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
 {
-	
+	if(mPlayerRef == nullptr) return nullptr;
+
+
+	//AttachToComponent(mPlayerRef->GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative), FName("weapon_r"));
 }

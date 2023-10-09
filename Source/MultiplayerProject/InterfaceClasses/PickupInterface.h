@@ -24,5 +24,5 @@ class MULTIPLAYERPROJECT_API IPickupInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void EquipWeapon();
+	class ABaseWeapon* EquipWeapon();
 };

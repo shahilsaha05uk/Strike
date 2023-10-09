@@ -33,5 +33,5 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnComponentEndOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I);
 
-	virtual void EquipWeapon_Implementation() override;
+	virtual ABaseWeapon* EquipWeapon_Implementation() override;
 };

@@ -25,5 +25,6 @@ public:
 	UInputAction* IA_Jump;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Crouch;
-	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
+	UInputAction* IA_Pickup;
 };

@@ -41,4 +41,6 @@ public:
 	void Jumping(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopJump();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Pickup();
 };

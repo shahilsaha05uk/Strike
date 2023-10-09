@@ -4,17 +4,23 @@
 #include "PlayerCharacter.h"
 
 #include "EnhancedInputComponent.h"
+#include "BaseClasses/BaseWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "InterfaceClasses/PickupInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBegin);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapEnd);
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -35,16 +41,35 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	bUseControllerRotationYaw = true;
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
 }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+
+void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
+{
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
+	{
+		mFocusedPickupActor = Cast<ABaseWeapon>(Actor);
+	}
+
+}
+void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
+{
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
+	{
+		mFocusedPickupActor = nullptr;
+	}
 }
 
 void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
@@ -70,7 +95,6 @@ void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
 	}
 }
 
-
 void APlayerCharacter::Look_Implementation(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -94,3 +118,17 @@ void APlayerCharacter::StopJump_Implementation()
 	StopJumping();
 }
 
+void APlayerCharacter::Pickup_Implementation()
+{
+	if(mFocusedPickupActor == nullptr) return;
+}
+
+ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
+{
+	return mPrimaryWeapon;
+}
+
+void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
+{
+	mPrimaryWeapon = Weapon;
+}

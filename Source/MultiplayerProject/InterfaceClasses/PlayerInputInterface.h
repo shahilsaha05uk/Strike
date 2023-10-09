@@ -35,5 +35,12 @@ public:
 	void StopJump();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void StartAiming();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void StopAiming();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Shoot();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Pickup();
 };

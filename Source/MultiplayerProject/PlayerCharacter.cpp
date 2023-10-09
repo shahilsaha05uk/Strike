@@ -127,9 +127,24 @@ void APlayerCharacter::Pickup_Implementation()
 	{
 		ABaseWeapon* Weapon = IPickupInterface::Execute_EquipWeapon(mFocusedPickupActor);
 
-		SetWeapon(Weapon);
+		if(Weapon != nullptr) SetWeapon(Weapon);
 	}
 }
+
+void APlayerCharacter::StartAiming_Implementation()
+{
+	isAiming = true;
+}
+void APlayerCharacter::StopAiming_Implementation()
+{
+	isAiming = false;
+}
+
+void APlayerCharacter::Shoot_Implementation()
+{
+
+}
+
 
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 {

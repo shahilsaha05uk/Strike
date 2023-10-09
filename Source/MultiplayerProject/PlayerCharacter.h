@@ -30,6 +30,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool isAiming;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -48,6 +51,9 @@ public:
 	virtual void Jumping_Implementation(const FInputActionValue& Value) override;
 	virtual void StopJump_Implementation() override;
 	virtual void Pickup_Implementation() override;
+	virtual void StartAiming_Implementation() override;
+	virtual void StopAiming_Implementation() override;
+	virtual void Shoot_Implementation() override;
 
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }

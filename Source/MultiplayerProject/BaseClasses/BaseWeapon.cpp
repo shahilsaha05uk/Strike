@@ -51,7 +51,11 @@ void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* Prim
 ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
 {
 	if(mPlayerRef == nullptr) return nullptr;
+	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+	
+	AttachToComponent(mPlayerRef->GetMesh(), rules, FName("weapon_r"));
 
-
-	//AttachToComponent(mPlayerRef->GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative), FName("weapon_r"));
+	mUIComponent->SetVisibility(false);
+	
+	return this;
 }

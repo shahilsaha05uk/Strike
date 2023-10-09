@@ -121,6 +121,14 @@ void APlayerCharacter::StopJump_Implementation()
 void APlayerCharacter::Pickup_Implementation()
 {
 	if(mFocusedPickupActor == nullptr) return;
+
+	if(GetWeapon() == nullptr &&
+		UKismetSystemLibrary::DoesImplementInterface(mFocusedPickupActor, UPickupInterface::StaticClass()))
+	{
+		ABaseWeapon* Weapon = IPickupInterface::Execute_EquipWeapon(mFocusedPickupActor);
+
+		SetWeapon(Weapon);
+	}
 }
 
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()

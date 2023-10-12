@@ -13,6 +13,24 @@ class AMultiplayerProjectGameMode : public AGameModeBase
 
 public:
 	AMultiplayerProjectGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void FindPlayerStarts();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void InitialiseController(int ControllerIndex);
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Properties")
+	TArray<AActor*> playerStarts;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Properties")
+	TArray<APlayerController*> mControllers;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Properties")
+	int mTotalPlayers;
+
+	
+	
+	
 };
 
 

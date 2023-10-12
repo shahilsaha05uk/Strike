@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
+#include "InterfaceClasses/ControllerInterface.h"
 #include "InputController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MULTIPLAYERPROJECT_API AInputController : public APlayerController
+class MULTIPLAYERPROJECT_API AInputController : public APlayerController, public IControllerInterface
 {
 	GENERATED_BODY()
 
@@ -30,8 +31,7 @@ public:
 
 	virtual void SetupInputComponent() override;
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Init();
+	virtual void Init_Implementation(FTransform PlayerStart) override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Move(const FInputActionValue& Value);

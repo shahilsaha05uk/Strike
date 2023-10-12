@@ -11,10 +11,9 @@
 
 void AInputController::BeginPlay()
 {
-	Init();
 	Super::BeginPlay();
 }
-void AInputController::Init_Implementation()
+void AInputController::Init_Implementation(FTransform PlayerSpawnTransform)
 {
 }
 

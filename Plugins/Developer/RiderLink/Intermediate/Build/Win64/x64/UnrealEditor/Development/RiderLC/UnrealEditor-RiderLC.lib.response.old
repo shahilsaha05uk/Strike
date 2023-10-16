@@ -7,5 +7,5 @@
 /IGNORE:4221
 /NODEFAULTLIB
 "G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLC\RiderLC.cpp.obj"
-"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLC\Default.rc2.res"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Default.rc2.res"
 /OUT:"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLC\UnrealEditor-RiderLC.lib"

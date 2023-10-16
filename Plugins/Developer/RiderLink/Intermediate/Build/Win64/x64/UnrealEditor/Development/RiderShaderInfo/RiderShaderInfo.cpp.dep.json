@@ -1,11 +1,11 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\s015695k.student\\desktop\\year4_multiplayer_project\\plugins\\developer\\riderlink\\source\\ridershaderinfo\\ridershaderinfo.cpp",
+        "Source": "c:\\users\\s015695k\\documents\\github\\year4_multiplayer_project\\plugins\\developer\\riderlink\\source\\ridershaderinfo\\ridershaderinfo.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\users\\s015695k.student\\desktop\\year4_multiplayer_project\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\ridershaderinfo\\definitions.h",
-            "c:\\users\\s015695k.student\\desktop\\year4_multiplayer_project\\plugins\\developer\\riderlink\\source\\ridershaderinfo\\ridershaderinfo.h",
+            "c:\\users\\s015695k\\documents\\github\\year4_multiplayer_project\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\ridershaderinfo\\definitions.h",
+            "c:\\users\\s015695k\\documents\\github\\year4_multiplayer_project\\plugins\\developer\\riderlink\\source\\ridershaderinfo\\ridershaderinfo.h",
             "c:\\program files\\epic games\\ue_5.2\\engine\\source\\runtime\\core\\public\\modules\\moduleinterface.h",
             "c:\\program files\\epic games\\ue_5.2\\engine\\source\\runtime\\core\\public\\coretypes.h",
             "c:\\program files\\epic games\\ue_5.2\\engine\\source\\runtime\\core\\public\\hal\\platform.h",

@@ -19,8 +19,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
 	TEnumAsByte<enum ETypeOfMatch> mMatchType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Map Reference")
+	TSoftObjectPtr<UWorld> mLevelMapRef;
 
 	virtual void BeginPlay() override;
+
+	
 
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);

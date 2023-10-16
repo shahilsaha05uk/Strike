@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/Button.h"
-#include "Components/EditableText.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
 #include "OnlineMenu.generated.h"
 
@@ -27,14 +26,7 @@ public:
 	UButton* btnConnect;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	UButton* btnHost;
-
-	/*
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
-	UEditableText* txt_IP;
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
-	UEditableText* txt_Port;
-	*/
-
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
 	TEnumAsByte<enum ETypeOfMatch> MatchType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")

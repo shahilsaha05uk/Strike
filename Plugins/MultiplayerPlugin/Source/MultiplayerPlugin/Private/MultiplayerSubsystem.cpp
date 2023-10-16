@@ -41,7 +41,7 @@ void UMultiplayerSubsystem::CreateSession(int32 NumPublicConnections, TEnumAsByt
 	Handle_CreateSessionCompleteDelegate = SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(Completed_CreateSession);
 
 	NewSessionSettings = MakeShareable(new FOnlineSessionSettings());
-	NewSessionSettings->bIsLANMatch = false;	
+	NewSessionSettings->bIsLANMatch = (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")? true: false;
 	NewSessionSettings->NumPublicConnections = NumPublicConnections;
 	NewSessionSettings->bAllowJoinInProgress = true;
 	NewSessionSettings->bUseLobbiesIfAvailable = true;
@@ -59,6 +59,8 @@ void UMultiplayerSubsystem::CreateSession(int32 NumPublicConnections, TEnumAsByt
 		// Let the menu know that the task has failed
 		OnCreateSession.Broadcast(false);
 	}
+
+	StartSession();
 }
 
 void UMultiplayerSubsystem::FindSessions(int32 MaxSearchResults)
@@ -106,6 +108,21 @@ void UMultiplayerSubsystem::StartSession()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Starting Session..."));
 
+	if(!SessionInterface.IsValid())
+	{
+		OnStartSession.Broadcast(false);
+		return;
+	}
+
+	Handle_StartSessionCompleteDelegate = SessionInterface->AddOnStartSessionCompleteDelegate_Handle(Completed_StartSession);
+	OnStartSession.Broadcast(EOnJoinSessionCompleteResult::Success);
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+	if(!SessionInterface->StartSession(NAME_GameSession))
+	{
+		SessionInterface->ClearOnStartSessionCompleteDelegate_Handle(Handle_StartSessionCompleteDelegate);
+		OnStartSession.Broadcast(false);
+	}
 }
 
 void UMultiplayerSubsystem::DestroySession()

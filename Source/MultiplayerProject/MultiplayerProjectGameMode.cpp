@@ -4,6 +4,8 @@
 #include "MultiplayerSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "Kismet/BlueprintPathsLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 AMultiplayerProjectGameMode::AMultiplayerProjectGameMode()
@@ -20,7 +22,7 @@ void AMultiplayerProjectGameMode::BeginPlay()
 
 	if(MultiplayerPlugin)
 	{
-		MultiplayerPlugin->OnStartSession.AddDynamic(this, &ThisClass::OnCreateSession);
+		MultiplayerPlugin->OnCreateSession.AddDynamic(this, &ThisClass::OnCreateSession);
 		MultiplayerPlugin->OnFindSessions.AddUObject(this,  &ThisClass::OnFindSessions);
 		MultiplayerPlugin->OnJoinSession.AddUObject(this,  &ThisClass::OnJoinSession);
 		MultiplayerPlugin->OnStartSession.AddDynamic(this, &ThisClass::OnStartSession);
@@ -39,7 +41,11 @@ void AMultiplayerProjectGameMode::OnCreateSession(bool bWasSuccessful)
 
 		if(World)
 		{
-			World->ServerTravel(FString("/Game/Maps/Level1?listen"));
+			//World->ServerTravel(FString("/Game/Maps/Level1?listen"));
+			//World->ServerTravel(mLevelMapRef->GetPathName().);
+
+			const FString path = UBlueprintPathsLibrary::GetBaseFilename(UKismetSystemLibrary::Conv_SoftObjectReferenceToString(mLevelMapRef), false);
+			UE_LOG(LogTemp, Warning, TEXT("Map Path: %s"), *path);
 		}
 	}
 }
@@ -67,21 +73,23 @@ void AMultiplayerProjectGameMode::OnFindSessions(const TArray<FOnlineSessionSear
 
 void AMultiplayerProjectGameMode::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
-	if(!SessionInterface.IsValid())
+	if(const IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
 	{
-		mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
-		return;
-	}
-	mJoinSessionCompleteDelegateHandle = mSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(mOnJoinSessionCompleteDelegate);
-	mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::Success);
+		const IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
 
-	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if(!mSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
-	{
-		mSessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(mJoinSessionCompleteDelegateHandle);
-		mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
-	}
+		if(SessionInterface.IsValid())
+		{
+			FString Address;
 
+			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
+			APlayerController* PC = GetGameInstance()->GetFirstLocalPlayerController();
+
+			if(PC)
+			{
+				PC->ClientTravel(Address, TRAVEL_Absolute);
+			}
+		}
+	}
 }
 
 void AMultiplayerProjectGameMode::OnStartSession(bool bBWasSuccessful)

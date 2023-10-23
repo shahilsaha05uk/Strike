@@ -17,11 +17,13 @@ class MULTIPLAYERPROJECT_API UServerListEntry : public UBaseWidget, public IUser
 
 public:
 
-//	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
-
+	/*
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 	virtual void NativeOnItemSelectionChanged(bool bIsSelected) override;
 	virtual void NativeOnItemExpansionChanged(bool bIsExpanded) override;
 	virtual void NativeOnEntryReleased() override;
+	*/
+
+
 	
 };

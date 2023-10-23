@@ -3,9 +3,10 @@
 
 #include "ServerListEntry.h"
 
+/*
 void UServerListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("Hello from Entry List"));
 }
 
 void UServerListEntry::NativeOnItemSelectionChanged(bool bIsSelected)
@@ -21,3 +22,4 @@ void UServerListEntry::NativeOnEntryReleased()
 {
 
 }
+*/

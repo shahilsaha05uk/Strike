@@ -11,11 +11,13 @@
 
 void AInputController::BeginPlay()
 {
-	Init();
+	//Init();
 	Super::BeginPlay();
 }
 void AInputController::Init_Implementation()
 {
+	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
+	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
 }
 
 void AInputController::SetupInputComponent()

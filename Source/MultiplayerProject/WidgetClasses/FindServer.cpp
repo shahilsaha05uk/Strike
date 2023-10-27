@@ -3,25 +3,34 @@
 
 #include "FindServer.h"
 
-#include "MultiplayerSubsystem.h"
 #include "ServerListEntry.h"
 #include "Components/Button.h"
 #include "Components/ListView.h"
 
 void UFindServer::NativeConstruct()
 {
-
 	if(UGameInstance* GameInstance = GetGameInstance())
 	{
-		MultiplayerPlugin = GameInstance->GetSubsystem<UMultiplayerSubsystem>();
+		mSessionComp = GameInstance->GetSubsystem<USession_GameInstanceComponent>();
 	}
+
+	if(mSessionComp)
+	{
+		mSessionComp->Event_OnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSessionComplete);
+	}
+	
 	Super::NativeConstruct();
 
 	btnConnect->OnClicked.AddDynamic(this, &UFindServer::OnConnect);
 
 }
 
+void UFindServer::OnFindSessionComplete_Implementation(const TArray<FSessionDetails>& OnlineSessionSearchResults,
+	bool bSuccessful)
+{
+}
+
 void UFindServer::OnConnect_Implementation()
 {
-	MultiplayerPlugin->FindSessions(MaxConnections);
+
 }

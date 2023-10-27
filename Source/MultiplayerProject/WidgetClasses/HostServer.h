@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
 #include "HostServer.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
 class MULTIPLAYERPROJECT_API UHostServer : public UBaseWidget
 {
@@ -19,13 +20,9 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UButton* btnHost;
 
-	UPROPERTY()
-	class UMultiplayerSubsystem* MultiplayerPlugin;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
-	TEnumAsByte<enum ETypeOfMatch> MatchType;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
-	int MaxConnections;
+	FMatchDetails mMatchDetails;
 
 	virtual void NativeConstruct() override;
 	

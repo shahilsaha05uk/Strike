@@ -33,8 +33,13 @@
 /NODEFAULTLIB:"LIBCD"
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
+<<<<<<< Updated upstream
 "C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLink\Module.RiderLink.cpp.obj"
 "C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLink\Default.rc2.res"
+=======
+"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLink\Module.RiderLink.cpp.obj"
+"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLink\Default.rc2.res"
+>>>>>>> Stashed changes
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
 "C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RD\UnrealEditor-RD.lib"
 "delayimp.lib"

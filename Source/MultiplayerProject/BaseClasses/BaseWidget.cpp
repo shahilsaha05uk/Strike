@@ -3,3 +3,10 @@
 
 #include "BaseWidget.h"
 
+void UBaseWidget::DestroyWidget_Implementation(UBaseWidget* WidgetToDestroy)
+{
+	if(WidgetToDestroy == nullptr)
+	{
+		this->RemoveFromParent();
+	}
+}

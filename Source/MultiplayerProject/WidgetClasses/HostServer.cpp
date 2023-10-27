@@ -3,16 +3,10 @@
 
 #include "HostServer.h"
 
-#include "MultiplayerSubsystem.h"
 #include "Components/Button.h"
 
 void UHostServer::NativeConstruct()
 {
-
-	if(UGameInstance* GameInstance = GetGameInstance())
-	{
-		MultiplayerPlugin = GameInstance->GetSubsystem<UMultiplayerSubsystem>();
-	}
 
 	Super::NativeConstruct();
 
@@ -21,6 +15,5 @@ void UHostServer::NativeConstruct()
 
 void UHostServer::OnHost_Implementation()
 {
-	MultiplayerPlugin->CreateSession(MaxConnections, MatchType);
-
+	
 }

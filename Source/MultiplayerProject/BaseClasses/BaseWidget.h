@@ -13,5 +13,13 @@ UCLASS()
 class MULTIPLAYERPROJECT_API UBaseWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true))
+	APlayerController* ControllerRef;
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void DestroyWidget(UBaseWidget* WidgetToDestroy = nullptr);
 	
 };

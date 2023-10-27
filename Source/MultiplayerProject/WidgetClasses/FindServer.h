@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
+#include "MultiplayerProject/Session_GameInstanceComponent.h"
 #include "FindServer.generated.h"
 
 /**
@@ -16,17 +17,20 @@ class MULTIPLAYERPROJECT_API UFindServer : public UBaseWidget
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
+	TArray<FSessionDetails> mSessionDetails;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
 	int MaxConnections;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
+	USession_GameInstanceComponent* mSessionComp;
 
-	UPROPERTY()
-	class UMultiplayerSubsystem* MultiplayerPlugin;
-	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UButton* btnConnect;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UListView* mServerList;
-	
-	
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnFindSessionComplete(const TArray<FSessionDetails>& OnlineSessionSearchResults, bool bSuccessful);
+
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

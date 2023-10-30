@@ -17,7 +17,6 @@ class MULTIPLAYERPROJECT_API UServerListEntry : public UBaseWidget, public IUser
 
 public:
 
-<<<<<<< Updated upstream
 	/*
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 	virtual void NativeOnItemSelectionChanged(bool bIsSelected) override;
@@ -25,8 +24,4 @@ public:
 	virtual void NativeOnEntryReleased() override;
 	*/
 
-
-	
-=======
->>>>>>> Stashed changes
 };

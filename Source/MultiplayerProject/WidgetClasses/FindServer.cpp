@@ -28,6 +28,7 @@ void UFindServer::NativeConstruct()
 void UFindServer::OnFindSessionComplete_Implementation(const TArray<FSessionDetails>& OnlineSessionSearchResults,
 	bool bSuccessful)
 {
+
 }
 
 void UFindServer::OnConnect_Implementation()

@@ -2,8 +2,6 @@
 
 
 #include "ServerListEntry.h"
-<<<<<<< Updated upstream
-
 /*
 void UServerListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
@@ -24,5 +22,3 @@ void UServerListEntry::NativeOnEntryReleased()
 
 }
 */
-=======
->>>>>>> Stashed changes

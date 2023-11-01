@@ -103,7 +103,6 @@ void USession_GameInstanceComponent::CreateSession(FMatchDetails MatchDetails)
 	LastSessionSettings->bAllowJoinViaPresence = true;
 	LastSessionSettings->bAllowJoinViaPresenceFriendsOnly = true;
 	LastSessionSettings->bAllowInvites = true;
-
 	LastSessionSettings->Set(SETTING_MAPNAME, FString("Level1"), EOnlineDataAdvertisementType::ViaOnlineService);
 	
 	Handle_CreateSessionCompleteDelegate = mSessionInterface->AddOnCreateSessionCompleteDelegate_Handle(CompleteDelegate_CreateSession);

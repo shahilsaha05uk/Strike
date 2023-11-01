@@ -54,4 +54,9 @@ public:
 	void StopAiming();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Shoot();
+
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void TestAction();
+
 };

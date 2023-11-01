@@ -31,4 +31,9 @@ public:
 	UInputAction* IA_Shoot;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Pickup;
+
+
+	// ONLY FOR DEBUGGING
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
+	UInputAction* IA_TestAction;
 };

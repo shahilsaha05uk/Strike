@@ -145,7 +145,6 @@ void APlayerCharacter::Shoot_Implementation()
 
 }
 
-
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 {
 	return mPrimaryWeapon;
@@ -154,4 +153,10 @@ ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 {
 	mPrimaryWeapon = Weapon;
+}
+
+
+void APlayerCharacter::ChangeMesh_Implementation()
+{
+	
 }

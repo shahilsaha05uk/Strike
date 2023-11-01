@@ -43,4 +43,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Pickup();
+
+
+	// Only for debugging
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void ChangeMesh();
+
 };

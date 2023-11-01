@@ -55,6 +55,10 @@ public:
 	virtual void StopAiming_Implementation() override;
 	virtual void Shoot_Implementation() override;
 
+
+	//Only for debugging
+	virtual void ChangeMesh_Implementation() override;
+
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	

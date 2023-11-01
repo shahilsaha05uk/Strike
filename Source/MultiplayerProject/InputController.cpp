@@ -43,6 +43,10 @@ void AInputController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(InputData->IA_Aim, ETriggerEvent::Completed, this, &AInputController::StopAiming);
 		
 		EnhancedInputComponent->BindAction(InputData->IA_Shoot, ETriggerEvent::Completed, this, &AInputController::Shoot);
+
+		// Only for debugging
+		EnhancedInputComponent->BindAction(InputData->IA_TestAction, ETriggerEvent::Completed, this, &AInputController::TestAction);
+		
 	}
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
@@ -53,6 +57,11 @@ void AInputController::SetupInputComponent()
 	}
 
 
+}
+
+void AInputController::TestAction_Implementation()
+{
+	
 }
 
 void AInputController::Move_Implementation(const FInputActionValue& Value)

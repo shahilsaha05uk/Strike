@@ -50,5 +50,8 @@ void UMultiplayer_GameInstance::OnSessionStartComplete_Implementation(bool bSucc
 
 void UMultiplayer_GameInstance::OnJoinSessionComplete(EOnJoinSessionCompleteResult::Type Result)
 {
-
+	MP_JoinSessionComplete();
+}
+void UMultiplayer_GameInstance::MP_JoinSessionComplete_Implementation()
+{
 }

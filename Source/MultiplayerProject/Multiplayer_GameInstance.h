@@ -34,6 +34,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void JoinSession(FSessionDetails SessionDetails);
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void MP_JoinSessionComplete();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnCreateSessionComplete(bool bSuccessful);

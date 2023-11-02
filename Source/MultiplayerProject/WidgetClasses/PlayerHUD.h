@@ -13,5 +13,8 @@ UCLASS()
 class MULTIPLAYERPROJECT_API UPlayerHUD : public UBaseWidget
 {
 	GENERATED_BODY()
+
+public:
+
 	
 };

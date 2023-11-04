@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/IUserObjectListEntry.h"
+#include "Components/TextBlock.h"
+#include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
 #include "ServerListEntry.generated.h"
 
@@ -17,11 +19,17 @@ class MULTIPLAYERPROJECT_API UServerListEntry : public UBaseWidget, public IUser
 
 public:
 
-	/*
-	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
-	virtual void NativeOnItemSelectionChanged(bool bIsSelected) override;
-	virtual void NativeOnItemExpansionChanged(bool bIsExpanded) override;
-	virtual void NativeOnEntryReleased() override;
-	*/
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	UTextBlock* txtServerName;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	UTextBlock* txtLatency;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	UTextBlock* txtPlayerCount;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FSessionDetails mSessionDetails;
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateEntry(FSessionDetails SessionDetails);
 
 };

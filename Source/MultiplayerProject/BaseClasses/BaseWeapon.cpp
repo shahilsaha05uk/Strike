@@ -14,7 +14,10 @@ ABaseWeapon::ABaseWeapon()
 {
 	mCollisionComponent = CreateDefaultSubobject<USphereComponent>("CollisionComponent");
 	RootComponent = mCollisionComponent;
-
+	
+	mProjectileSpawnLocation = CreateDefaultSubobject<USceneComponent>("ProjectileSpawn");
+	mProjectileSpawnLocation->SetupAttachment(RootComponent);
+	
 	mCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnComponentBeginOverlap);
 	mCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ABaseWeapon::OnComponentEndOverlap);
 
@@ -24,14 +27,25 @@ ABaseWeapon::ABaseWeapon()
 	mUIComponent->SetWidgetClass(mWidgetClass);
 	mUIComponent->SetTickMode(ETickMode::Automatic);
 	mUIComponent->SetVisibility(false);
+
+	WeaponSocket = "weapon_r";
+
+	StartShootingSignature.AddDynamic(this, &ThisClass::ServerFire);
+	StopShootingSignature.AddDynamic(this, &ThisClass::StopFire);
+	//UKismetSystemLibrary::Timer
 }
 
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
                                                          UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	mPlayerRef = Cast<APlayerCharacter>(Actor);
-	if(mPlayerRef)
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInputInterface::StaticClass()))
+	{
+		mOwnerRef = Actor;
+	}
+	
+	mOwnerRef = Cast<APlayerCharacter>(Actor);
+	if(mOwnerRef)
 	{
 		mUIComponent->SetVisibility(true);
 	}
@@ -40,22 +54,55 @@ void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* Pr
 void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 	UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	mPlayerRef = Cast<APlayerCharacter>(Actor);
-	if(mPlayerRef)
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInputInterface::StaticClass()))
 	{
 		mUIComponent->SetVisibility(false);
-		mPlayerRef = nullptr;
 	}
 }
 
 ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
 {
-	if(mPlayerRef == nullptr) return nullptr;
+	if(mOwnerRef == nullptr) return nullptr;
+
+	UMeshComponent* OwnerMesh = IPlayerInputInterface::Execute_GetMeshComponent(mOwnerRef);
+	
 	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 	
-	AttachToComponent(mPlayerRef->GetMesh(), rules, FName("weapon_r"));
+	AttachToComponent(OwnerMesh, rules, WeaponSocket);
 
 	mUIComponent->SetVisibility(false);
 	
 	return this;
+}
+
+
+
+void ABaseWeapon::PlayWeaponSound_Implementation()
+{
+}
+
+void ABaseWeapon::StopFire_Implementation()
+{
+	
+}
+void ABaseWeapon::ServerFire_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Native MultiClient"));
+
+	NativeServer_Fire();
+}
+
+void ABaseWeapon::MultiClientFire_Implementation()
+{
+}
+
+void ABaseWeapon::NativeServer_Fire_Implementation()
+{
+	NativeMultiClient_Fire();
+}
+
+void ABaseWeapon::NativeMultiClient_Fire_Implementation()
+{
+	MultiClientFire();
+
 }

@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "DataAssetClasses/DA_InputData.h"
+#include "DataAssetClasses/DA_UIInputs.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -37,21 +38,28 @@ void AInputController::SetupInputComponent()
 		//Looking
 		EnhancedInputComponent->BindAction(InputData->IA_Look, ETriggerEvent::Triggered, this, &AInputController::Look);
 
+		// Pickup
 		EnhancedInputComponent->BindAction(InputData->IA_Pickup, ETriggerEvent::Completed, this, &AInputController::Pickup);
-		
+
+		// Aiming
 		EnhancedInputComponent->BindAction(InputData->IA_Aim, ETriggerEvent::Started, this, &AInputController::StartAiming);
 		EnhancedInputComponent->BindAction(InputData->IA_Aim, ETriggerEvent::Completed, this, &AInputController::StopAiming);
-		
-		EnhancedInputComponent->BindAction(InputData->IA_Shoot, ETriggerEvent::Completed, this, &AInputController::Shoot);
 
-		// Only for debugging
-		EnhancedInputComponent->BindAction(InputData->IA_TestAction, ETriggerEvent::Completed, this, &AInputController::TestAction);
-		
+		// Shooting
+		EnhancedInputComponent->BindAction(InputData->IA_Shoot, ETriggerEvent::Started, this, &AInputController::StartShooting);
+		EnhancedInputComponent->BindAction(InputData->IA_Shoot, ETriggerEvent::Completed, this, &AInputController::StopShooting);
+
+
+		// ======= UI Inputs =======
+		EnhancedInputComponent->BindAction(UIInputs->IA_Pause, ETriggerEvent::Completed, this, &AInputController::PauseGame);
+		UIInputs->IA_Pause->bTriggerWhenPaused = true;
 	}
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		// add the mapping context so we get controls
 		Subsystem->AddMappingContext(InputMappingContext, 0);
+		Subsystem->AddMappingContext(UI_MappingContext, 0);
+		
 
 		UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 	}
@@ -59,11 +67,18 @@ void AInputController::SetupInputComponent()
 
 }
 
+// UI Actions
+void AInputController::PauseGame_Implementation()
+{
+	
+}
+
 void AInputController::TestAction_Implementation()
 {
 	
 }
 
+// Player Actions
 void AInputController::Move_Implementation(const FInputActionValue& Value)
 {
 	APawn* pawn = GetPawn();
@@ -135,13 +150,23 @@ void AInputController::StopAiming_Implementation()
 	}
 }
 
-void AInputController::Shoot_Implementation()
+void AInputController::StartShooting_Implementation()
 {
 	APawn* pawn = GetPawn();
 
 	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
 	{
-		IPlayerInputInterface::Execute_Shoot(pawn);
+		IPlayerInputInterface::Execute_StartShooting(pawn);
 	}
+
 }
 
+void AInputController::StopShooting_Implementation()
+{
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_StopShooting(pawn);
+	}
+}

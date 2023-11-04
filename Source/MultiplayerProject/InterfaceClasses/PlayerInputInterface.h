@@ -39,7 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopAiming();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Shoot();
+	void StartShooting();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void StopShooting();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Pickup();
@@ -47,6 +49,7 @@ public:
 
 	// Only for debugging
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ChangeMesh();
-
+	UCameraComponent* GetFollowCamera();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UMeshComponent* GetMeshComponent();
 };

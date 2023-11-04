@@ -38,10 +38,26 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString SessionID;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString SessionName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Latency;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int MaxPlayers;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int CurrentNumberOfPlayers;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int StartingMoney;
 
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FLevelAddress
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString IPAddress;
 };
 
 

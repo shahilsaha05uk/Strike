@@ -2,23 +2,10 @@
 
 
 #include "ServerListEntry.h"
-/*
-void UServerListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Hello from Entry List"));
-}
 
-void UServerListEntry::NativeOnItemSelectionChanged(bool bIsSelected)
+void UServerListEntry::UpdateEntry(FSessionDetails SessionDetails)
 {
-	
+	txtServerName->SetText(FText::FromString(SessionDetails.SessionName));
+	txtPlayerCount->SetText(FText::Format(FText::FromString(TEXT("{0} / {0}")), FText::AsNumber(SessionDetails.CurrentNumberOfPlayers), FText::AsNumber(SessionDetails.MaxPlayers)));
+	txtLatency->SetText(FText::Format(FText::FromString(TEXT("{0} ms")), FText::AsNumber(SessionDetails.Latency)));
 }
-void UServerListEntry::NativeOnItemExpansionChanged(bool bIsExpanded)
-{
-
-}
-
-void UServerListEntry::NativeOnEntryReleased()
-{
-
-}
-*/

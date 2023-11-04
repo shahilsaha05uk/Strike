@@ -140,9 +140,29 @@ void APlayerCharacter::StopAiming_Implementation()
 	isAiming = false;
 }
 
-void APlayerCharacter::Shoot_Implementation()
+void APlayerCharacter::StartShooting_Implementation()
 {
+	if(GetWeapon() == nullptr) return;
+	bIsFiring = true;
+	GetWeapon()->StartShootingSignature.Broadcast();
+	//GetWeapon()->NativeServer_Fire();
+}
 
+void APlayerCharacter::StopShooting_Implementation()
+{
+	if(GetWeapon() == nullptr) return;
+	bIsFiring = false;
+	GetWeapon()->StopShootingSignature.Broadcast();
+}
+
+UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
+{
+	return FollowCamera;
+}
+
+UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
+{
+	return GetMesh();
 }
 
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
@@ -155,8 +175,3 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 	mPrimaryWeapon = Weapon;
 }
 
-
-void APlayerCharacter::ChangeMesh_Implementation()
-{
-	
-}

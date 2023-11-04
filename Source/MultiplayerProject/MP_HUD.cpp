@@ -4,6 +4,7 @@
 #include "MP_HUD.h"
 
 #include "WidgetClasses/MainMenu.h"
+#include "WidgetClasses/PauseMenu.h"
 #include "WidgetClasses/PlayerHUD.h"
 
 
@@ -49,6 +50,9 @@ UBaseWidget* AMP_HUD::WidgetCreator(EWidgetType WidgetToSpawn)
 		break;
 	case MAIN_MENU:
 		widget = CreateWidget<UMainMenu>(GetOwningPlayerController(), MainMenuClass);
+		break;
+	case PAUSE_MENU:
+		widget = CreateWidget<UPauseMenu>(GetOwningPlayerController(), PauseMenuClass);
 		break;
 	}
 	

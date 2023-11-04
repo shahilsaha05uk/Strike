@@ -9,38 +9,40 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Multiplayer_GameInstance.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFindSessionComplete, TArray<FSessionDetails>, SessionDetails);
+
 UCLASS()
 class MULTIPLAYERPROJECT_API UMultiplayer_GameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-private:
-
-	
 public:
-	UPROPERTY(BlueprintReadOnly)
-	class USession_GameInstanceComponent* SessionComp;
-	UPROPERTY(BlueprintReadOnly)
-	TArray<FSessionDetails> mSessionDetails;
-	UPROPERTY(BlueprintReadOnly)
-	FSessionDetails mCurrentSession;
+	class UMultiplayerSessionsSubsystem* mMultiplayerSessionsSubsystem;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
+	FOnFindSessionComplete OnFindSessionComplete;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	TSoftObjectPtr<UWorld> mTravelMap;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	TSoftObjectPtr<UWorld> mMainMenuLevel;
 
 	virtual void Init() override;
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void CreateSession(FMatchDetails MatchDetails);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void FindSession(int MaxSearchResults, bool IsLanQuery);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void JoinSession(FSessionDetails SessionDetails);
+	UFUNCTION()
+	void OnCreateSession(bool bWasSuccessful);
+	void OnFindSessions(const TArray<FSessionDetails>& OnlineSessionSearchResults, bool bWasSuccessful);
+	void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+	UFUNCTION()
+	void OnStartSession(bool bBWasSuccessful);
+	UFUNCTION()
+	void OnDestroySession(bool bWasSuccessful);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MP_JoinSessionComplete();
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	FString GetLevelPath(TSoftObjectPtr<UWorld> Map, bool shouldListen = true);
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnCreateSessionComplete(bool bSuccessful);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnSessionStartComplete(bool bSuccessful);
-	void OnJoinSessionComplete(EOnJoinSessionCompleteResult::Type Result);
 };
 

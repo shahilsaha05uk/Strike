@@ -19,10 +19,14 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
 	class UDA_InputData* InputData;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
+	class UDA_UIInputs* UIInputs;
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	class UInputMappingContext* InputMappingContext;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	class UInputMappingContext* UI_MappingContext;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	bool shouldActivateMappingContext;
 	
@@ -53,7 +57,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopAiming();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Shoot();
+	void StartShooting();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void StopShooting();
+
+	// UI Actions
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void PauseGame();
 
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

@@ -32,6 +32,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool bIsFiring;
 
 	virtual void BeginPlay() override;
 
@@ -53,12 +55,12 @@ public:
 	virtual void Pickup_Implementation() override;
 	virtual void StartAiming_Implementation() override;
 	virtual void StopAiming_Implementation() override;
-	virtual void Shoot_Implementation() override;
+	virtual void StartShooting_Implementation() override;
+	virtual void StopShooting_Implementation() override;
 
-
-	//Only for debugging
-	virtual void ChangeMesh_Implementation() override;
-
+	virtual UCameraComponent* GetFollowCamera_Implementation() override;
+	virtual UMeshComponent* GetMeshComponent_Implementation() override;
+	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	

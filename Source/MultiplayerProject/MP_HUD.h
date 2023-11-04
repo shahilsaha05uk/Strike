@@ -12,7 +12,8 @@ UENUM(Blueprintable, BlueprintType)
 enum EWidgetType
 {
 	PLAYER_HUD,
-	MAIN_MENU
+	MAIN_MENU,
+	PAUSE_MENU
 };
 
 UCLASS()
@@ -34,6 +35,9 @@ public:
 	TSubclassOf<UBaseWidget> PlayerHudClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> MainMenuClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UBaseWidget> PauseMenuClass;
+	
 
 	
 	virtual void BeginPlay() override;

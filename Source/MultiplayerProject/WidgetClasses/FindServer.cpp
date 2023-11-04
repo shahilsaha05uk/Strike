@@ -2,36 +2,44 @@
 
 
 #include "FindServer.h"
-
-#include "ServerListEntry.h"
 #include "Components/Button.h"
 #include "Components/ListView.h"
+#include "MultiplayerProject/Multiplayer_GameInstance.h"
+#include "MultiplayerProject/SubsystemClasses/MultiplayerSessionsSubsystem.h"
 
 void UFindServer::NativeConstruct()
 {
-	if(UGameInstance* GameInstance = GetGameInstance())
-	{
-		mSessionComp = GameInstance->GetSubsystem<USession_GameInstanceComponent>();
-	}
+	MultiplayerSessionsSubsystem = GetGameInstance()->GetSubsystem<UMultiplayerSessionsSubsystem>();
+	Cast<UMultiplayer_GameInstance>(GetGameInstance())->OnFindSessionComplete.AddDynamic(this, &ThisClass::OnFindSessionComplete);
+	btnRefresh->OnClicked.AddDynamic(this, &UFindServer::OnRefresh);
+	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
 
-	if(mSessionComp)
-	{
-		mSessionComp->Event_OnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSessionComplete);
-	}
+	//Refresh on Construct
+	OnRefresh();
 	
 	Super::NativeConstruct();
-
-	btnConnect->OnClicked.AddDynamic(this, &UFindServer::OnConnect);
-
 }
 
-void UFindServer::OnFindSessionComplete_Implementation(const TArray<FSessionDetails>& OnlineSessionSearchResults,
-	bool bSuccessful)
+void UFindServer::OnClose_Implementation()
 {
-
+	DetachFromParent();
 }
 
-void UFindServer::OnConnect_Implementation()
-{
 
+void UFindServer::OnFindSessionComplete(TArray<FSessionDetails> SessionDetails)
+{
+	mSessionDetails = SessionDetails;
+	UpdateList();
+}
+
+void UFindServer::OnRefresh_Implementation()
+{
+	mServerList->ClearListItems();
+	
+	MultiplayerSessionsSubsystem->FindSessions(10);
+}
+
+void UFindServer::UpdateList_Implementation()
+{
+	
 }

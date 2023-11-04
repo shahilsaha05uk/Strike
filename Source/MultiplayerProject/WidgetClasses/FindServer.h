@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
-#include "MultiplayerProject/Session_GameInstanceComponent.h"
 #include "FindServer.generated.h"
 
+struct FSessionDetails;
 /**
  * 
  */
@@ -16,25 +16,34 @@ class MULTIPLAYERPROJECT_API UFindServer : public UBaseWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
-	TArray<FSessionDetails> mSessionDetails;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
-	int MaxConnections;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
-	USession_GameInstanceComponent* mSessionComp;
-
+	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
-	class UButton* btnConnect;
+	class UButton* btnRefresh;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	class UButton* CloseButton;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UListView* mServerList;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnFindSessionComplete(const TArray<FSessionDetails>& OnlineSessionSearchResults, bool bSuccessful);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
+	TArray<FSessionDetails> mSessionDetails;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
 	virtual void NativeConstruct() override;
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnConnect();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnRefresh();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnClose();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateList();
+
+private:
+	UFUNCTION()
+	void OnFindSessionComplete(TArray<FSessionDetails> SessionDetails);
 
 	
 };

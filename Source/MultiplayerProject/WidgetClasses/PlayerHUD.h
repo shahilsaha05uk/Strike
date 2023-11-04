@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
 #include "PlayerHUD.generated.h"
 
@@ -16,5 +17,7 @@ class MULTIPLAYERPROJECT_API UPlayerHUD : public UBaseWidget
 
 public:
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FMatchDetails mMatchDetails;
 	
 };

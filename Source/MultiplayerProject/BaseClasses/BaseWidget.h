@@ -20,6 +20,10 @@ public:
 	APlayerController* ControllerRef;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void DetachFromParent();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void DestroyWidget(UBaseWidget* WidgetToDestroy = nullptr);
 	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void QuitGame();
 };

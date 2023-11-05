@@ -3,6 +3,19 @@
 
 #include "ServerListEntry.h"
 
+#include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
+
+void UServerListEntry::NativeConstruct()
+{
+	Super::NativeConstruct();
+	btnJoin->OnClicked.AddDynamic(this, &ThisClass::OnJoin);
+}
+
+void UServerListEntry::OnJoin_Implementation()
+{
+	GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>()->JoinSession(mSessionDetails);
+}
+
 void UServerListEntry::UpdateEntry(FSessionDetails SessionDetails)
 {
 	txtServerName->SetText(FText::FromString(SessionDetails.SessionName));

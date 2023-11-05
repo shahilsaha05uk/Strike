@@ -19,14 +19,25 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UButton* btnHost;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	class UButton* CloseButton;
+	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	class UEntryWidget1* MaxPlayerEntry; 
 
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
+	class UEntryWidget1* StartingMoneyEntry; 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
 	FMatchDetails mMatchDetails;
+
+	class ULAN_OnlineSubsystem* mMultiplayerSubsystem;
 
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnHost();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnClose();
 	
 };

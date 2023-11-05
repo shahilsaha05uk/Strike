@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnumClass.h"
 #include "OnlineSessionSettings.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "StructClass.generated.h"
@@ -24,6 +25,15 @@ public:
 	bool bBotsAllowed;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsLanMatch;
+
+	FMatchDetails()
+	: MaxPlayers(4)
+	, StartingMoney(1000)
+	, TotalRounds(10)
+	, bBotsAllowed(false)
+	, bIsLanMatch(false)
+	{}
+	
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -58,6 +68,22 @@ struct FLevelAddress
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString IPAddress;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FWeaponDetails
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString WeaponName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UImage* WeaponImage;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<class ABaseWeapon> WeaponAsset;
 };
 
 

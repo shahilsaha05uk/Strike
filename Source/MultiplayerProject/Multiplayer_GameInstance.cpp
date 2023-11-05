@@ -3,25 +3,22 @@
 
 #include "Multiplayer_GameInstance.h"
 
-#include "MP_HUD.h"
-#include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystem.h"
-#include "SubsystemClasses/MultiplayerSessionsSubsystem.h"
+#include "SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UMultiplayer_GameInstance::Init()
 {
 	Super::Init();
 
-	mMultiplayerSessionsSubsystem = GetSubsystem<UMultiplayerSessionsSubsystem>();
+	mMultiplayerSessionsSubsystem = GetSubsystem<ULAN_OnlineSubsystem>();
 	if(mMultiplayerSessionsSubsystem)
 	{
 		mMultiplayerSessionsSubsystem->mMultiplayerOnCreateSessionComplete.AddDynamic(this, &ThisClass::OnCreateSession);
 		mMultiplayerSessionsSubsystem->mMultiplayerOnFindSessionsComplete.AddUObject(this,  &ThisClass::OnFindSessions);
 		mMultiplayerSessionsSubsystem->mMultiplayerOnJoinSessionComplete.AddUObject(this,  &ThisClass::OnJoinSession);
 		mMultiplayerSessionsSubsystem->mMultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
-		mMultiplayerSessionsSubsystem->mMultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
-	}
+		mMultiplayerSessionsSubsystem->mMultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	}
 }
 
 void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)
@@ -39,7 +36,7 @@ void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)
 		}
 	}
 
-	GetSubsystem<UMultiplayerSessionsSubsystem>()->StartSession();
+	GetSubsystem<ULAN_OnlineSubsystem>()->StartSession();
 }
 
 void UMultiplayer_GameInstance::OnFindSessions(const TArray<FSessionDetails>& OnlineSessionSearchResults,
@@ -50,23 +47,7 @@ void UMultiplayer_GameInstance::OnFindSessions(const TArray<FSessionDetails>& On
 
 void UMultiplayer_GameInstance::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
-	if(const IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
-	{
-		const IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
 
-		if(SessionInterface.IsValid())
-		{
-			FString Address;
-
-			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
-			APlayerController* PC = GetFirstLocalPlayerController();
-
-			if(PC)
-			{
-				PC->ClientTravel(Address, TRAVEL_Absolute);
-			}
-		}
-	}
 }
 
 void UMultiplayer_GameInstance::OnStartSession(bool bBWasSuccessful)
@@ -95,5 +76,15 @@ void UMultiplayer_GameInstance::OnDestroySession(bool bWasSuccessful)
 
 FString UMultiplayer_GameInstance::GetLevelPath(TSoftObjectPtr<UWorld> Map, bool shouldListen)
 {
-	return FPaths::GetBaseFilename(Map.ToString());
+	FString path =  FPaths::GetBaseFilename(Map.ToString());
+
+	if(shouldListen)
+	{
+		path.Append("?listen");
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Path to Travel: %s"), *path);
+
+	
+	return path;
 }

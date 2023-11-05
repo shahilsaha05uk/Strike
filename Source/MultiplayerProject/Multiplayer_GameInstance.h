@@ -18,7 +18,7 @@ class MULTIPLAYERPROJECT_API UMultiplayer_GameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	class UMultiplayerSessionsSubsystem* mMultiplayerSessionsSubsystem;
+	class ULAN_OnlineSubsystem* mMultiplayerSessionsSubsystem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FOnFindSessionComplete OnFindSessionComplete;

@@ -5,11 +5,11 @@
 #include "Components/Button.h"
 #include "Components/ListView.h"
 #include "MultiplayerProject/Multiplayer_GameInstance.h"
-#include "MultiplayerProject/SubsystemClasses/MultiplayerSessionsSubsystem.h"
+#include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UFindServer::NativeConstruct()
 {
-	MultiplayerSessionsSubsystem = GetGameInstance()->GetSubsystem<UMultiplayerSessionsSubsystem>();
+	MultiplayerSessionsSubsystem = GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>();
 	Cast<UMultiplayer_GameInstance>(GetGameInstance())->OnFindSessionComplete.AddDynamic(this, &ThisClass::OnFindSessionComplete);
 	btnRefresh->OnClicked.AddDynamic(this, &UFindServer::OnRefresh);
 	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
@@ -34,7 +34,10 @@ void UFindServer::OnFindSessionComplete(TArray<FSessionDetails> SessionDetails)
 
 void UFindServer::OnRefresh_Implementation()
 {
-	mServerList->ClearListItems();
+	if(mServerList->GetNumItems() > 0)
+	{
+		mServerList->ClearListItems();
+	}
 	
 	MultiplayerSessionsSubsystem->FindSessions(10);
 }

@@ -6,7 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "MultiplayerProject/StructClass.h"
-#include "MultiplayerSessionsSubsystem.generated.h"
+#include "LAN_OnlineSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplete, bool, bWasSuccessful);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiplayerOnFindSessionsComplete, const TArray<FSessionDetails>& SessionResults, bool bWasSuccessful);
@@ -15,12 +15,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnStartSessionComplete, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnDestroySessionComplete, bool, bWasSuccessful);
 
 UCLASS()
-class MULTIPLAYERPROJECT_API UMultiplayerSessionsSubsystem : public UGameInstanceSubsystem
+class MULTIPLAYERPROJECT_API ULAN_OnlineSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+
 public:
 
-	UMultiplayerSessionsSubsystem();
+	ULAN_OnlineSubsystem();
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SessionProperties")
+	FMatchDetails mMatchDetails;
 	
 	IOnlineSessionPtr mSessionInterface;
 	TSharedPtr<class FOnlineSessionSettings> mLastSessionSettings;
@@ -77,4 +81,6 @@ private:
 	FOnDestroySessionCompleteDelegate mOnDestroySessionCompleteDelegate;
 	FDelegateHandle mDestroySessionCompleteDelegateHandle;
 
+	
+	bool TryTravelToCurrentSession();
 };

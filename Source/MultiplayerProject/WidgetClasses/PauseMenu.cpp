@@ -5,8 +5,7 @@
 
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
-#include "MultiplayerProject/Multiplayer_GameInstance.h"
-#include "MultiplayerProject/SubsystemClasses/MultiplayerSessionsSubsystem.h"
+#include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UPauseMenu::NativeConstruct()
 {
@@ -28,5 +27,5 @@ void UPauseMenu::OnResumeButtonClick_Implementation()
 
 void UPauseMenu::OnLeaveSessionButtonClick_Implementation()
 {
-	GetGameInstance()->GetSubsystem<UMultiplayerSessionsSubsystem>()->DestroySession();
+	GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>()->DestroySession();
 }

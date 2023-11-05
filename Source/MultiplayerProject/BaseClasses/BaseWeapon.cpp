@@ -28,13 +28,24 @@ ABaseWeapon::ABaseWeapon()
 	mUIComponent->SetTickMode(ETickMode::Automatic);
 	mUIComponent->SetVisibility(false);
 
-	WeaponSocket = "weapon_r";
 
-	StartShootingSignature.AddDynamic(this, &ThisClass::ServerFire);
+	StartShootingSignature.AddDynamic(this, &ThisClass::Fire);
 	StopShootingSignature.AddDynamic(this, &ThisClass::StopFire);
 	//UKismetSystemLibrary::Timer
 }
 
+void ABaseWeapon::BeginPlay()
+{
+	Init();
+	
+	Super::BeginPlay();
+}
+
+void ABaseWeapon::Init_Implementation()
+{
+	bIsFiring = false;
+	
+}
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
                                                          UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
@@ -60,8 +71,28 @@ void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* Prim
 	}
 }
 
+
+void ABaseWeapon::PlayWeaponSound_Implementation()
+{
+}
+
+#pragma region Server Method Callers
+
+void ABaseWeapon::Fire_Implementation()
+{
+}
+
+void ABaseWeapon::StopFire_Implementation()
+{
+	
+}
+
+/*
 ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
 {
+	ServerEquip();
+
+	/*
 	if(mOwnerRef == nullptr) return nullptr;
 
 	UMeshComponent* OwnerMesh = IPlayerInputInterface::Execute_GetMeshComponent(mOwnerRef);
@@ -74,35 +105,83 @@ ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
 	
 	return this;
 }
-
-
-
-void ABaseWeapon::PlayWeaponSound_Implementation()
-{
-}
-
-void ABaseWeapon::StopFire_Implementation()
+*/
+void ABaseWeapon::OnEquip_Implementation()
 {
 	
 }
-void ABaseWeapon::ServerFire_Implementation()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Native MultiClient"));
 
-	NativeServer_Fire();
+
+
+#pragma endregion
+
+
+
+#pragma region Server Methods
+
+void ABaseWeapon::Server_Fire_Implementation()
+{
+	Blueprint_Server_Fire();
 }
 
-void ABaseWeapon::MultiClientFire_Implementation()
+void ABaseWeapon::Server_StopFire_Implementation()
+{
+	Blueprint_ServerStopFire();
+}
+
+void ABaseWeapon::Server_Equip_Implementation()
+{
+	Blueprint_Server_EquipWeapon();
+}
+#pragma endregion
+
+#pragma region Multicast Methods
+
+void ABaseWeapon::Multicast_Fire_Implementation()
+{
+	Blueprint_Multicast_Fire();
+}
+
+void ABaseWeapon::Multicast_StopFire_Implementation()
+{
+	Blueprint_Multicast_StopFire();
+}
+
+void ABaseWeapon::Multicast_EquipWeapon_Implementation()
+{
+	Blueprint_Multicast_EquipWeapon();
+}
+#pragma endregion
+
+#pragma region Blueprint Server Method Implementation
+
+void ABaseWeapon::Blueprint_Server_Fire_Implementation()
 {
 }
 
-void ABaseWeapon::NativeServer_Fire_Implementation()
+void ABaseWeapon::Blueprint_ServerStopFire_Implementation()
 {
-	NativeMultiClient_Fire();
 }
 
-void ABaseWeapon::NativeMultiClient_Fire_Implementation()
+void ABaseWeapon::Blueprint_Server_EquipWeapon_Implementation()
 {
-	MultiClientFire();
-
+	
 }
+
+#pragma endregion
+
+#pragma region Blueprint Client Method Implementation
+
+void ABaseWeapon::Blueprint_Multicast_Fire_Implementation()
+{
+}
+
+void ABaseWeapon::Blueprint_Multicast_StopFire_Implementation()
+{
+}
+
+void ABaseWeapon::Blueprint_Multicast_EquipWeapon_Implementation()
+{
+}
+
+#pragma endregion

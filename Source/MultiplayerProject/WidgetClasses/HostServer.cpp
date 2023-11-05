@@ -4,16 +4,27 @@
 #include "HostServer.h"
 
 #include "Components/Button.h"
+#include "CustomWidgets/EntryWidget1.h"
+#include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UHostServer::NativeConstruct()
 {
-
 	Super::NativeConstruct();
-
+	mMultiplayerSubsystem = GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>();
 	if(btnHost) btnHost->OnClicked.AddDynamic(this, &UHostServer::OnHost);
+	if(CloseButton) CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
 }
 
 void UHostServer::OnHost_Implementation()
 {
+	mMatchDetails.MaxPlayers = MaxPlayerEntry->FieldValue;
+	mMatchDetails.StartingMoney = StartingMoneyEntry->FieldValue;
 	
+	mMultiplayerSubsystem->CreateSession(mMatchDetails.MaxPlayers, "CaptureTheFlag");
 }
+
+void UHostServer::OnClose_Implementation()
+{
+	DestroyWidget();
+}
+

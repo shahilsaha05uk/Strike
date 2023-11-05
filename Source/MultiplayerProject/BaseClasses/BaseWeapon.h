@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/InterfaceClasses/PickupInterface.h"
 #include "BaseWeapon.generated.h"
 
@@ -32,57 +33,87 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	USoundBase* mSoundToPlay;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	FName WeaponSocket;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AActor* mOwnerRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	bool bIsFiring;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FWeaponDetails mWeaponDetails;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FStartShootingSignature StartShootingSignature;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FStopShootingSignature StopShootingSignature;
 
+	virtual void BeginPlay() override;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Init();
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnComponentBeginOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnComponentEndOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void StopFire();
-
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayWeaponSound();
 
-	virtual ABaseWeapon* EquipWeapon_Implementation() override;
 
-/*
-public:
-
-	// Client RPC
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void Client_Fire();
-*/
 
 public:
 
-	// Server RPC
+	// Server Methods
+
+	// Fire
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_Fire();
+	UFUNCTION(BlueprintNativeEvent)
+	void Blueprint_Server_Fire();
+
+	// Stop Fire
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_StopFire();
+	UFUNCTION(BlueprintNativeEvent)
+	void Blueprint_ServerStopFire();
+
+	// Equip Weapon
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_Equip();
+	UFUNCTION(BlueprintNativeEvent)
+	void Blueprint_Server_EquipWeapon();
+	
+public:
+
+	// Multicast Methods
+
+	// Fire
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_Fire();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ServerFire();
+	void Blueprint_Multicast_Fire();
+
+	//Stop Fire
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_StopFire();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Blueprint_Multicast_StopFire();
+
+	// Equip Weapon
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_EquipWeapon();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Blueprint_Multicast_EquipWeapon();
+
+public:
+
+	// Server Method Callers
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MultiClientFire();
-	
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void Fire();
-
-private:
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void NativeServer_Fire();
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void NativeMultiClient_Fire();
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void StopFire();
 
-
+	virtual void OnEquip_Implementation() override;
 };

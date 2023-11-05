@@ -28,7 +28,7 @@ public:
 	TArray<FSessionDetails> mSessionDetails;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
-	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
+	class ULAN_OnlineSubsystem* MultiplayerSessionsSubsystem;
 
 	virtual void NativeConstruct() override;
 

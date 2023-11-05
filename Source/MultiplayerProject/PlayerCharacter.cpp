@@ -48,6 +48,7 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	WeaponSocket = "weapon_r";
 }
 
 void APlayerCharacter::BeginPlay()
@@ -122,12 +123,9 @@ void APlayerCharacter::Pickup_Implementation()
 {
 	if(mFocusedPickupActor == nullptr) return;
 
-	if(GetWeapon() == nullptr &&
-		UKismetSystemLibrary::DoesImplementInterface(mFocusedPickupActor, UPickupInterface::StaticClass()))
+	if(GetWeapon() == nullptr && UKismetSystemLibrary::DoesImplementInterface(mFocusedPickupActor, UPickupInterface::StaticClass()))
 	{
-		ABaseWeapon* Weapon = IPickupInterface::Execute_EquipWeapon(mFocusedPickupActor);
-
-		if(Weapon != nullptr) SetWeapon(Weapon);
+		Server_PickupAndEquip(mFocusedPickupActor);
 	}
 }
 
@@ -142,17 +140,12 @@ void APlayerCharacter::StopAiming_Implementation()
 
 void APlayerCharacter::StartShooting_Implementation()
 {
-	if(GetWeapon() == nullptr) return;
-	bIsFiring = true;
-	GetWeapon()->StartShootingSignature.Broadcast();
-	//GetWeapon()->NativeServer_Fire();
+	Server_Shoot();
 }
 
 void APlayerCharacter::StopShooting_Implementation()
 {
-	if(GetWeapon() == nullptr) return;
-	bIsFiring = false;
-	GetWeapon()->StopShootingSignature.Broadcast();
+	Server_StopShoot();
 }
 
 UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
@@ -165,6 +158,9 @@ UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
 	return GetMesh();
 }
 
+
+
+
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 {
 	return mPrimaryWeapon;
@@ -174,4 +170,58 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 {
 	mPrimaryWeapon = Weapon;
 }
+
+#pragma region Server Methods
+
+void APlayerCharacter::Server_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
+{
+	Multicast_PickupAndEquip(WeaponToEquip);
+}
+
+void APlayerCharacter::Server_Shoot_Implementation()
+{
+	Multicast_Shoot();
+}
+
+void APlayerCharacter::Server_StopShoot_Implementation()
+{
+	Multicast_StopShoot();
+}
+
+#pragma endregion
+
+#pragma region Multicast Methods
+
+void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
+{
+	if(WeaponToEquip == nullptr) return;
+	SetWeapon(WeaponToEquip);
+	
+	UMeshComponent* OwnerMesh = GetMesh();
+	
+	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+
+	GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
+
+	if(UKismetSystemLibrary::DoesImplementInterface(mFocusedPickupActor, UPickupInterface::StaticClass()))
+	{
+		IPickupInterface::Execute_OnEquip(GetWeapon());
+	}
+}
+
+void APlayerCharacter::Multicast_Shoot_Implementation()
+{
+	if(GetWeapon() == nullptr) return;
+	bIsFiring = true;
+	GetWeapon()->StartShootingSignature.Broadcast();
+}
+
+void APlayerCharacter::Multicast_StopShoot_Implementation()
+{
+	if(GetWeapon() == nullptr) return;
+	bIsFiring = false;
+	GetWeapon()->StopShootingSignature.Broadcast();
+}
+#pragma endregion
+
 

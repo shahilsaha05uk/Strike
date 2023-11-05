@@ -30,6 +30,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	FName WeaponSocket;
+	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
@@ -63,5 +66,29 @@ public:
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+
+	//Server Methods
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_PickupAndEquip(ABaseWeapon* WeaponToEquip);
 	
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_Shoot();
+
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_StopShoot();
+public:
+
+	// Multicast Methods
+	
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void Multicast_PickupAndEquip(ABaseWeapon* WeaponToEquip);
+
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_Shoot();
+
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_StopShoot();
+
 };

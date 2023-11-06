@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
+#include "MP_HUD.h"
 #include "GameFramework/PlayerController.h"
 #include "InputController.generated.h"
 
@@ -21,7 +22,12 @@ public:
 	class UDA_InputData* InputData;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
 	class UDA_UIInputs* UIInputs;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	APawn* mPlayerRef;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	AMP_HUD* mHudRef;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	class UInputMappingContext* InputMappingContext;

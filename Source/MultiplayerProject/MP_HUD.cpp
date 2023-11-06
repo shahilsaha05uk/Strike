@@ -7,6 +7,7 @@
 #include "WidgetClasses/MainMenu.h"
 #include "WidgetClasses/PauseMenu.h"
 #include "WidgetClasses/PlayerHUD.h"
+#include "WidgetClasses/TeamChooseUI.h"
 
 
 void AMP_HUD::BeginPlay()
@@ -17,28 +18,18 @@ void AMP_HUD::BeginPlay()
 
 void AMP_HUD::Init_Implementation()
 {
-
+	//mWidgetMap = new TMap<TEnumAsByte<EWidgetType>, UBaseWidget*>();
 }
 
 UBaseWidget* AMP_HUD::WidgetInitialiser_Implementation(EWidgetType WidgetToSpawn)
 {
-	/*
-	UBaseWidget* WidgetRef = WidgetCreator(WidgetToSpawn);
+	UBaseWidget* Widget = (GetWidget(WidgetToSpawn) == nullptr)
+		                      ? WidgetCreator(WidgetToSpawn)
+		                      : GetWidget(WidgetToSpawn);
 
-	if(mWidgetMap.Contains(WidgetToSpawn))
-	{
-		return mWidgetMap[WidgetToSpawn];
-	}
-
-	if(mWidgetMap.IsEmpty() || !mWidgetMap.Contains(WidgetToSpawn))
-	{
-		mWidgetMap.Add(WidgetToSpawn, WidgetRef);
-	}
-
+	UpdateWidgetMap(Widget, WidgetToSpawn);
 	
-	*/
-	return WidgetCreator(WidgetToSpawn);
-
+	return Widget;
 }
 
 UBaseWidget* AMP_HUD::WidgetCreator(EWidgetType WidgetToSpawn)
@@ -58,7 +49,57 @@ UBaseWidget* AMP_HUD::WidgetCreator(EWidgetType WidgetToSpawn)
 	case SHOP_MENU:
 		widget = CreateWidget<UBuyMenu>(GetOwningPlayerController(), ShopMenuClass);
 		break;
+	case TEAM_MENU:
+		widget = CreateWidget<UTeamChooseUI>(GetOwningPlayerController(), TeamMenuClass);
+		break;
 	}
 	
 	return widget;
+}
+
+void AMP_HUD::UpdateWidgetMap(UBaseWidget* Widget, EWidgetType WidgetToUpdate)
+{
+	if(WidgetMap.Contains(WidgetToUpdate)) return;
+
+	WidgetMap.Add(WidgetToUpdate, Widget);
+}
+
+void AMP_HUD::WidgetDestroyer_Implementation(EWidgetType WidgetToDestroy)
+{
+	UBaseWidget* Widget = GetWidget(WidgetToDestroy);
+
+	if(Widget != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Widget is valid"));
+		
+		if(WidgetMap.Contains(WidgetToDestroy))
+		{
+			WidgetMap[WidgetToDestroy]->DestroyWidget();
+			WidgetMap.Remove(WidgetToDestroy);
+		}
+		
+	}
+}
+
+UBaseWidget* AMP_HUD::GetWidget_Implementation(EWidgetType WidgetToGet)
+{
+	UBaseWidget* Widget = nullptr;
+	if(WidgetReferenceCheck(Widget, WidgetToGet))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Widget is valid"));
+
+	}
+	return Widget;
+}
+
+bool AMP_HUD::WidgetReferenceCheck(UBaseWidget* &WidgetRef, EWidgetType WidgetToSpawn)
+{
+	WidgetRef = nullptr;
+
+	if (!WidgetMap.Contains(WidgetToSpawn)) return false;
+
+	WidgetRef = WidgetMap[WidgetToSpawn];
+
+	return true;
+
 }

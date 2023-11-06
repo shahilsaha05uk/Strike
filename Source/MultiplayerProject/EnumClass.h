@@ -15,6 +15,17 @@ enum EWeaponType
 };
 
 
+UENUM(Blueprintable, BlueprintType)
+enum EWidgetType
+{
+	PLAYER_HUD,
+	MAIN_MENU,
+	PAUSE_MENU,
+	SHOP_MENU,
+	TEAM_MENU,
+	FIND_SERVER_MENU,
+	HOST_SERVER_MENU
+};
 
 UCLASS()
 class MULTIPLAYERPROJECT_API UEnumClass : public UBlueprintFunctionLibrary

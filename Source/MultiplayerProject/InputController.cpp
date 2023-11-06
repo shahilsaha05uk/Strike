@@ -19,6 +19,8 @@ void AInputController::Init_Implementation()
 {
 	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
 	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
+
+	mHudRef = Cast<AMP_HUD>(GetHUD());
 }
 
 void AInputController::SetupInputComponent()

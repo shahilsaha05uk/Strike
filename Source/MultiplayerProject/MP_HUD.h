@@ -13,7 +13,8 @@ enum EWidgetType
 {
 	PLAYER_HUD,
 	MAIN_MENU,
-	PAUSE_MENU
+	PAUSE_MENU,
+	SHOP_MENU
 };
 
 UCLASS()
@@ -33,10 +34,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> PlayerHudClass;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> MainMenuClass;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> PauseMenuClass;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UBaseWidget> ShopMenuClass;
 	
 
 	

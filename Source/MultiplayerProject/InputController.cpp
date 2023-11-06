@@ -52,7 +52,8 @@ void AInputController::SetupInputComponent()
 
 		// ======= UI Inputs =======
 		EnhancedInputComponent->BindAction(UIInputs->IA_Pause, ETriggerEvent::Completed, this, &AInputController::PauseGame);
-		UIInputs->IA_Pause->bTriggerWhenPaused = true;
+		EnhancedInputComponent->BindAction(UIInputs->IA_Shop, ETriggerEvent::Completed, this, &AInputController::OpenShop);
+
 	}
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
@@ -74,6 +75,11 @@ void AInputController::PauseGame_Implementation()
 }
 
 void AInputController::TestAction_Implementation()
+{
+	
+}
+
+void AInputController::OpenShop_Implementation()
 {
 	
 }

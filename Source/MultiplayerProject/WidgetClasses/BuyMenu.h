@@ -29,11 +29,9 @@ public:
 
 	virtual void NativeConstruct() override;
 
-	/*
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ClearList();
-	*/
-	
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateList(UDA_WeaponDetails* WeaponDetails);
 	

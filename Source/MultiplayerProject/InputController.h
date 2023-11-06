@@ -65,6 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PauseGame();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OpenShop();
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void TestAction();

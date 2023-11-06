@@ -20,4 +20,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI Inputs")
 	UInputAction* IA_Pause;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI Inputs")
+	UInputAction* IA_Shop;
+	
 };

@@ -33,7 +33,7 @@ void UBuyMenu::OnBack_Implementation()
 	
 }
 
-/*void UBuyMenu::ClearList_Implementation()
+void UBuyMenu::ClearList_Implementation()
 {
 	
-}*/
+}

@@ -37,7 +37,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnHost();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnClose();
-	
 };

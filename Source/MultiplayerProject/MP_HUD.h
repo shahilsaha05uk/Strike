@@ -46,6 +46,12 @@ public:
 	TSubclassOf<UBaseWidget> ShopMenuClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UBaseWidget> HosetServerMenuClass;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UBaseWidget> FindServerMenuClass;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> TeamMenuClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Delegates")

@@ -10,7 +10,7 @@ void UBuyMenu::NativeConstruct()
 	Super::NativeConstruct();
 
 	OnUpdateList.AddDynamic(this, &ThisClass::UpdateList);
-	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
+	CloseButton->OnClicked.AddDynamic(this, &ThisClass::DestroyWidget);
 }
 
 void UBuyMenu::GoToMainMenu_Implementation()
@@ -21,11 +21,6 @@ void UBuyMenu::GoToMainMenu_Implementation()
 void UBuyMenu::UpdateList_Implementation(UDA_WeaponDetails* WeaponDetails)
 {
 	
-}
-
-void UBuyMenu::OnClose_Implementation()
-{
-	DestroyWidget();
 }
 
 void UBuyMenu::OnBack_Implementation()

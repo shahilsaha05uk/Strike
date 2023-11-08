@@ -41,10 +41,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
 	float mMaxCamPitch;
 
+	AInputController();
+	
 	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
-	
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Init();
 
@@ -78,4 +81,19 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void TestAction();
 
+
+public:
+
+	// Server methods
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_Init();
+
+public:
+
+	// Client Methods
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void Multicast_Init();
+
+
+	
 };

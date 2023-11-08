@@ -36,9 +36,6 @@ public:
 	void OnRefresh();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnClose();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateList();
 
 private:

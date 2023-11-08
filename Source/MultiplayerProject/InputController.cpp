@@ -9,6 +9,12 @@
 #include "DataAssetClasses/DA_UIInputs.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
+
+AInputController::AInputController()
+{
+	//bReplicates = true;
+}
 
 void AInputController::BeginPlay()
 {
@@ -19,7 +25,7 @@ void AInputController::Init_Implementation()
 {
 	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
 	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
-
+	
 	mHudRef = Cast<AMP_HUD>(GetHUD());
 }
 
@@ -70,23 +76,25 @@ void AInputController::SetupInputComponent()
 
 }
 
-// UI Actions
-void AInputController::PauseGame_Implementation()
+/*
+void AInputController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	
+	DOREPLIFETIME( AInputController, mHudRef );
 }
 
-void AInputController::TestAction_Implementation()
+*/
+void AInputController::Server_Init_Implementation()
 {
-	
+	Multicast_Init();
 }
 
-void AInputController::OpenShop_Implementation()
+void AInputController::Multicast_Init_Implementation()
 {
-	
+	Init();
 }
 
-// Player Actions
+#pragma region Player Action Methods
+
 void AInputController::Move_Implementation(const FInputActionValue& Value)
 {
 	APawn* pawn = GetPawn();
@@ -178,3 +186,24 @@ void AInputController::StopShooting_Implementation()
 		IPlayerInputInterface::Execute_StopShooting(pawn);
 	}
 }
+
+#pragma endregion
+
+#pragma region UI Action Methods
+
+void AInputController::PauseGame_Implementation()
+{
+	
+}
+
+void AInputController::TestAction_Implementation()
+{
+	
+}
+
+void AInputController::OpenShop_Implementation()
+{
+	
+}
+
+#pragma endregion

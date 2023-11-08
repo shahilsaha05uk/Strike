@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "MultiplayerProject/EnumClass.h"
 #include "BaseWidget.generated.h"
 
 /**
@@ -14,15 +15,23 @@ class MULTIPLAYERPROJECT_API UBaseWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	TEnumAsByte<EWidgetType> mWidgetType;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true))
 	APlayerController* ControllerRef;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	class AHUD* mHudRef;
+
+	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void DetachFromParent();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void DestroyWidget(UBaseWidget* WidgetToDestroy = nullptr);
+	void DestroyWidget();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void QuitGame();

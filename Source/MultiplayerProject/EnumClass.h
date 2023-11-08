@@ -27,6 +27,13 @@ enum EWidgetType
 	HOST_SERVER_MENU
 };
 
+UENUM(Blueprintable, BlueprintType)
+enum ETeam
+{
+	TERRORIST,
+	COUNTER_TERRORIST
+};
+
 UCLASS()
 class MULTIPLAYERPROJECT_API UEnumClass : public UBlueprintFunctionLibrary
 {

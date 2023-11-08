@@ -62,7 +62,7 @@ void UMultiplayer_GameInstance::OnDestroySession(bool bWasSuccessful)
 
 		if(SessionInterface.IsValid())
 		{
-			FString LevelPath = GetLevelPath(mMainMenuLevel, true);
+			FString LevelPath = GetLevelPath(mMainMenuLevel, false);
 			
 			APlayerController* PC = GetFirstLocalPlayerController();
 

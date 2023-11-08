@@ -16,8 +16,6 @@ ULAN_OnlineSubsystem::ULAN_OnlineSubsystem()
 	mSessionInterface = Online::GetSessionInterface(GetWorld());
 }
 
-#pragma region Unused Methods
-
 bool ULAN_OnlineSubsystem::TryTravelToCurrentSession()
 {
 	mSessionInterface = Online::GetSessionInterface(GetWorld());
@@ -38,11 +36,8 @@ bool ULAN_OnlineSubsystem::TryTravelToCurrentSession()
 }
 
 
-#pragma endregion
-
-
-
 #pragma region Create Session
+
 void ULAN_OnlineSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
 {
 	if(GEngine)

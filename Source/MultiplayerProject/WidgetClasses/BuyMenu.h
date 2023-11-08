@@ -36,9 +36,6 @@ public:
 	void UpdateList(UDA_WeaponDetails* WeaponDetails);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnClose();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnBack();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

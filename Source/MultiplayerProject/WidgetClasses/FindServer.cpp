@@ -9,20 +9,15 @@
 
 void UFindServer::NativeConstruct()
 {
+	Super::NativeConstruct();
+	
 	MultiplayerSessionsSubsystem = GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>();
 	Cast<UMultiplayer_GameInstance>(GetGameInstance())->OnFindSessionComplete.AddDynamic(this, &ThisClass::OnFindSessionComplete);
 	btnRefresh->OnClicked.AddDynamic(this, &UFindServer::OnRefresh);
-	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
+	CloseButton->OnClicked.AddDynamic(this, &ThisClass::DestroyWidget);
 
 	//Refresh on Construct
 	OnRefresh();
-	
-	Super::NativeConstruct();
-}
-
-void UFindServer::OnClose_Implementation()
-{
-	DetachFromParent();
 }
 
 

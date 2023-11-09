@@ -3,26 +3,26 @@
 
 #include "PauseMenu.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
-#include "Kismet/GameplayStatics.h"
 #include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UPauseMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ResumeGameButton->OnClicked.AddDynamic(this, &ThisClass::OnResumeButtonClick);
+	ResumeGameButton->OnClicked.AddDynamic(this, &ThisClass::ResumeGame);
 	LeaveSessionButton->OnClicked.AddDynamic(this, &ThisClass::OnLeaveSessionButtonClick);
 	QuitButton->OnClicked.AddDynamic(this, &ThisClass::QuitGame);
 
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
-	GetOwningPlayer()->bShowMouseCursor = true;
-	
+	GetOwningPlayer()->SetShowMouseCursor(true);
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(GetOwningPlayer());
+
 }
 
 void UPauseMenu::OnResumeButtonClick_Implementation()
 {
-	DestroyWidget();
+	//ResumeGame();
 }
 
 void UPauseMenu::OnLeaveSessionButtonClick_Implementation()

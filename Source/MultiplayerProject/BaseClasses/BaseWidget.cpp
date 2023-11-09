@@ -3,6 +3,7 @@
 
 #include "BaseWidget.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "GameFramework/HUD.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MultiplayerProject/InterfaceClasses/HUDInterface.h"
@@ -13,6 +14,19 @@ void UBaseWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	mHudRef = GetOwningPlayer()->GetHUD();
+}
+
+void UBaseWidget::PauseGame_Implementation(bool Value)
+{
+	GetOwningPlayer()->SetPause(Value);
+}
+
+void UBaseWidget::ResumeGame_Implementation()
+{
+	UWidgetBlueprintLibrary::SetInputMode_GameOnly(GetOwningPlayer());
+	GetOwningPlayer()->SetShowMouseCursor(false);
+
+	DestroyWidget();
 }
 
 void UBaseWidget::DestroyWidget_Implementation()

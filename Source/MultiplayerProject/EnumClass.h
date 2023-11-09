@@ -30,6 +30,7 @@ enum EWidgetType
 UENUM(Blueprintable, BlueprintType)
 enum ETeam
 {
+	NONE,
 	TERRORIST,
 	COUNTER_TERRORIST
 };

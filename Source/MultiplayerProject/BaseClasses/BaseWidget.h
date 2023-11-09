@@ -35,4 +35,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void QuitGame();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void ResumeGame();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void PauseGame(bool Value);
 };

@@ -7,26 +7,43 @@
 #include "EnhancedInputSubsystems.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "DataAssetClasses/DA_UIInputs.h"
+#include "GameFramework/GameModeBase.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+
 AInputController::AInputController()
 {
-	//bReplicates = true;
+	bReplicates = true;
 }
 
 void AInputController::BeginPlay()
 {
-	//Init();
 	Super::BeginPlay();
+
+	Execute_OnSpawn(this);
 }
+void AInputController::OnSpawn_Implementation()
+{
+	Server_OnSpawn();
+}
+
+void AInputController::SpawnPawn_Implementation(ETeam Team)
+{
+	IHUDInterface::Execute_WidgetDestroyer(GetHUD(), TEAM_MENU);
+	Server_SpawnPawn(Team);
+}
+
+void AInputController::UpdatePlayerState_Implementation()
+{
+	
+}
+
 void AInputController::Init_Implementation()
 {
-	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
-	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
 	
-	mHudRef = Cast<AMP_HUD>(GetHUD());
 }
 
 void AInputController::SetupInputComponent()
@@ -76,22 +93,49 @@ void AInputController::SetupInputComponent()
 
 }
 
-/*
-void AInputController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+#pragma region Server Methods
+
+void AInputController::Server_OnSpawn_Implementation()
 {
-	DOREPLIFETIME( AInputController, mHudRef );
+	Client_OnSpawn();
 }
 
-*/
-void AInputController::Server_Init_Implementation()
+
+void AInputController::Server_SpawnPawn_Implementation(ETeam Team)
 {
-	Multicast_Init();
+	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
+	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
+	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
+
+	BlueprintServer_SpawnPawn(pawnClass, Team, playerStart);
 }
 
-void AInputController::Multicast_Init_Implementation()
+#pragma endregion
+
+#pragma region Multicast Methods
+
+void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> DefaultPawnClass, ETeam Team,
+	const FTransform& FindStartTransform)
 {
-	Init();
+	BlueprintMulticast_SpawnPawn(DefaultPawnClass, Team, FindStartTransform);
+
+	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
+	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
+
 }
+
+#pragma endregion
+
+#pragma region Client Methods
+
+
+void AInputController::Client_OnSpawn_Implementation()
+{
+	BlueprintClient_OnSpawn();
+}
+
+#pragma endregion
+
 
 #pragma region Player Action Methods
 
@@ -192,11 +236,6 @@ void AInputController::StopShooting_Implementation()
 #pragma region UI Action Methods
 
 void AInputController::PauseGame_Implementation()
-{
-	
-}
-
-void AInputController::TestAction_Implementation()
 {
 	
 }

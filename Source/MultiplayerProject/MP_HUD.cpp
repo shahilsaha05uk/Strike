@@ -55,7 +55,7 @@ UBaseWidget* AMP_HUD::WidgetCreator(EWidgetType WidgetToSpawn)
 		widget = CreateWidget<UTeamChooseUI>(GetOwningPlayerController(), TeamMenuClass);
 		break;
 	case HOST_SERVER_MENU:
-		widget = CreateWidget<UHostServer>(GetOwningPlayerController(), HosetServerMenuClass);
+		widget = CreateWidget<UHostServer>(GetOwningPlayerController(), HostServerMenuClass);
 		break;
 	case FIND_SERVER_MENU:
 		widget = CreateWidget<UFindServer>(GetOwningPlayerController(), FindServerMenuClass);

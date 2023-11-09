@@ -46,7 +46,7 @@ public:
 	TSubclassOf<UBaseWidget> ShopMenuClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
-	TSubclassOf<UBaseWidget> HosetServerMenuClass;
+	TSubclassOf<UBaseWidget> HostServerMenuClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> FindServerMenuClass;

@@ -8,10 +8,8 @@
 
 #include "ShopItemButton.generated.h"
 
-class UButton;
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSpawnWeaponSignature, FWeaponDetails, WeaponDetails);
+
 UCLASS()
 class MULTIPLAYERPROJECT_API UShopItemButton : public UBaseButton
 {
@@ -20,11 +18,18 @@ class MULTIPLAYERPROJECT_API UShopItemButton : public UBaseButton
 public:
 
 	UPROPERTY(meta = (BindWidget), EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	UButton* mButton;
+	class UButton* mButton;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (ExposeOnSpawn))
 	FWeaponDetails WeaponDetails;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References", meta = (ExposeOnSpawn))
+	UBaseWidget* ParentRef;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite)
+	FOnSpawnWeaponSignature OnSpawnWeaponSignature;
+
+	
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

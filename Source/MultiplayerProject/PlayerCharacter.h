@@ -71,7 +71,7 @@ public:
 
 	//Server Methods
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_Move(const FInputActionValue& Value);
+	void Server_Move(FVector Direction, float Val);
 	
 	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -88,6 +88,9 @@ public:
 	
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_Move(const FInputActionValue& Value);
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_Move(FVector Direction, float Val);
 
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_PickupAndEquip(ABaseWeapon* WeaponToEquip);

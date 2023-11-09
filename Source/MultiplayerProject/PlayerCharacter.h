@@ -60,6 +60,7 @@ public:
 	virtual void StopAiming_Implementation() override;
 	virtual void StartShooting_Implementation() override;
 	virtual void StopShooting_Implementation() override;
+	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
 
 	virtual UCameraComponent* GetFollowCamera_Implementation() override;
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;
@@ -73,6 +74,8 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Move(FVector Direction, float Val);
 	
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
 	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_PickupAndEquip(ABaseWeapon* WeaponToEquip);
@@ -100,5 +103,11 @@ public:
 
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_StopShoot();
+
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_SpawnWeapon(FWeaponDetails WeaponDetails);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintMulticast_SpawnWeapon(FWeaponDetails WeaponDetails);
 
 };

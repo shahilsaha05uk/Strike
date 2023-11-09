@@ -150,6 +150,11 @@ void APlayerCharacter::StopShooting_Implementation()
 	Server_StopShoot();
 }
 
+void APlayerCharacter::SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	Server_SpawnWeapon(WeaponDetails);
+}
+
 UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
 {
 	return FollowCamera;
@@ -159,7 +164,6 @@ UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
 {
 	return GetMesh();
 }
-
 
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 {
@@ -180,6 +184,11 @@ void APlayerCharacter::Server_Move_Implementation(FVector Direction, float Val)
 void APlayerCharacter::Client_Move_Implementation(FVector Direction, float Val)
 {
 	AddMovementInput(Direction, Val);
+}
+
+void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	Multicast_SpawnWeapon(WeaponDetails);
 }
 
 
@@ -204,6 +213,10 @@ void APlayerCharacter::Server_StopShoot_Implementation()
 void APlayerCharacter::Multicast_Move_Implementation(const FInputActionValue& Value)
 {
 	
+}
+void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	BlueprintMulticast_SpawnWeapon(WeaponDetails);
 }
 
 void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
+#include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
 #include "PlayerInputInterface.generated.h"
 
@@ -45,6 +46,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Pickup();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SpawnWeapon(FWeaponDetails WeaponDetails);
 
 
 	// Only for debugging

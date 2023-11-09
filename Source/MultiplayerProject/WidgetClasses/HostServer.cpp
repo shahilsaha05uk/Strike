@@ -12,7 +12,7 @@ void UHostServer::NativeConstruct()
 	Super::NativeConstruct();
 	mMultiplayerSubsystem = GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>();
 	if(btnHost) btnHost->OnClicked.AddDynamic(this, &UHostServer::OnHost);
-	if(CloseButton) CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
+	if(CloseButton) CloseButton->OnClicked.AddDynamic(this, &ThisClass::DestroyWidget);
 }
 
 void UHostServer::OnHost_Implementation()
@@ -22,9 +22,3 @@ void UHostServer::OnHost_Implementation()
 	
 	mMultiplayerSubsystem->CreateSession(mMatchDetails.MaxPlayers, "CaptureTheFlag");
 }
-
-void UHostServer::OnClose_Implementation()
-{
-	DestroyWidget();
-}
-

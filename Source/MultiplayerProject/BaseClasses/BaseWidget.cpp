@@ -3,22 +3,43 @@
 
 #include "BaseWidget.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "GameFramework/HUD.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "MultiplayerProject/InterfaceClasses/HUDInterface.h"
 
-void UBaseWidget::DestroyWidget_Implementation(UBaseWidget* WidgetToDestroy)
+
+void UBaseWidget::NativeConstruct()
 {
-	if(WidgetToDestroy == nullptr)
+	Super::NativeConstruct();
+
+	mHudRef = GetOwningPlayer()->GetHUD();
+}
+
+void UBaseWidget::PauseGame_Implementation(bool Value)
+{
+	GetOwningPlayer()->SetPause(Value);
+}
+
+void UBaseWidget::ResumeGame_Implementation()
+{
+	UWidgetBlueprintLibrary::SetInputMode_GameOnly(GetOwningPlayer());
+	GetOwningPlayer()->SetShowMouseCursor(false);
+
+	DestroyWidget();
+}
+
+void UBaseWidget::DestroyWidget_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Destroy Widget"));
+
+	if(UKismetSystemLibrary::DoesImplementInterface(mHudRef, UHUDInterface::StaticClass()))
 	{
-		this->RemoveFromParent();
+		IHUDInterface::Execute_WidgetDestroyer(mHudRef, mWidgetType);
 	}
 }
 
 void UBaseWidget::QuitGame_Implementation()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, false);
-}
-
-void UBaseWidget::DetachFromParent_Implementation()
-{
-	this->RemoveFromParent();
 }

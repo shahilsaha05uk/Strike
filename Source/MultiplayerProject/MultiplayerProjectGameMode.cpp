@@ -8,6 +8,10 @@ AMultiplayerProjectGameMode::AMultiplayerProjectGameMode()
 
 }
 
+void AMultiplayerProjectGameMode::UpdateOnNewPlayerJoin_Implementation(APawn* Player)
+{
+}
+
 void AMultiplayerProjectGameMode::BeginPlay()
 {
 	Super::BeginPlay();

@@ -75,8 +75,6 @@ void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* Primitiv
 
 void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
 {
-	//Server_Move(Value);
-	
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -93,8 +91,10 @@ void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		// add movement 
+
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
+
 	}
 }
 
@@ -161,8 +161,6 @@ UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
 }
 
 
-
-
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 {
 	return mPrimaryWeapon;
@@ -175,10 +173,15 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 
 #pragma region Server Methods
 
-void APlayerCharacter::Server_Move_Implementation(const FInputActionValue& Value)
+void APlayerCharacter::Server_Move_Implementation(FVector Direction, float Val)
 {
-	Multicast_Move(Value);
+	Client_Move(Direction, Val);
 }
+void APlayerCharacter::Client_Move_Implementation(FVector Direction, float Val)
+{
+	AddMovementInput(Direction, Val);
+}
+
 
 void APlayerCharacter::Server_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
 {
@@ -200,26 +203,7 @@ void APlayerCharacter::Server_StopShoot_Implementation()
 #pragma region Multicast Methods
 void APlayerCharacter::Multicast_Move_Implementation(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
-
 }
 
 void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)

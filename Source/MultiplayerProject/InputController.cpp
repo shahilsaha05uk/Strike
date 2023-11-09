@@ -7,18 +7,43 @@
 #include "EnhancedInputSubsystems.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "DataAssetClasses/DA_UIInputs.h"
+#include "GameFramework/GameModeBase.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
+
+
+AInputController::AInputController()
+{
+	bReplicates = true;
+}
 
 void AInputController::BeginPlay()
 {
-	//Init();
 	Super::BeginPlay();
+
+	Execute_OnSpawn(this);
 }
+void AInputController::OnSpawn_Implementation()
+{
+	Server_OnSpawn();
+}
+
+void AInputController::SpawnPawn_Implementation(ETeam Team)
+{
+	IHUDInterface::Execute_WidgetDestroyer(GetHUD(), TEAM_MENU);
+	Server_SpawnPawn(Team);
+}
+
+void AInputController::UpdatePlayerState_Implementation()
+{
+	
+}
+
 void AInputController::Init_Implementation()
 {
-	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
-	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
+	
 }
 
 void AInputController::SetupInputComponent()
@@ -68,23 +93,52 @@ void AInputController::SetupInputComponent()
 
 }
 
-// UI Actions
-void AInputController::PauseGame_Implementation()
+#pragma region Server Methods
+
+void AInputController::Server_OnSpawn_Implementation()
 {
-	
+	Client_OnSpawn();
 }
 
-void AInputController::TestAction_Implementation()
+
+void AInputController::Server_SpawnPawn_Implementation(ETeam Team)
 {
-	
+	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
+	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
+	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
+
+	BlueprintServer_SpawnPawn(pawnClass, Team, playerStart);
 }
 
-void AInputController::OpenShop_Implementation()
+#pragma endregion
+
+#pragma region Multicast Methods
+
+void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> DefaultPawnClass, ETeam Team,
+	const FTransform& FindStartTransform)
 {
-	
+	BlueprintMulticast_SpawnPawn(DefaultPawnClass, Team, FindStartTransform);
+
+	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
+	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
+
 }
 
-// Player Actions
+#pragma endregion
+
+#pragma region Client Methods
+
+
+void AInputController::Client_OnSpawn_Implementation()
+{
+	BlueprintClient_OnSpawn();
+}
+
+#pragma endregion
+
+
+#pragma region Player Action Methods
+
 void AInputController::Move_Implementation(const FInputActionValue& Value)
 {
 	APawn* pawn = GetPawn();
@@ -176,3 +230,19 @@ void AInputController::StopShooting_Implementation()
 		IPlayerInputInterface::Execute_StopShooting(pawn);
 	}
 }
+
+#pragma endregion
+
+#pragma region UI Action Methods
+
+void AInputController::PauseGame_Implementation()
+{
+	
+}
+
+void AInputController::OpenShop_Implementation()
+{
+	
+}
+
+#pragma endregion

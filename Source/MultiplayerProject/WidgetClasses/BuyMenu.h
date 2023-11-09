@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
 #include "BuyMenu.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateListSignature, UDA_WeaponDetails*, WeaponDetails);
-
 UCLASS()
 class MULTIPLAYERPROJECT_API UBuyMenu : public UBaseWidget
 {
@@ -36,12 +36,11 @@ public:
 	void UpdateList(UDA_WeaponDetails* WeaponDetails);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnClose();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnBack();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GoToMainMenu();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SpawnWeapon(FWeaponDetails WeaponDetails);
 };

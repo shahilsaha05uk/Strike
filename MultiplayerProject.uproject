@@ -33,6 +33,6 @@
 		{
 			"Name": "OnlineSubsystemSteam",
 			"Enabled": true
-		}
+		},
 	]
 }

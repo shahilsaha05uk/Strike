@@ -42,7 +42,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable)
-	FString GetLevelPath(TSoftObjectPtr<UWorld> Map, bool shouldListen = true);
+	FString GetLevelPath(TSoftObjectPtr<UWorld> Map, bool shouldListen = false);
 	
 };
 

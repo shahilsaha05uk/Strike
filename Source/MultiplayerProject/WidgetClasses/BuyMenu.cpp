@@ -3,6 +3,7 @@
 
 #include "BuyMenu.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
 
 void UBuyMenu::NativeConstruct()
@@ -10,7 +11,15 @@ void UBuyMenu::NativeConstruct()
 	Super::NativeConstruct();
 
 	OnUpdateList.AddDynamic(this, &ThisClass::UpdateList);
-	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClose);
+	CloseButton->OnClicked.AddDynamic(this, &ThisClass::ResumeGame);
+
+	GetOwningPlayer()->SetShowMouseCursor(true);
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(GetOwningPlayer());
+}
+
+void UBuyMenu::SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	
 }
 
 void UBuyMenu::GoToMainMenu_Implementation()
@@ -21,11 +30,6 @@ void UBuyMenu::GoToMainMenu_Implementation()
 void UBuyMenu::UpdateList_Implementation(UDA_WeaponDetails* WeaponDetails)
 {
 	
-}
-
-void UBuyMenu::OnClose_Implementation()
-{
-	DestroyWidget();
 }
 
 void UBuyMenu::OnBack_Implementation()

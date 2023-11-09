@@ -25,6 +25,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (ExposeOnSpawn))
 	class UDA_WeaponDetails* WeaponDetails;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References", meta = (ExposeOnSpawn))
+	class UBuyMenu* ParentRef;
+
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

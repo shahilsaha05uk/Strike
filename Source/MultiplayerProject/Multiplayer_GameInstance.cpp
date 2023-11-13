@@ -21,6 +21,12 @@ void UMultiplayer_GameInstance::Init()
 		mMultiplayerSessionsSubsystem->mMultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	}
 }
 
+void UMultiplayer_GameInstance::SetSessionDetails_Implementation(FMatchDetails MatchDetails)
+{
+	mMatchDetails = MatchDetails;
+	mPlayerDetails.CurrentMoney = mMatchDetails.StartingMoney;
+}
+
 void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)
 {
 	if(bWasSuccessful)

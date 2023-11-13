@@ -27,7 +27,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	TSoftObjectPtr<UWorld> mMainMenuLevel;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FMatchDetails mMatchDetails;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FPlayerDetails mPlayerDetails;
+	
 	virtual void Init() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetSessionDetails(FMatchDetails MatchDetails);
 	
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);

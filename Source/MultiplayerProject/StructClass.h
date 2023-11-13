@@ -37,6 +37,23 @@ public:
 };
 
 USTRUCT(Blueprintable, BlueprintType)
+struct FPlayerDetails
+{
+	GENERATED_BODY()
+
+public:
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName PlayerName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int CurrentMoney;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ETeam> Team;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Score;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
 struct FSessionDetails
 {
 	GENERATED_BODY()
@@ -80,10 +97,29 @@ public:
 	FString WeaponName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UImage* WeaponImage;
+	int WeaponCost;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* WeaponImage;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponAsset;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FCharacterDetails
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString CharacterName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ETeam> Team;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class USkeletalMesh* CharacterMesh;
 };
 
 

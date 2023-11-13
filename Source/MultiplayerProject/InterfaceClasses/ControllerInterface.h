@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerProject/EnumClass.h"
+#include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
 #include "ControllerInterface.generated.h"
 
@@ -25,9 +26,11 @@ class MULTIPLAYERPROJECT_API IControllerInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnSpawn();
+	void OnControllerSpawn();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SpawnPawn(ETeam Team);
+	void SpawnPawn();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdatePlayerState();
+	void UpdatePlayerOverlayHUD();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdatePlayerHUD(FPlayerDetails PlayerDetails);
 };

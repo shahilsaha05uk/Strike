@@ -32,13 +32,16 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName WeaponSocket;
-	
+
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool bIsFiring;
 
 	virtual void BeginPlay() override;
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Init();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnOverlapEnd(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I);

@@ -5,9 +5,11 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "MP_PlayerState.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "DataAssetClasses/DA_UIInputs.h"
 #include "GameFramework/GameModeBase.h"
+#include "InterfaceClasses/InputsInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -23,27 +25,52 @@ void AInputController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Execute_OnSpawn(this);
-}
-void AInputController::OnSpawn_Implementation()
-{
-	Server_OnSpawn();
+	Execute_OnControllerSpawn(this);
 }
 
-void AInputController::SpawnPawn_Implementation(ETeam Team)
+// Initialises the Controller when it spawns
+void AInputController::OnControllerSpawn_Implementation()
 {
-	IHUDInterface::Execute_WidgetDestroyer(GetHUD(), TEAM_MENU);
-	Server_SpawnPawn(Team);
+	Server_OnControllerSpawn();
 }
 
-void AInputController::UpdatePlayerState_Implementation()
+// On Possess
+void AInputController::OnPossess(APawn* InPawn)
 {
-	
+	Super::OnPossess(InPawn);
+	mPlayerState = Cast<AMP_PlayerState>(PlayerState);
 }
 
-void AInputController::Init_Implementation()
+// Spawns the Pawn and possess it
+void AInputController::SpawnPawn_Implementation()
 {
-	
+	Server_SpawnPawn();
+}
+
+// Updates the Player HUD
+void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails)
+{
+	if(!mPlayerState) return;
+
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UInputsInterface::StaticClass()))
+	{
+		IInputsInterface::Execute_InitHUD(pawn, PlayerDetails);
+	}
+}
+
+// Updates the Player OverlayHUD
+void AInputController::UpdatePlayerOverlayHUD_Implementation()
+{
+	if(!mPlayerState) return;
+
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UInputsInterface::StaticClass()))
+	{
+		IInputsInterface::Execute_InitOverlayUI(pawn);
+	}
 }
 
 void AInputController::SetupInputComponent()
@@ -93,21 +120,37 @@ void AInputController::SetupInputComponent()
 
 }
 
-#pragma region Server Methods
 
-void AInputController::Server_OnSpawn_Implementation()
+void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 {
-	Client_OnSpawn();
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_SpawnWeapon(pawn, WeaponDetails);
+	}
+
+	mPlayerState->mPlayerDetails.CurrentMoney -= WeaponDetails.WeaponCost;
+
+	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
 
 
-void AInputController::Server_SpawnPawn_Implementation(ETeam Team)
+#pragma region Server Methods
+
+void AInputController::Server_OnControllerSpawn_Implementation()
+{
+	Client_OnControllerSpawn();
+}
+
+
+void AInputController::Server_SpawnPawn_Implementation()
 {
 	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
 	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
 	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
 
-	BlueprintServer_SpawnPawn(pawnClass, Team, playerStart);
+	BlueprintServer_SpawnPawn(pawnClass, playerStart);
 }
 
 #pragma endregion
@@ -117,7 +160,7 @@ void AInputController::Server_SpawnPawn_Implementation(ETeam Team)
 void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> DefaultPawnClass, ETeam Team,
 	const FTransform& FindStartTransform)
 {
-	BlueprintMulticast_SpawnPawn(DefaultPawnClass, Team, FindStartTransform);
+	BlueprintMulticast_SpawnPawn(DefaultPawnClass, FindStartTransform);
 
 	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
 	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
@@ -129,13 +172,12 @@ void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> Def
 #pragma region Client Methods
 
 
-void AInputController::Client_OnSpawn_Implementation()
+void AInputController::Client_OnControllerSpawn_Implementation()
 {
-	BlueprintClient_OnSpawn();
+	BlueprintClient_OnControllerSpawn();
 }
 
 #pragma endregion
-
 
 #pragma region Player Action Methods
 
@@ -237,12 +279,26 @@ void AInputController::StopShooting_Implementation()
 
 void AInputController::PauseGame_Implementation()
 {
-	
+	AHUD* hud = GetHUD();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
+	{
+		UBaseWidget* PauseWidget = IHUDInterface::Execute_WidgetInitialiser(hud, EWidgetType::PAUSE_MENU);
+		PauseWidget->AddToViewport();
+	}
 }
 
 void AInputController::OpenShop_Implementation()
 {
-	
+	AHUD* hud = GetHUD();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
+	{
+		UBaseWidget* ShopWidget = IHUDInterface::Execute_WidgetInitialiser(hud, EWidgetType::SHOP_MENU);
+		ShopWidget->ControllerRef = this;
+		SpawnWeaponSignature.AddDynamic(this, &ThisClass::OnSpawnWeapon);
+		ShopWidget->AddToViewport();
+	}
 }
 
 #pragma endregion

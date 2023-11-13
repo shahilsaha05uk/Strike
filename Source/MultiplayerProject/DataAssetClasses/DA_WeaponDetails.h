@@ -22,5 +22,4 @@ public:
 	TEnumAsByte<EWeaponType> WeaponType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TArray<FWeaponDetails> WeaponDetails;
-
 };

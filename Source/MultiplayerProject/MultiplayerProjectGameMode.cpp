@@ -8,7 +8,7 @@ AMultiplayerProjectGameMode::AMultiplayerProjectGameMode()
 
 }
 
-void AMultiplayerProjectGameMode::UpdateOnNewPlayerJoin_Implementation(APawn* Player)
+void AMultiplayerProjectGameMode::UpdateOnNewPlayerJoin_Implementation()
 {
 }
 

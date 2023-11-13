@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EnumClass.h"
+#include "StructClass.h"
 #include "GameFramework/PlayerState.h"
 #include "MP_PlayerState.generated.h"
 
@@ -17,6 +18,9 @@ class MULTIPLAYERPROJECT_API AMP_PlayerState : public APlayerState
 
 public:
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
+	FPlayerDetails mPlayerDetails;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
 	TEnumAsByte<ETeam> mPlayerTeam;
 

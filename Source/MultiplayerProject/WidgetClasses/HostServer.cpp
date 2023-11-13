@@ -5,6 +5,7 @@
 
 #include "Components/Button.h"
 #include "CustomWidgets/EntryWidget1.h"
+#include "MultiplayerProject/Multiplayer_GameInstance.h"
 #include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UHostServer::NativeConstruct()
@@ -19,6 +20,8 @@ void UHostServer::OnHost_Implementation()
 {
 	mMatchDetails.MaxPlayers = MaxPlayerEntry->FieldValue;
 	mMatchDetails.StartingMoney = StartingMoneyEntry->FieldValue;
+
+	Cast<UMultiplayer_GameInstance>(GetGameInstance())->SetSessionDetails(mMatchDetails);
 	
 	mMultiplayerSubsystem->CreateSession(mMatchDetails.MaxPlayers, "CaptureTheFlag");
 }

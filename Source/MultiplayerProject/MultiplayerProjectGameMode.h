@@ -18,7 +18,7 @@ public:
 	TSoftObjectPtr<UWorld> mLevelMapRef;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateOnNewPlayerJoin(class APawn* Player);
+	void UpdateOnNewPlayerJoin();
 
 	virtual void BeginPlay() override;
 };

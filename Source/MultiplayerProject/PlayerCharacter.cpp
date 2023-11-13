@@ -13,6 +13,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "InterfaceClasses/PickupInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -54,6 +55,10 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APlayerCharacter::Init_Implementation()
+{
 }
 
 

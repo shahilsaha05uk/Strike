@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "MP_HUD.h"
+#include "StructClass.h"
 #include "GameFramework/PlayerController.h"
 #include "InterfaceClasses/ControllerInterface.h"
 #include "InputController.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSpawnWeaponSignature, FWeaponDetails, WeaponDetails);
+
 UCLASS()
 class MULTIPLAYERPROJECT_API AInputController : public APlayerController, public IControllerInterface
 {
@@ -27,8 +27,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	APawn* mPlayerRef;
 	
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	class AMP_PlayerState* mPlayerState;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	AHUD* mHudRef;
+	UPROPERTY(BlueprintReadWrite, BlueprintCallable, BlueprintAssignable, Category = "References")
+	FSpawnWeaponSignature SpawnWeaponSignature;
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -48,15 +54,21 @@ public:
 #pragma region On Controller Spawn Methods
 	
 	virtual void BeginPlay() override;
+
 	
-	virtual void OnSpawn_Implementation() override;
-	virtual void SpawnPawn_Implementation(ETeam Team) override;
-	virtual void UpdatePlayerState_Implementation() override;
 	
+	virtual void OnControllerSpawn_Implementation() override;
+	virtual void SpawnPawn_Implementation() override;
+	virtual void UpdatePlayerOverlayHUD_Implementation() override;
+	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails) override;
+
+	virtual void OnPossess(APawn* InPawn) override;
+
 	virtual void SetupInputComponent() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Init();
+	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
+
 
 #pragma endregion
 
@@ -99,31 +111,27 @@ public:
 
 	// Server methods
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_OnSpawn();
+	void Server_OnControllerSpawn();
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SpawnPawn(ETeam Team);
+	void Server_SpawnPawn();
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, ETeam Team, const FTransform& FindStartTransform);
+	void BlueprintServer_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
 	
 public:
 	
 	// Multicast Methods
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_OnSpawn();
-
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, ETeam Team, const FTransform& FindStartTransform);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, ETeam Team, const FTransform& FindStartTransform);
+	void BlueprintMulticast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
 
 public:
 	
 	// Client Methods
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_OnSpawn();
+	void Client_OnControllerSpawn();
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_OnSpawn();
-
+	void BlueprintClient_OnControllerSpawn();
 };
 

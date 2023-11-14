@@ -3,6 +3,8 @@
 
 #include "MP_HUD.h"
 
+#include "InterfaceClasses/ControllerInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "WidgetClasses/BuyMenu.h"
 #include "WidgetClasses/FindServer.h"
 #include "WidgetClasses/HostServer.h"
@@ -28,6 +30,29 @@ UBaseWidget* AMP_HUD::WidgetInitialiser_Implementation(EWidgetType WidgetToSpawn
 	UBaseWidget* Widget = (Execute_GetWidget(this, WidgetToSpawn) == nullptr)
 		                      ? WidgetCreator(WidgetToSpawn)
 		                      : GetWidget(WidgetToSpawn);
+
+	// Initialise the widget
+	switch (WidgetToSpawn) {
+	case TEAM_MENU:
+		Widget->InitialiseWidget(this);
+		OnTeamChosen.AddDynamic(this, &ThisClass::OnDecisionMade);
+		
+		break;
+	case PLAYER_HUD:
+		break;
+	case MAIN_MENU:
+		break;
+	case PAUSE_MENU:
+		break;
+	case SHOP_MENU:
+		break;
+	case FIND_SERVER_MENU:
+		break;
+	case HOST_SERVER_MENU:
+		break;
+	default: ;
+	}
+
 
 	UpdateWidgetMap(Widget, WidgetToSpawn);
 	
@@ -74,6 +99,25 @@ void AMP_HUD::UpdateWidgetMap(UBaseWidget* Widget, EWidgetType WidgetToUpdate)
 
 void AMP_HUD::WidgetDestroyer_Implementation(EWidgetType WidgetToDestroy)
 {
+	switch (WidgetToDestroy) {
+	case PLAYER_HUD:
+		break;
+	case MAIN_MENU:
+		break;
+	case PAUSE_MENU:
+		break;
+	case SHOP_MENU:
+		break;
+	case TEAM_MENU:
+		OnTeamChosen.RemoveDynamic(this, &ThisClass::OnDecisionMade);
+		break;
+	case FIND_SERVER_MENU:
+		break;
+	case HOST_SERVER_MENU:
+		break;
+	default: ;
+	}
+	
 	if(WidgetMap.Contains(WidgetToDestroy))
 	{
 		WidgetMap[WidgetToDestroy]->RemoveFromParent();
@@ -102,3 +146,19 @@ bool AMP_HUD::WidgetReferenceCheck(UBaseWidget* &WidgetRef, EWidgetType WidgetTo
 	return true;
 
 }
+
+
+#pragma region Team Methods
+
+
+void AMP_HUD::OnDecisionMade_Implementation(ETeam Team)
+{
+	APlayerController* PC = GetOwningPlayerController();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(PC, UControllerInterface::StaticClass()))
+	{
+		IControllerInterface::Execute_PawnSetup(PC, Team);
+	}
+}
+
+#pragma endregion

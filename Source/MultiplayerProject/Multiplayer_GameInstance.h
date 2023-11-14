@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "StructClass.h"
 #include "Engine/GameInstance.h"
+#include "InterfaceClasses/GameInstanceInterface.h"
 
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Multiplayer_GameInstance.generated.h"
@@ -13,7 +14,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFindSessionComplete, TArray<FSessionDetails>, SessionDetails);
 
 UCLASS()
-class MULTIPLAYERPROJECT_API UMultiplayer_GameInstance : public UGameInstance
+class MULTIPLAYERPROJECT_API UMultiplayer_GameInstance : public UGameInstance, public IGameInstanceInterface
 {
 	GENERATED_BODY()
 
@@ -30,10 +31,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	FMatchDetails mMatchDetails;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
-	FPlayerDetails mPlayerDetails;
-	
 	virtual void Init() override;
+	virtual FMatchDetails GetMatchDetails_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetSessionDetails(FMatchDetails MatchDetails);

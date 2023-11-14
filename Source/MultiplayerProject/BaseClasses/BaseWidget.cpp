@@ -16,6 +16,13 @@ void UBaseWidget::NativeConstruct()
 	mHudRef = GetOwningPlayer()->GetHUD();
 }
 
+void UBaseWidget::InitialiseWidget(AMP_HUD* Hud, AInputController* InputController)
+{
+	mHUD = Hud;
+	mInputController = InputController;
+
+}
+
 void UBaseWidget::PauseGame_Implementation(bool Value)
 {
 	GetOwningPlayer()->SetPause(Value);

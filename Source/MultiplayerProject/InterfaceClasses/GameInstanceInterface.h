@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
-#include "InputsInterface.generated.h"
+#include "GameInstanceInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI, Blueprintable, BlueprintType)
-class UInputsInterface : public UInterface
+UINTERFACE(MinimalAPI)
+class UGameInstanceInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +17,7 @@ class UInputsInterface : public UInterface
 /**
  * 
  */
-class MULTIPLAYERPROJECT_API IInputsInterface
+class MULTIPLAYERPROJECT_API IGameInstanceInterface
 {
 	GENERATED_BODY()
 
@@ -25,8 +25,6 @@ class MULTIPLAYERPROJECT_API IInputsInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void InitHUD(FPlayerDetails PlayerDetails);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateOverlayUI();
+	FMatchDetails GetMatchDetails();
+	
 };

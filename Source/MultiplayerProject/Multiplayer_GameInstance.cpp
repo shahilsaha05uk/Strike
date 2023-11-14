@@ -21,10 +21,15 @@ void UMultiplayer_GameInstance::Init()
 		mMultiplayerSessionsSubsystem->mMultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	}
 }
 
+FMatchDetails UMultiplayer_GameInstance::GetMatchDetails_Implementation()
+{
+	return mMatchDetails;
+}
+
 void UMultiplayer_GameInstance::SetSessionDetails_Implementation(FMatchDetails MatchDetails)
 {
 	mMatchDetails = MatchDetails;
-	mPlayerDetails.CurrentMoney = mMatchDetails.StartingMoney;
+	//mPlayerDetails.CurrentMoney = mMatchDetails.StartingMoney;
 }
 
 void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)
@@ -88,9 +93,5 @@ FString UMultiplayer_GameInstance::GetLevelPath(TSoftObjectPtr<UWorld> Map, bool
 	{
 		path.Append("?listen");
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Path to Travel: %s"), *path);
-
-	
 	return path;
 }

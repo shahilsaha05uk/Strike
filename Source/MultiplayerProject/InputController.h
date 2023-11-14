@@ -17,6 +17,15 @@ class MULTIPLAYERPROJECT_API AInputController : public APlayerController, public
 {
 	GENERATED_BODY()
 
+private:
+
+	UFUNCTION()
+	void OnSpawn();
+
+	UFUNCTION()
+	void SpawnPawn();
+
+	
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
@@ -26,7 +35,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	APawn* mPlayerRef;
-	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AMP_PlayerState* mPlayerState;
@@ -54,14 +62,18 @@ public:
 #pragma region On Controller Spawn Methods
 	
 	virtual void BeginPlay() override;
+	virtual void PawnSetup_Implementation(ETeam Team) override;
 
-	
-	
-	virtual void OnControllerSpawn_Implementation() override;
-	virtual void SpawnPawn_Implementation() override;
-	virtual void UpdatePlayerOverlayHUD_Implementation() override;
-	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails) override;
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void Server_PawnSetup(ETeam Team);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void Multicast_PawnSetup(ETeam Team);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintServer_PawnSetup(ETeam Team);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintMulticast_PawnSetup(ETeam Team);
+	
 	virtual void OnPossess(APawn* InPawn) override;
 
 	virtual void SetupInputComponent() override;
@@ -107,31 +119,34 @@ public:
 
 #pragma endregion
 
-public:
+// When the Controller Spawns
 
-	// Server methods
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_OnControllerSpawn();
+	void Server_OnSpawn();
 
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_OnSpawn();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_OnSpawn();
+
+// When the Player Spawns
+	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SpawnPawn();
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintServer_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
-	
-public:
-	
-	// Multicast Methods
+
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, ETeam Team, const FTransform& FindStartTransform);
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
 
-public:
+// When the Player picks up the Flag
+
 	
-	// Client Methods
-	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_OnControllerSpawn();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_OnControllerSpawn();
+
 };
 

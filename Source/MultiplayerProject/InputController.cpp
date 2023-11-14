@@ -16,6 +16,8 @@
 #include "Net/UnrealNetwork.h"
 
 
+
+
 AInputController::AInputController()
 {
 	bReplicates = true;
@@ -25,15 +27,38 @@ void AInputController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Execute_OnControllerSpawn(this);
+	OnSpawn();
+}
+
+void AInputController::PawnSetup_Implementation(ETeam Team)
+{
+	/*if(UKismetSystemLibrary::DoesImplementInterface(PlayerState, UPlayerStateInterface::StaticClass()))
+	{
+		IPlayerStateInterface::Execute_InitialisePlayerState(PlayerState, Team);
+	}*/
+
+	Server_PawnSetup(Team);
+	SpawnPawn();
+}
+
+void AInputController::Server_PawnSetup_Implementation(ETeam Team)
+{
+	BlueprintServer_PawnSetup(Team);
+	
+	Multicast_PawnSetup(Team);
+}
+
+void AInputController::Multicast_PawnSetup_Implementation(ETeam Team)
+{
+	BlueprintMulticast_PawnSetup(Team);
+	
+	/*if(UKismetSystemLibrary::DoesImplementInterface(PlayerState, UPlayerStateInterface::StaticClass()))
+	{
+		IPlayerStateInterface::Execute_InitialisePlayerState(PlayerState, Team);
+	}*/
 }
 
 // Initialises the Controller when it spawns
-void AInputController::OnControllerSpawn_Implementation()
-{
-	Server_OnControllerSpawn();
-}
-
 // On Possess
 void AInputController::OnPossess(APawn* InPawn)
 {
@@ -41,13 +66,9 @@ void AInputController::OnPossess(APawn* InPawn)
 	mPlayerState = Cast<AMP_PlayerState>(PlayerState);
 }
 
-// Spawns the Pawn and possess it
-void AInputController::SpawnPawn_Implementation()
-{
-	Server_SpawnPawn();
-}
 
 // Updates the Player HUD
+/*
 void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails)
 {
 	if(!mPlayerState) return;
@@ -59,19 +80,7 @@ void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetai
 		IInputsInterface::Execute_InitHUD(pawn, PlayerDetails);
 	}
 }
-
-// Updates the Player OverlayHUD
-void AInputController::UpdatePlayerOverlayHUD_Implementation()
-{
-	if(!mPlayerState) return;
-
-	APawn* pawn = GetPawn();
-
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UInputsInterface::StaticClass()))
-	{
-		IInputsInterface::Execute_InitOverlayUI(pawn);
-	}
-}
+*/
 
 void AInputController::SetupInputComponent()
 {
@@ -120,7 +129,6 @@ void AInputController::SetupInputComponent()
 
 }
 
-
 void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 {
 	APawn* pawn = GetPawn();
@@ -135,50 +143,7 @@ void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails
 	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
 
-
-#pragma region Server Methods
-
-void AInputController::Server_OnControllerSpawn_Implementation()
-{
-	Client_OnControllerSpawn();
-}
-
-
-void AInputController::Server_SpawnPawn_Implementation()
-{
-	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
-	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
-	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
-
-	BlueprintServer_SpawnPawn(pawnClass, playerStart);
-}
-
-#pragma endregion
-
-#pragma region Multicast Methods
-
-void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> DefaultPawnClass, ETeam Team,
-	const FTransform& FindStartTransform)
-{
-	BlueprintMulticast_SpawnPawn(DefaultPawnClass, FindStartTransform);
-
-	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
-	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
-
-}
-
-#pragma endregion
-
-#pragma region Client Methods
-
-
-void AInputController::Client_OnControllerSpawn_Implementation()
-{
-	BlueprintClient_OnControllerSpawn();
-}
-
-#pragma endregion
-
+// Input Action Methods
 #pragma region Player Action Methods
 
 void AInputController::Move_Implementation(const FInputActionValue& Value)
@@ -302,3 +267,54 @@ void AInputController::OpenShop_Implementation()
 }
 
 #pragma endregion
+
+
+// Controller Management Methods
+
+#pragma region On Controller Spawn
+
+void AInputController::OnSpawn()
+{
+	Server_OnSpawn();
+}
+
+void AInputController::Server_OnSpawn_Implementation()
+{
+	Client_OnSpawn();
+}
+
+void AInputController::Client_OnSpawn_Implementation()
+{
+	BlueprintClient_OnSpawn();
+}
+
+#pragma endregion
+
+#pragma region Spawning the Player
+
+// Spawns the Pawn and possess it
+void AInputController::SpawnPawn()
+{
+	Server_SpawnPawn();
+}
+
+void AInputController::Server_SpawnPawn_Implementation()
+{
+	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
+	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
+	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
+
+	BlueprintServer_SpawnPawn(pawnClass, playerStart);
+}
+
+void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> DefaultPawnClass, ETeam Team,
+	const FTransform& FindStartTransform)
+{
+	BlueprintMulticast_SpawnPawn(DefaultPawnClass, FindStartTransform);
+
+	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
+	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
+}
+
+#pragma endregion
+

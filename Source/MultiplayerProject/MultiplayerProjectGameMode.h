@@ -17,9 +17,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Map Reference")
 	TSoftObjectPtr<UWorld> mLevelMapRef;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateOnNewPlayerJoin();
-
 	virtual void BeginPlay() override;
 };
 

@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
+#include "InterfaceClasses/InputsInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlayerInputInterface
+class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlayerInputInterface, public IInputsInterface
 {
 	GENERATED_BODY()
 
@@ -29,7 +30,10 @@ public:
 	class ABaseWeapon* mFocusedPickupActor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
-
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
+	class UWidgetComponent* mOverlayWidget;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName WeaponSocket;
 
@@ -70,6 +74,10 @@ public:
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+	virtual void UpdateOverlayUI_Implementation() override;
+	virtual void InitHUD_Implementation(FPlayerDetails PlayerDetails) override;
 
 public:
 

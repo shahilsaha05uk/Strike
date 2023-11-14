@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/EnumClass.h"
 #include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
-#include "InputsInterface.generated.h"
+#include "PlayerStateInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI, Blueprintable, BlueprintType)
-class UInputsInterface : public UInterface
+UINTERFACE(MinimalAPI)
+class UPlayerStateInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +18,7 @@ class UInputsInterface : public UInterface
 /**
  * 
  */
-class MULTIPLAYERPROJECT_API IInputsInterface
+class MULTIPLAYERPROJECT_API IPlayerStateInterface
 {
 	GENERATED_BODY()
 
@@ -25,8 +26,9 @@ class MULTIPLAYERPROJECT_API IInputsInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void InitHUD(FPlayerDetails PlayerDetails);
+	void InitialisePlayerState(ETeam Team);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateOverlayUI();
+	FPlayerDetails GetPlayerDetails();
+	
 };

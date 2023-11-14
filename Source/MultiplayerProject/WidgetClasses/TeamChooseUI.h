@@ -15,6 +15,11 @@ class MULTIPLAYERPROJECT_API UTeamChooseUI : public UBaseWidget
 {
 	GENERATED_BODY()
 
+private:
+
+	UFUNCTION()
+	void OnDecisionMade();
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -25,8 +30,8 @@ public:
 
 	virtual void NativeConstruct() override;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdatePlayerState(ETeam Team);
+	virtual void InitialiseWidget(AMP_HUD* Hud, AInputController* InputController) override;
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnCounterTerroristButtonCLick();

@@ -14,9 +14,7 @@ class UHUDInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class MULTIPLAYERPROJECT_API IHUDInterface
 {
 	GENERATED_BODY()

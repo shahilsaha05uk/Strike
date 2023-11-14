@@ -7,9 +7,6 @@
 #include "MultiplayerProject/EnumClass.h"
 #include "BaseWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class MULTIPLAYERPROJECT_API UBaseWidget : public UUserWidget
 {
@@ -20,15 +17,24 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	TEnumAsByte<EWidgetType> mWidgetType;
 
+
 public:
+	
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true))
+	class APlayerController* ControllerRef;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true))
-	APlayerController* ControllerRef;
+	class AInputController* mInputController;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AHUD* mHudRef;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	class AMP_HUD* mHUD;
+	
 	virtual void NativeConstruct() override;
+	virtual void InitialiseWidget(class AMP_HUD* Hud = nullptr, AInputController* InputController = nullptr);
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void DestroyWidget();

@@ -8,10 +8,12 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InterfaceClasses/PickupInterface.h"
+#include "InterfaceClasses/PlayerStateInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -49,6 +51,9 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	mOverlayWidget = CreateDefaultSubobject<UWidgetComponent>("Overlay UI");
+	mOverlayWidget->SetupAttachment(RootComponent);
+	
 	WeaponSocket = "weapon_r";
 }
 
@@ -168,6 +173,16 @@ UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
 UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
 {
 	return GetMesh();
+}
+
+void APlayerCharacter::UpdateOverlayUI_Implementation()
+{
+	
+}
+
+void APlayerCharacter::InitHUD_Implementation(FPlayerDetails PlayerDetails)
+{
+	
 }
 
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()

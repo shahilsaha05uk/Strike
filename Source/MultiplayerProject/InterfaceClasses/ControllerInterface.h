@@ -26,11 +26,8 @@ class MULTIPLAYERPROJECT_API IControllerInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnControllerSpawn();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SpawnPawn();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdatePlayerOverlayHUD();
+	void PawnSetup(ETeam Team);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHUD(FPlayerDetails PlayerDetails);
 };

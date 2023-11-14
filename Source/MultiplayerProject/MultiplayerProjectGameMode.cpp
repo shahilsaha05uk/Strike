@@ -8,10 +8,6 @@ AMultiplayerProjectGameMode::AMultiplayerProjectGameMode()
 
 }
 
-void AMultiplayerProjectGameMode::UpdateOnNewPlayerJoin_Implementation()
-{
-}
-
 void AMultiplayerProjectGameMode::BeginPlay()
 {
 	Super::BeginPlay();

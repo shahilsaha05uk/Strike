@@ -35,6 +35,15 @@ enum ETeam
 	COUNTER_TERRORIST
 };
 
+UENUM(Blueprintable, BlueprintType)
+enum EFlag
+{
+	CT_FLAG,
+	T_FLAG
+};
+
+
+
 UCLASS()
 class MULTIPLAYERPROJECT_API UEnumClass : public UBlueprintFunctionLibrary
 {

@@ -6,27 +6,30 @@
 #include "EnumClass.h"
 #include "StructClass.h"
 #include "GameFramework/PlayerState.h"
+#include "InterfaceClasses/PlayerStateInterface.h"
 #include "MP_PlayerState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MULTIPLAYERPROJECT_API AMP_PlayerState : public APlayerState
+class MULTIPLAYERPROJECT_API AMP_PlayerState : public APlayerState, public IPlayerStateInterface
 {
 	GENERATED_BODY()
 
 public:
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
 	FPlayerDetails mPlayerDetails;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
-	TEnumAsByte<ETeam> mPlayerTeam;
+	AMP_PlayerState();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
-	FString mUniqueID;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void BlueprintInitialisation(ETeam Team);
+	
+	virtual void InitialisePlayerState_Implementation(ETeam Team) override;
+	virtual FPlayerDetails GetPlayerDetails_Implementation() override;
 
-	
-	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };

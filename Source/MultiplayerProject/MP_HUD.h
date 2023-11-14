@@ -10,6 +10,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResumeGameSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeamChosenSignature, ETeam, Team);
 
 UCLASS()
 class MULTIPLAYERPROJECT_API AMP_HUD : public ABaseHUD, public IHUDInterface
@@ -53,10 +54,24 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UBaseWidget> TeamMenuClass;
+
+#pragma region Delegates
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Delegates")
 	FResumeGameSignature ResumeGameSignature;
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTeamChosenSignature OnTeamChosen;
+
+#pragma region endregion
+
+#pragma region Team UI
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnDecisionMade(ETeam Team);
+
+#pragma endregion
+	
 	
 	virtual void BeginPlay() override;
 
@@ -66,5 +81,8 @@ public:
 	virtual UBaseWidget* GetWidget_Implementation(EWidgetType WidgetToGet) override;
 	virtual void WidgetDestroyer_Implementation(EWidgetType WidgetToDestroy) override;
 	virtual UBaseWidget* WidgetInitialiser_Implementation(EWidgetType WidgetToSpawn) override;
+
 	
+
+
 };

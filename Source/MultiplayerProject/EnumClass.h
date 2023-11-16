@@ -42,6 +42,13 @@ enum EFlag
 	T_FLAG
 };
 
+UENUM(Blueprintable, BlueprintType)
+enum EInteractType
+{
+	NOT_INTERACTABLE,
+	EQUIPPABLE,
+	COLLECTIBLE
+};
 
 
 UCLASS()

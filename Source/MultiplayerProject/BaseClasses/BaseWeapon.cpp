@@ -106,11 +106,15 @@ ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
 	return this;
 }
 */
-void ABaseWeapon::OnEquip_Implementation()
+void ABaseWeapon::OnInteract_Implementation()
 {
 	
 }
 
+EInteractType ABaseWeapon::GetInteractType_Implementation()
+{
+	return EInteractType::EQUIPPABLE;
+}
 
 
 #pragma endregion

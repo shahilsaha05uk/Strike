@@ -30,7 +30,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Shoot;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
-	UInputAction* IA_Pickup;
+	UInputAction* IA_Interact;
 
 
 	// ONLY FOR DEBUGGING

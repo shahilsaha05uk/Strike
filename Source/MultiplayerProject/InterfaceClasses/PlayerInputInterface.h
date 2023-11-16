@@ -45,11 +45,11 @@ public:
 	void StopShooting();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Pickup();
+	void Interact();
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SpawnWeapon(FWeaponDetails WeaponDetails);
-
-
+	
 	// Only for debugging
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UCameraComponent* GetFollowCamera();

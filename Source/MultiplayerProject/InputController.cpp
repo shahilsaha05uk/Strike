@@ -110,6 +110,8 @@ void AInputController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(InputData->IA_Shoot, ETriggerEvent::Started, this, &AInputController::StartShooting);
 		EnhancedInputComponent->BindAction(InputData->IA_Shoot, ETriggerEvent::Completed, this, &AInputController::StopShooting);
 
+		// Drop Item
+		EnhancedInputComponent->BindAction(InputData->IA_DropItem, ETriggerEvent::Completed, this, &ThisClass::DropItem);
 
 		// ======= UI Inputs =======
 		EnhancedInputComponent->BindAction(UIInputs->IA_Pause, ETriggerEvent::Completed, this, &AInputController::PauseGame);
@@ -126,6 +128,17 @@ void AInputController::SetupInputComponent()
 		UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 	}
 
+
+}
+
+void AInputController::DropItem_Implementation()
+{
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_DropItem(pawn);
+	}
 
 }
 

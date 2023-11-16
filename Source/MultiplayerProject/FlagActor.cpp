@@ -3,47 +3,74 @@
 
 #include "FlagActor.h"
 
+#include "Components/WidgetComponent.h"
+#include "InterfaceClasses/InputsInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 // Sets default values
 AFlagActor::AFlagActor()
 {
+	mRoot = CreateDefaultSubobject<USceneComponent>("Root");
+	RootComponent = mRoot;
+
+	mRangeComp = CreateDefaultSubobject<USphereComponent>("Interact Range");
+	mRangeComp->SetupAttachment(RootComponent);
+	mRangeComp->SetSphereRadius(130);
+	mRangeComp->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnComponentBeginOverlap);
+	mRangeComp->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnComponentEndOverlap);
+	
 	mFlagBase = CreateDefaultSubobject<UStaticMeshComponent>("Flag Base");
 	mFlagBase->SetupAttachment(RootComponent);
 
-	mRangeComp->SetSphereRadius(128.0f);
+	mFlagWidget = CreateDefaultSubobject<UWidgetComponent>("Flag Widget");
+	mFlagWidget->SetupAttachment(RootComponent);
+	mFlagWidget->SetVisibility(false);
 
-	const FAttachmentTransformRules Rules = FAttachmentTransformRules::KeepWorldTransform;
+	mFlagParent = CreateDefaultSubobject<USceneComponent>("Flag Parent");
 	
 	mFlag = CreateDefaultSubobject<UStaticMeshComponent>("Flag");
-	mFlag->SetupAttachment(RootComponent);
+	mFlag->SetupAttachment(mFlagParent);
 	mFlag->SetVisibility(true);
 
+}
 
-	InteractableType = PICKUP;
+void AFlagActor::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+                                                        UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
+{
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInputsInterface::StaticClass()))
+	{
+		FFocusedActorDetails Details;
+		Details.ActorName = GetDebugName(this);
+		Details.ActorReference = this;
+		Details.InteractType = FLAGCAPTURE;
+		
+		IInputsInterface::Execute_UpdateFocusedActor(Actor, Details);
+	}
 	
-	ActorDetails.ActorName = GetName();
-	ActorDetails.InteractType = InteractableType;
-	ActorDetails.ActorReference = this;
-
+	mFlagWidget->SetVisibility(true);
 }
 
-void AFlagActor::AttachFlag()
+void AFlagActor::OnComponentEndOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+	UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	if(mFlag->IsVisible())
-	{
-		mFlag->SetVisibility(false);
-	}
-	else
-	{
-		mFlag->SetVisibility(true);
-	}
+	mFlagWidget->SetVisibility(false);
 }
 
-void AFlagActor::OnPlayerOverlapBegin_Implementation(AActor* Actor, bool isPlayer)
+void AFlagActor::OnFlagCaptured_Implementation(USkeletalMeshComponent* MeshToAttachTo, FName SocketName)
 {
-	Super::OnPlayerOverlapBegin_Implementation(Actor, isPlayer);
+	
 }
 
-void AFlagActor::OnPlayerOverlapEnd_Implementation(AActor* Actor, bool isPlayer)
+void AFlagActor::OnFlagRetrieved_Implementation()
 {
-	Super::OnPlayerOverlapEnd_Implementation(Actor, isPlayer);
 }
+void AFlagActor::CaptureFlag_Implementation(USkeletalMeshComponent* MeshToAttachTo, FName SocketName)
+{
+	OnFlagCaptured(MeshToAttachTo, SocketName);
+}
+
+void AFlagActor::RetrieveFlag_Implementation()
+{
+	OnFlagRetrieved();
+}
+

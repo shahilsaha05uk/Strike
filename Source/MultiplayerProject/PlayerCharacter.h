@@ -127,7 +127,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_SpawnWeapon(FWeaponDetails WeaponDetails);
 
-
+	// When the player Captures the Flag
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void CaptureFlag();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_CaptureFlag();
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void Multicast_CaptureFlag();
+	
 	// When the player interacts
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Collect();

@@ -183,9 +183,6 @@ void APlayerCharacter::UpdateFocusedActor_Implementation(FFocusedActorDetails De
 {
 	
 }
-
-
-
 #pragma region When the player Interacts
 
 void APlayerCharacter::Server_Interact_Implementation()
@@ -205,6 +202,9 @@ void APlayerCharacter::Client_Interact_Implementation()
 		break;
 	case PICKUP:
 		Collect();
+		break;
+	case FLAGCAPTURE:
+		CaptureFlag();
 		break;
 	case WORLD_OBJECTS:
 
@@ -332,5 +332,18 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 }
 #pragma endregion 
 
+#pragma region When the player captures the flag
+void APlayerCharacter::CaptureFlag_Implementation()
+{
+}
 
+void APlayerCharacter::Server_CaptureFlag_Implementation()
+{
+}
+
+void APlayerCharacter::Multicast_CaptureFlag_Implementation()
+{
+}
+
+#pragma endregion 
 

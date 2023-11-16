@@ -70,26 +70,27 @@ void APlayerCharacter::Init_Implementation()
 
 void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	/*
-	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInteractableInterface::StaticClass()))
 	{
-		const EInteractType InteractType = IPickupInterface::Execute_GetInteractType(Actor);
-
-		FocusedActorDetails = {};
+		const EInteractType InteractType = IInteractableInterface::Execute_GetInteractType(Actor);
 		
-		FocusedActorDetails.ActorName = Actor->GetName();
-		FocusedActorDetails.InteractType = InteractType;
-		FocusedActorDetails.ActorReference = Actor;
+		mFocusedActorDetails = {};
+		
+		mFocusedActorDetails.ActorName = Actor->GetName();
+		mFocusedActorDetails.InteractType = InteractType;
+		mFocusedActorDetails.ActorReference = Actor;
 	}
-*/
 }
 void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	/*if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInteractableInterface::StaticClass()))
 	{
-		FocusedActorDetails = {};
-	}*/
+		mFocusedActorDetails = {};
+	}
 }
+
+
+
 
 void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
 {
@@ -168,16 +169,6 @@ void APlayerCharacter::Interact_Implementation()
 	Server_Interact();
 }
 
-UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
-{
-	return FollowCamera;
-}
-
-UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
-{
-	return GetMesh();
-}
-
 void APlayerCharacter::UpdateOverlayUI_Implementation()
 {
 	
@@ -193,15 +184,7 @@ void APlayerCharacter::UpdateFocusedActor_Implementation(FFocusedActorDetails De
 	
 }
 
-ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
-{
-	return mPrimaryWeapon;
-}
 
-void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
-{
-	mPrimaryWeapon = Weapon;
-}
 
 #pragma region When the player Interacts
 
@@ -212,7 +195,7 @@ void APlayerCharacter::Server_Interact_Implementation()
 
 void APlayerCharacter::Client_Interact_Implementation()
 {
-	switch (FocusedActorDetails.InteractType)
+	switch (mFocusedActorDetails.InteractType)
 	{
 	case NOT_INTERACTABLE:
 
@@ -220,11 +203,14 @@ void APlayerCharacter::Client_Interact_Implementation()
 	case EQUIPPABLE:
 		Equip();
 		break;
-	case COLLECTIBLE:
+	case PICKUP:
 		Collect();
 		break;
+	case WORLD_OBJECTS:
+
+		break;
 	}
-	BlueprintClient_Interact();
+	BlueprintClient_Interact(mFocusedActorDetails);
 }
 
 #pragma endregion
@@ -275,38 +261,22 @@ void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails Weapo
 
 void APlayerCharacter::Equip_Implementation()
 {
-	if(FocusedActorDetails.ActorReference == nullptr) return;
+	if(mFocusedActorDetails.ActorReference == nullptr) return;
 
-	if(GetWeapon() == nullptr && UKismetSystemLibrary::DoesImplementInterface(FocusedActorDetails.ActorReference, UPickupInterface::StaticClass()))
+	if(GetWeapon() == nullptr && UKismetSystemLibrary::DoesImplementInterface(mFocusedActorDetails.ActorReference, UEquippableInterface::StaticClass()))
 	{
-		ABaseWeapon* weapon = Cast<ABaseWeapon>(FocusedActorDetails.ActorReference);
-
-		SetWeapon(weapon);
-	
-		UMeshComponent* OwnerMesh = GetMesh();
-	
-		const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-
-		GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
-
-		if(UKismetSystemLibrary::DoesImplementInterface(GetWeapon(), UPickupInterface::StaticClass()))
-		{
-			IPickupInterface::Execute_OnInteract(GetWeapon());
-		}
-		//Server_PickupAndEquip(weapon);
-
-		FocusedActorDetails = {};
-
+		ABaseWeapon* weapon = Cast<ABaseWeapon>(mFocusedActorDetails.ActorReference);
+		Server_WeaponEquip_Implementation(weapon);
+		mFocusedActorDetails = {};
 	}
 }
-
-void APlayerCharacter::Server_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
+void APlayerCharacter::Server_WeaponEquip_Implementation(ABaseWeapon* WeaponToEquip)
 {
-	Multicast_PickupAndEquip(WeaponToEquip);
+	Multicast_WeaponEquip(WeaponToEquip);
+
 }
 
-
-void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
+void APlayerCharacter::Multicast_WeaponEquip_Implementation(ABaseWeapon* WeaponToEquip)
 {
 	if(WeaponToEquip == nullptr) return;
 	SetWeapon(WeaponToEquip);
@@ -317,9 +287,9 @@ void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* Weap
 
 	GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
 
-	if(UKismetSystemLibrary::DoesImplementInterface(GetWeapon(), UPickupInterface::StaticClass()))
+	if(UKismetSystemLibrary::DoesImplementInterface(GetWeapon(), UEquippableInterface::StaticClass()))
 	{
-		IPickupInterface::Execute_OnInteract(GetWeapon());
+		IEquippableInterface::Execute_OnEquip(GetWeapon());
 	}
 }
 
@@ -329,6 +299,38 @@ void APlayerCharacter::Collect_Implementation()
 {
 	
 }
+
+#pragma region Getters and Setters
+FFocusedActorDetails APlayerCharacter::GetFocusedActorDetails_Implementation()
+{
+	return mFocusedActorDetails;
+}
+
+void APlayerCharacter::SetFocusedActorDetails_Implementation(FFocusedActorDetails NewDetails)
+{
+	mFocusedActorDetails = NewDetails;
+}
+
+UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
+{
+	return FollowCamera;
+}
+
+UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
+{
+	return GetMesh();
+}
+
+ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
+{
+	return mPrimaryWeapon;
+}
+
+void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
+{
+	mPrimaryWeapon = Weapon;
+}
+#pragma endregion 
 
 
 

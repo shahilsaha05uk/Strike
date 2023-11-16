@@ -135,7 +135,7 @@ public:
 	TEnumAsByte<EInteractType> InteractType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UObject* ActorReference;
+	AActor* ActorReference;
 
 	FFocusedActorDetails(): ActorName(""), InteractType(NOT_INTERACTABLE), ActorReference(nullptr)
 	{

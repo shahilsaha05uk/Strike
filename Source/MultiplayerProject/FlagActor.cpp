@@ -18,7 +18,7 @@ AFlagActor::AFlagActor()
 	mFlag->SetVisibility(true);
 
 
-	InteractableType = COLLECTIBLE;
+	InteractableType = PICKUP;
 	
 	ActorDetails.ActorName = GetName();
 	ActorDetails.InteractType = InteractableType;

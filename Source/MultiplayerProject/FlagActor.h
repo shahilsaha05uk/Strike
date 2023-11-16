@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "BaseClasses/BaseInteractable.h"
+#include "BaseClasses/BasePickup.h"
 #include "GameFramework/Actor.h"
 #include "FlagActor.generated.h"
 
 UCLASS()
-class MULTIPLAYERPROJECT_API AFlagActor : public ABaseInteractable
+class MULTIPLAYERPROJECT_API AFlagActor : public ABasePickup
 {
 	GENERATED_BODY()
 	
@@ -23,6 +24,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AttachFlag();
+	UFUNCTION(BlueprintCallable)
+	
 	
 	virtual void OnPlayerOverlapBegin_Implementation(AActor* Actor, bool isPlayer) override;
 	virtual void OnPlayerOverlapEnd_Implementation(AActor* Actor, bool isPlayer) override;

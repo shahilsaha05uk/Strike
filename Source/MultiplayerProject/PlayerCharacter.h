@@ -15,6 +15,8 @@ class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlaye
 	GENERATED_BODY()
 
 private:
+	UPROPERTY()
+	FFocusedActorDetails mFocusedActorDetails;
 
 
 public:
@@ -26,8 +28,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
-	FFocusedActorDetails FocusedActorDetails;
 	/*
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mFocusedPickupActor;
@@ -64,6 +64,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetWeapon(class ABaseWeapon* Weapon);
 	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FFocusedActorDetails GetFocusedActorDetails();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetFocusedActorDetails(FFocusedActorDetails NewDetails);
+	
 	virtual void Move_Implementation(const FInputActionValue& Value) override;
 	virtual void Look_Implementation(const FInputActionValue& Value) override;
 	virtual void Jumping_Implementation(const FInputActionValue& Value) override;
@@ -87,15 +92,15 @@ public:
 
 public:
 
-	// When the player picks up something
+	// When the player picks up a weapon
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Equip();
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_PickupAndEquip(ABaseWeapon* WeaponToEquip);
+	void Server_WeaponEquip(ABaseWeapon* WeaponToEquip);
 	
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_PickupAndEquip(ABaseWeapon* WeaponToEquip);
+	void Multicast_WeaponEquip(ABaseWeapon* WeaponToEquip);
 
 	// When the player shoots
 	
@@ -134,6 +139,6 @@ public:
 	void Client_Interact();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_Interact();
+	void BlueprintClient_Interact(FFocusedActorDetails FocusedActorDetails);
 	
 };

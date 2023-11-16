@@ -52,6 +52,17 @@ enum EInteractType
 	WORLD_OBJECTS
 };
 
+UENUM(Blueprintable, BlueprintType)
+enum EFlagStatus
+{
+	IN_ORIGINAL_PLACE,
+	CAPTURED,
+	RETRIEVED,
+	MISPLACED,
+};
+
+
+
 
 UCLASS()
 class MULTIPLAYERPROJECT_API UEnumClass : public UBlueprintFunctionLibrary

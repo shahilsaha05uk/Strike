@@ -13,6 +13,10 @@ UCLASS()
 class MULTIPLAYERPROJECT_API AFlagActor : public AActor, public IFlagInterface
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY()
+	TEnumAsByte<EFlagStatus> mFlagStatus;
 	
 public:	
 
@@ -28,6 +32,7 @@ public:
 	class UWidgetComponent* mFlagWidget;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interactable Components")
 	class USphereComponent* mRangeComp;
+
 	
 	AFlagActor();
 	
@@ -44,6 +49,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnFlagRetrieved();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnFlagMisplaced();
+
 	virtual void CaptureFlag_Implementation(USkeletalMeshComponent* MeshToAttachTo, FName SocketName) override;
 	virtual void RetrieveFlag_Implementation() override;
+	virtual EFlagStatus GetFlagStatus_Implementation() override;
+	virtual void SetFlagStatus_Implementation(EFlagStatus UpdatedStatus) override;
+	virtual void MisplaceFlag_Implementation() override;
 };

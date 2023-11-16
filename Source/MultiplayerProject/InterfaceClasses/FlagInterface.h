@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/EnumClass.h"
 #include "UObject/Interface.h"
 #include "FlagInterface.generated.h"
 
@@ -24,9 +25,16 @@ class MULTIPLAYERPROJECT_API IFlagInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	EFlagStatus GetFlagStatus();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetFlagStatus(EFlagStatus UpdatedStatus);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void CaptureFlag(USkeletalMeshComponent* MeshToAttachTo, FName SocketName);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void RetrieveFlag();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void MisplaceFlag();
 };

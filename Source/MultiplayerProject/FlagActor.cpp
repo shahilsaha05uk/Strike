@@ -63,14 +63,38 @@ void AFlagActor::OnFlagCaptured_Implementation(USkeletalMeshComponent* MeshToAtt
 
 void AFlagActor::OnFlagRetrieved_Implementation()
 {
+	
 }
+
+void AFlagActor::OnFlagMisplaced_Implementation()
+{
+	
+}
+
 void AFlagActor::CaptureFlag_Implementation(USkeletalMeshComponent* MeshToAttachTo, FName SocketName)
 {
+	SetFlagStatus(CAPTURED);
 	OnFlagCaptured(MeshToAttachTo, SocketName);
 }
 
 void AFlagActor::RetrieveFlag_Implementation()
 {
+	SetFlagStatus(RETRIEVED);
 	OnFlagRetrieved();
+}
+void AFlagActor::MisplaceFlag_Implementation()
+{
+	SetFlagStatus(MISPLACED);
+	OnFlagMisplaced();
+}
+
+EFlagStatus AFlagActor::GetFlagStatus_Implementation()
+{
+	return mFlagStatus;
+}
+
+void AFlagActor::SetFlagStatus_Implementation(EFlagStatus UpdatedStatus)
+{
+	mFlagStatus = UpdatedStatus;
 }
 

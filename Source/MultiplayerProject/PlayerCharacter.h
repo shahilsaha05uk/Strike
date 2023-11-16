@@ -79,6 +79,7 @@ public:
 	virtual void StopShooting_Implementation() override;
 	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
 	virtual void Interact_Implementation() override;
+	virtual void DropItem_Implementation() override;
 
 	virtual UCameraComponent* GetFollowCamera_Implementation() override;
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;

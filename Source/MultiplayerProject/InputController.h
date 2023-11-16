@@ -97,6 +97,8 @@ public:
 	void StopJump();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Interact();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DropItem();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StartAiming();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

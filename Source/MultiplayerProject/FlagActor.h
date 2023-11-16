@@ -3,58 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseClasses/BaseInteractable.h"
-#include "BaseClasses/BasePickup.h"
 #include "GameFramework/Actor.h"
 #include "InterfaceClasses/FlagInterface.h"
 #include "FlagActor.generated.h"
 
 UCLASS()
-class MULTIPLAYERPROJECT_API AFlagActor : public AActor, public IFlagInterface
+class MULTIPLAYERPROJECT_API AFlagActor : public AActor
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY()
-	TEnumAsByte<EFlagStatus> mFlagStatus;
 	
 public:	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Flag Components")
-	UStaticMeshComponent* mFlagBase;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Flag Components")
-	USceneComponent* mFlagParent;
+	USceneComponent* mRoot;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Flag Components")
 	UStaticMeshComponent* mFlag;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Flag Components")
-	class USceneComponent* mRoot;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Flag Components")
-	class UWidgetComponent* mFlagWidget;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interactable Components")
-	class USphereComponent* mRangeComp;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Properties")
+	TEnumAsByte<ETeam> mTeamFlag;
 	
 	AFlagActor();
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnComponentBeginOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnComponentEndOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I);
-
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnFlagCaptured(USkeletalMeshComponent* MeshToAttachTo, FName SocketName);
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnFlagRetrieved();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnFlagMisplaced();
-
-	virtual void CaptureFlag_Implementation(USkeletalMeshComponent* MeshToAttachTo, FName SocketName) override;
-	virtual void RetrieveFlag_Implementation() override;
-	virtual EFlagStatus GetFlagStatus_Implementation() override;
-	virtual void SetFlagStatus_Implementation(EFlagStatus UpdatedStatus) override;
-	virtual void MisplaceFlag_Implementation() override;
 };

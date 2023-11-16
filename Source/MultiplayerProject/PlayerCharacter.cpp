@@ -169,6 +169,11 @@ void APlayerCharacter::Interact_Implementation()
 	Server_Interact();
 }
 
+void APlayerCharacter::DropItem_Implementation()
+{
+	
+}
+
 void APlayerCharacter::UpdateOverlayUI_Implementation()
 {
 	

@@ -48,6 +48,9 @@ public:
 	void Interact();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void DropItem();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SpawnWeapon(FWeaponDetails WeaponDetails);
 	
 	// Only for debugging

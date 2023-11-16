@@ -36,5 +36,5 @@ public:
 	void RetrieveFlag();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MisplaceFlag();
+	void DropFlag();
 };

@@ -50,9 +50,17 @@ void ABaseWeapon::Init_Implementation()
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
                                                          UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInputInterface::StaticClass()))
+
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInputsInterface::StaticClass()))
 	{
 		mOwnerRef = Actor;
+		
+		FFocusedActorDetails Details;
+		Details.ActorName = GetDebugName(this);
+		Details.ActorReference = this;
+		Details.InteractType = EQUIPPABLE;
+		
+		IInputsInterface::Execute_UpdateFocusedActor(Actor, Details);
 	}
 	
 	mOwnerRef = Cast<APlayerCharacter>(Actor);

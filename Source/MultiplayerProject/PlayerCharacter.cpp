@@ -55,6 +55,7 @@ APlayerCharacter::APlayerCharacter()
 	mOverlayWidget->SetupAttachment(RootComponent);
 	
 	WeaponSocket = "weapon_r";
+	FlagSocket = "flagSocket";
 }
 
 void APlayerCharacter::BeginPlay()
@@ -69,18 +70,25 @@ void APlayerCharacter::Init_Implementation()
 
 void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
+	/*
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
 	{
-		mFocusedPickupActor = Cast<ABaseWeapon>(Actor);
-	}
+		const EInteractType InteractType = IPickupInterface::Execute_GetInteractType(Actor);
 
+		FocusedActorDetails = {};
+		
+		FocusedActorDetails.ActorName = Actor->GetName();
+		FocusedActorDetails.InteractType = InteractType;
+		FocusedActorDetails.ActorReference = Actor;
+	}
+*/
 }
 void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
+	/*if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPickupInterface::StaticClass()))
 	{
-		mFocusedPickupActor = nullptr;
-	}
+		FocusedActorDetails = {};
+	}*/
 }
 
 void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
@@ -131,16 +139,6 @@ void APlayerCharacter::StopJump_Implementation()
 	StopJumping();
 }
 
-void APlayerCharacter::Pickup_Implementation()
-{
-	if(mFocusedPickupActor == nullptr) return;
-
-	if(GetWeapon() == nullptr && UKismetSystemLibrary::DoesImplementInterface(mFocusedPickupActor, UPickupInterface::StaticClass()))
-	{
-		Server_PickupAndEquip(mFocusedPickupActor);
-	}
-}
-
 void APlayerCharacter::StartAiming_Implementation()
 {
 	isAiming = true;
@@ -165,6 +163,11 @@ void APlayerCharacter::SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 	Server_SpawnWeapon(WeaponDetails);
 }
 
+void APlayerCharacter::Interact_Implementation()
+{
+	Server_Interact();
+}
+
 UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
 {
 	return FollowCamera;
@@ -185,6 +188,11 @@ void APlayerCharacter::InitHUD_Implementation(FPlayerDetails PlayerDetails)
 	
 }
 
+void APlayerCharacter::UpdateFocusedActor_Implementation(FFocusedActorDetails Details)
+{
+	
+}
+
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 {
 	return mPrimaryWeapon;
@@ -195,27 +203,33 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 	mPrimaryWeapon = Weapon;
 }
 
-#pragma region Server Methods
+#pragma region When the player Interacts
 
-void APlayerCharacter::Server_Move_Implementation(FVector Direction, float Val)
+void APlayerCharacter::Server_Interact_Implementation()
 {
-	Client_Move(Direction, Val);
-}
-void APlayerCharacter::Client_Move_Implementation(FVector Direction, float Val)
-{
-	AddMovementInput(Direction, Val);
+	Client_Interact();
 }
 
-void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+void APlayerCharacter::Client_Interact_Implementation()
 {
-	Multicast_SpawnWeapon(WeaponDetails);
+	switch (FocusedActorDetails.InteractType)
+	{
+	case NOT_INTERACTABLE:
+
+		break;
+	case EQUIPPABLE:
+		Equip();
+		break;
+	case COLLECTIBLE:
+		Collect();
+		break;
+	}
+	BlueprintClient_Interact();
 }
 
+#pragma endregion
 
-void APlayerCharacter::Server_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
-{
-	Multicast_PickupAndEquip(WeaponToEquip);
-}
+#pragma region When the Player Shoots
 
 void APlayerCharacter::Server_Shoot_Implementation()
 {
@@ -225,35 +239,6 @@ void APlayerCharacter::Server_Shoot_Implementation()
 void APlayerCharacter::Server_StopShoot_Implementation()
 {
 	Multicast_StopShoot();
-}
-
-#pragma endregion
-
-#pragma region Multicast Methods
-void APlayerCharacter::Multicast_Move_Implementation(const FInputActionValue& Value)
-{
-	
-}
-void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
-{
-	BlueprintMulticast_SpawnWeapon(WeaponDetails);
-}
-
-void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
-{
-	if(WeaponToEquip == nullptr) return;
-	SetWeapon(WeaponToEquip);
-	
-	UMeshComponent* OwnerMesh = GetMesh();
-	
-	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-
-	GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
-
-	if(UKismetSystemLibrary::DoesImplementInterface(mFocusedPickupActor, UPickupInterface::StaticClass()))
-	{
-		IPickupInterface::Execute_OnEquip(GetWeapon());
-	}
 }
 
 void APlayerCharacter::Multicast_Shoot_Implementation()
@@ -269,6 +254,81 @@ void APlayerCharacter::Multicast_StopShoot_Implementation()
 	bIsFiring = false;
 	GetWeapon()->StopShootingSignature.Broadcast();
 }
+
 #pragma endregion
+
+#pragma region When the player Spawns weapon
+
+void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	Multicast_SpawnWeapon(WeaponDetails);
+}
+
+void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	BlueprintMulticast_SpawnWeapon(WeaponDetails);
+}
+
+#pragma endregion
+
+#pragma region When the player Equips a weapon
+
+void APlayerCharacter::Equip_Implementation()
+{
+	if(FocusedActorDetails.ActorReference == nullptr) return;
+
+	if(GetWeapon() == nullptr && UKismetSystemLibrary::DoesImplementInterface(FocusedActorDetails.ActorReference, UPickupInterface::StaticClass()))
+	{
+		ABaseWeapon* weapon = Cast<ABaseWeapon>(FocusedActorDetails.ActorReference);
+
+		SetWeapon(weapon);
+	
+		UMeshComponent* OwnerMesh = GetMesh();
+	
+		const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+
+		GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
+
+		if(UKismetSystemLibrary::DoesImplementInterface(GetWeapon(), UPickupInterface::StaticClass()))
+		{
+			IPickupInterface::Execute_OnInteract(GetWeapon());
+		}
+		//Server_PickupAndEquip(weapon);
+
+		FocusedActorDetails = {};
+
+	}
+}
+
+void APlayerCharacter::Server_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
+{
+	Multicast_PickupAndEquip(WeaponToEquip);
+}
+
+
+void APlayerCharacter::Multicast_PickupAndEquip_Implementation(ABaseWeapon* WeaponToEquip)
+{
+	if(WeaponToEquip == nullptr) return;
+	SetWeapon(WeaponToEquip);
+	
+	UMeshComponent* OwnerMesh = GetMesh();
+	
+	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+
+	GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
+
+	if(UKismetSystemLibrary::DoesImplementInterface(GetWeapon(), UPickupInterface::StaticClass()))
+	{
+		IPickupInterface::Execute_OnInteract(GetWeapon());
+	}
+}
+
+#pragma endregion
+
+void APlayerCharacter::Collect_Implementation()
+{
+	
+}
+
 
 

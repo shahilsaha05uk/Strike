@@ -95,8 +95,8 @@ public:
 	void Jumping(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopJump();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Pickup();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Interact();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StartAiming();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -144,9 +144,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
 
-// When the Player picks up the Flag
+// When the Player Interacts
 
-	
+
 
 };
 

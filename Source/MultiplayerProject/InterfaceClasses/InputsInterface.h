@@ -29,4 +29,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateOverlayUI();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateFocusedActor(FFocusedActorDetails Details);
+
 };

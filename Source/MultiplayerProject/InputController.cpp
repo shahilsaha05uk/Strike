@@ -99,9 +99,9 @@ void AInputController::SetupInputComponent()
 		//Looking
 		EnhancedInputComponent->BindAction(InputData->IA_Look, ETriggerEvent::Triggered, this, &AInputController::Look);
 
-		// Pickup
-		EnhancedInputComponent->BindAction(InputData->IA_Pickup, ETriggerEvent::Completed, this, &AInputController::Pickup);
-
+		// Interact
+		EnhancedInputComponent->BindAction(InputData->IA_Interact, ETriggerEvent::Completed, this, &AInputController::Interact);
+		
 		// Aiming
 		EnhancedInputComponent->BindAction(InputData->IA_Aim, ETriggerEvent::Started, this, &AInputController::StartAiming);
 		EnhancedInputComponent->BindAction(InputData->IA_Aim, ETriggerEvent::Completed, this, &AInputController::StopAiming);
@@ -128,6 +128,17 @@ void AInputController::SetupInputComponent()
 
 
 }
+
+void AInputController::Interact_Implementation()
+{
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_Interact(pawn);
+	}
+}
+
 
 void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 {
@@ -184,17 +195,6 @@ void AInputController::StopJump_Implementation()
 	{
 		IPlayerInputInterface::Execute_StopJump(pawn);
 	}
-}
-
-void AInputController::Pickup_Implementation()
-{
-	APawn* pawn = GetPawn();
-
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
-	{
-		IPlayerInputInterface::Execute_Pickup(pawn);
-	}
-
 }
 
 void AInputController::StartAiming_Implementation()
@@ -317,4 +317,3 @@ void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> Def
 }
 
 #pragma endregion
-

@@ -114,5 +114,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StopFire();
 
-	virtual void OnEquip_Implementation() override;
+	virtual void OnInteract_Implementation() override;
+
+	virtual EInteractType GetInteractType_Implementation() override;
 };

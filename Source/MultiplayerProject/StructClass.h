@@ -122,6 +122,27 @@ public:
 	class USkeletalMesh* CharacterMesh;
 };
 
+USTRUCT(Blueprintable, BlueprintType)
+struct FFocusedActorDetails
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString ActorName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<EInteractType> InteractType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UObject* ActorReference;
+
+	FFocusedActorDetails(): ActorName(""), InteractType(NOT_INTERACTABLE), ActorReference(nullptr)
+	{
+		
+	}
+};
+
 
 UCLASS()
 class MULTIPLAYERPROJECT_API UStructClass : public UBlueprintFunctionLibrary

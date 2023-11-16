@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/EnumClass.h"
 #include "UObject/Interface.h"
 #include "PickupInterface.generated.h"
 
@@ -24,5 +25,7 @@ class MULTIPLAYERPROJECT_API IPickupInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnEquip();
+	EInteractType GetInteractType();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnInteract();
 };

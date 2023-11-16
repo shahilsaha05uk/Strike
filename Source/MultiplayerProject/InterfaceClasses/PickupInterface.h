@@ -25,7 +25,5 @@ class MULTIPLAYERPROJECT_API IPickupInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	EInteractType GetInteractType();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnInteract();
+	void OnPickup();
 };

@@ -6,6 +6,6 @@
 /NAME:"UnrealEditor-RiderLogging.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\s015695k.STUDENT\Documents\GitHub\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
-"C:\Users\s015695k.STUDENT\Documents\GitHub\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
-/OUT:"C:\Users\s015695k.STUDENT\Documents\GitHub\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"
+"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
+"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
+/OUT:"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"

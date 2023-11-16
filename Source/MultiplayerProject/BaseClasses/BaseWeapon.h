@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MultiplayerProject/StructClass.h"
+#include "MultiplayerProject/InterfaceClasses/EquippableInterface.h"
+#include "MultiplayerProject/InterfaceClasses/InteractableInterface.h"
 #include "MultiplayerProject/InterfaceClasses/PickupInterface.h"
 #include "BaseWeapon.generated.h"
 
@@ -12,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartShootingSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStopShootingSignature);
 
 UCLASS()
-class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IPickupInterface
+class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IEquippableInterface, public IInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -114,7 +116,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StopFire();
 
-	virtual void OnInteract_Implementation() override;
-
+	virtual void OnEquip_Implementation() override;
 	virtual EInteractType GetInteractType_Implementation() override;
 };

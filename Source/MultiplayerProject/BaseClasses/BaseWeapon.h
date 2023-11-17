@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartShootingSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStopShootingSignature);
 
 UCLASS()
-class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IEquippableInterface, public IInteractableInterface
+class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -41,6 +41,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	FWeaponDetails mWeaponDetails;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FInteractableDetails mInteractableDetails;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FStartShootingSignature StartShootingSignature;
@@ -48,6 +50,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FStopShootingSignature StopShootingSignature;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	FName WeaponSocket;
+	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -116,6 +121,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StopFire();
 
-	virtual void OnEquip_Implementation() override;
-	virtual EInteractType GetInteractType_Implementation() override;
+	virtual FInteractableDetails GetInteractableDetails_Implementation() override;
+	virtual void Interact_Implementation(AActor* OwnerPlayer) override;
 };

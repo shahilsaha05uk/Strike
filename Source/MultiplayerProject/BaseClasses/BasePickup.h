@@ -24,6 +24,8 @@ public:
 	// Sets default values for this actor's properties
 	ABasePickup();
 
+	virtual void BeginPlay() override;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Flag Components")
 	class USceneComponent* mRoot;
 
@@ -31,7 +33,7 @@ public:
 	class USphereComponent* mRangeComp;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interactable Properties")
-	FFocusedActorDetails ActorDetails;
+	FInteractableDetails mInteractableDetails;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interactable Properties")
 	TEnumAsByte<EInteractType> InteractableType;
 
@@ -41,7 +43,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnPlayerOverlapEnd(AActor* Actor, bool isPlayer = false);
 	
-	virtual EInteractType GetInteractType_Implementation() override;
+	virtual FInteractableDetails GetInteractableDetails_Implementation() override;;
 	virtual void OnPickup_Implementation() override;
 
 };

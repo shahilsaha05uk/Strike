@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MultiplayerProject/EnumClass.h"
 #include "UObject/Interface.h"
-#include "FlagInterface.generated.h"
+#include "PlayerInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UFlagInterface : public UInterface
+class UPlayerInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,24 +16,23 @@ class UFlagInterface : public UInterface
 /**
  * 
  */
-class MULTIPLAYERPROJECT_API IFlagInterface
+class MULTIPLAYERPROJECT_API IPlayerInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
+	// Only for debugging
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	EFlagStatus GetFlagStatus();
+	UCameraComponent* GetFollowCamera();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetFlagStatus(EFlagStatus UpdatedStatus);
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void CaptureFlag(USkeletalMeshComponent* MeshToAttachTo, FName SocketName);
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void RetrieveFlag();
+	UMeshComponent* GetMeshComponent();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void DropFlag();
+	ABaseWeapon* GetWeapon();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetWeapon(class ABaseWeapon* Weapon);
+	
+
 };

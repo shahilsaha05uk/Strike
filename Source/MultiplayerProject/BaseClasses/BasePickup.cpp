@@ -23,8 +23,17 @@ ABasePickup::ABasePickup()
 
 }
 
+void ABasePickup::BeginPlay()
+{
+	mInteractableDetails.ActorName = GetName();
+	mInteractableDetails.ActorReference = this;
+	mInteractableDetails.InteractType = PICKUP;
+
+	Super::BeginPlay();
+}
+
 void ABasePickup::OnComponentBeginOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-	UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
+                                          UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInputInterface::StaticClass()))
 	{
@@ -47,20 +56,21 @@ void ABasePickup::OnPlayerOverlapBegin_Implementation(AActor* Actor, bool isPlay
 {
 	if(!isPlayer) return;
 	
-	IInputsInterface::Execute_UpdateFocusedActor(Actor, ActorDetails);
+	IInputsInterface::Execute_UpdateFocusedActor(Actor, mInteractableDetails);
 
 }
 
 void ABasePickup::OnPlayerOverlapEnd_Implementation(AActor* Actor, bool isPlayer)
 {
 	if(!isPlayer) return;
-	IInputsInterface::Execute_UpdateFocusedActor(Actor, FFocusedActorDetails{});
+	IInputsInterface::Execute_UpdateFocusedActor(Actor, FInteractableDetails{});
 
 }
 
-EInteractType ABasePickup::GetInteractType_Implementation()
+FInteractableDetails ABasePickup::GetInteractableDetails_Implementation()
 {
-	return PICKUP;
+	return mInteractableDetails;
+
 }
 
 void ABasePickup::OnPickup_Implementation()

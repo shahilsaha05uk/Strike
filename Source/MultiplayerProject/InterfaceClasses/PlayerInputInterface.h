@@ -53,9 +53,4 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SpawnWeapon(FWeaponDetails WeaponDetails);
 	
-	// Only for debugging
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	UCameraComponent* GetFollowCamera();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	UMeshComponent* GetMeshComponent();
 };

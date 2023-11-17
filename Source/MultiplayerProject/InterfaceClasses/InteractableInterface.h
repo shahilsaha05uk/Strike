@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerProject/EnumClass.h"
+#include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
 #include "InteractableInterface.generated.h"
 
@@ -25,5 +26,7 @@ class MULTIPLAYERPROJECT_API IInteractableInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	EInteractType GetInteractType();
+	FInteractableDetails GetInteractableDetails();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Interact(AActor* OwnerPlayer);
 };

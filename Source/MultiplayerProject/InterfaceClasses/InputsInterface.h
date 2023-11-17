@@ -31,6 +31,6 @@ public:
 	void UpdateOverlayUI();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateFocusedActor(FFocusedActorDetails Details);
+	void UpdateFocusedActor(FInteractableDetails Details);
 
 };

@@ -54,7 +54,6 @@ APlayerCharacter::APlayerCharacter()
 	mOverlayWidget = CreateDefaultSubobject<UWidgetComponent>("Overlay UI");
 	mOverlayWidget->SetupAttachment(RootComponent);
 	
-	WeaponSocket = "weapon_r";
 	FlagSocket = "flagSocket";
 }
 
@@ -72,25 +71,13 @@ void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* Primit
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInteractableInterface::StaticClass()))
 	{
-		const EInteractType InteractType = IInteractableInterface::Execute_GetInteractType(Actor);
-		
-		mFocusedActorDetails = {};
-		
-		mFocusedActorDetails.ActorName = Actor->GetName();
-		mFocusedActorDetails.InteractType = InteractType;
-		mFocusedActorDetails.ActorReference = Actor;
+		CollidedActor = Actor;
 	}
 }
 void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInteractableInterface::StaticClass()))
-	{
-		mFocusedActorDetails = {};
-	}
+	CollidedActor = nullptr;
 }
-
-
-
 
 void APlayerCharacter::Move_Implementation(const FInputActionValue& Value)
 {
@@ -144,6 +131,7 @@ void APlayerCharacter::StartAiming_Implementation()
 {
 	isAiming = true;
 }
+
 void APlayerCharacter::StopAiming_Implementation()
 {
 	isAiming = false;
@@ -184,10 +172,11 @@ void APlayerCharacter::InitHUD_Implementation(FPlayerDetails PlayerDetails)
 	
 }
 
-void APlayerCharacter::UpdateFocusedActor_Implementation(FFocusedActorDetails Details)
+void APlayerCharacter::UpdateFocusedActor_Implementation(FInteractableDetails Details)
 {
 	
 }
+
 #pragma region When the player Interacts
 
 void APlayerCharacter::Server_Interact_Implementation()
@@ -197,25 +186,9 @@ void APlayerCharacter::Server_Interact_Implementation()
 
 void APlayerCharacter::Client_Interact_Implementation()
 {
-	switch (mFocusedActorDetails.InteractType)
-	{
-	case NOT_INTERACTABLE:
-
-		break;
-	case EQUIPPABLE:
-		Equip();
-		break;
-	case PICKUP:
-		Collect();
-		break;
-	case FLAGCAPTURE:
-		CaptureFlag();
-		break;
-	case WORLD_OBJECTS:
-
-		break;
-	}
-	BlueprintClient_Interact(mFocusedActorDetails);
+	if(CollidedActor == nullptr) return;
+	
+	IInteractableInterface::Execute_Interact(CollidedActor, this);
 }
 
 #pragma endregion
@@ -234,16 +207,16 @@ void APlayerCharacter::Server_StopShoot_Implementation()
 
 void APlayerCharacter::Multicast_Shoot_Implementation()
 {
-	if(GetWeapon() == nullptr) return;
+	if(mPrimaryWeapon == nullptr) return;
 	bIsFiring = true;
-	GetWeapon()->StartShootingSignature.Broadcast();
+	mPrimaryWeapon->StartShootingSignature.Broadcast();
 }
 
 void APlayerCharacter::Multicast_StopShoot_Implementation()
 {
-	if(GetWeapon() == nullptr) return;
+	if(mPrimaryWeapon == nullptr) return;
 	bIsFiring = false;
-	GetWeapon()->StopShootingSignature.Broadcast();
+	mPrimaryWeapon->StopShootingSignature.Broadcast();
 }
 
 #pragma endregion
@@ -262,59 +235,7 @@ void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails Weapo
 
 #pragma endregion
 
-#pragma region When the player Equips a weapon
-
-void APlayerCharacter::Equip_Implementation()
-{
-	if(mFocusedActorDetails.ActorReference == nullptr) return;
-
-	if(GetWeapon() == nullptr && UKismetSystemLibrary::DoesImplementInterface(mFocusedActorDetails.ActorReference, UEquippableInterface::StaticClass()))
-	{
-		ABaseWeapon* weapon = Cast<ABaseWeapon>(mFocusedActorDetails.ActorReference);
-		Server_WeaponEquip_Implementation(weapon);
-		mFocusedActorDetails = {};
-	}
-}
-void APlayerCharacter::Server_WeaponEquip_Implementation(ABaseWeapon* WeaponToEquip)
-{
-	Multicast_WeaponEquip(WeaponToEquip);
-
-}
-
-void APlayerCharacter::Multicast_WeaponEquip_Implementation(ABaseWeapon* WeaponToEquip)
-{
-	if(WeaponToEquip == nullptr) return;
-	SetWeapon(WeaponToEquip);
-	
-	UMeshComponent* OwnerMesh = GetMesh();
-	
-	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-
-	GetWeapon()->AttachToComponent(OwnerMesh, rules, WeaponSocket);
-
-	if(UKismetSystemLibrary::DoesImplementInterface(GetWeapon(), UEquippableInterface::StaticClass()))
-	{
-		IEquippableInterface::Execute_OnEquip(GetWeapon());
-	}
-}
-
-#pragma endregion
-
-void APlayerCharacter::Collect_Implementation()
-{
-	
-}
-
 #pragma region Getters and Setters
-FFocusedActorDetails APlayerCharacter::GetFocusedActorDetails_Implementation()
-{
-	return mFocusedActorDetails;
-}
-
-void APlayerCharacter::SetFocusedActorDetails_Implementation(FFocusedActorDetails NewDetails)
-{
-	mFocusedActorDetails = NewDetails;
-}
 
 UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
 {
@@ -337,18 +258,4 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 }
 #pragma endregion 
 
-#pragma region When the player captures the flag
-void APlayerCharacter::CaptureFlag_Implementation()
-{
-}
-
-void APlayerCharacter::Server_CaptureFlag_Implementation()
-{
-}
-
-void APlayerCharacter::Multicast_CaptureFlag_Implementation()
-{
-}
-
-#pragma endregion 
 

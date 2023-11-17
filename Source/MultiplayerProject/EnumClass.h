@@ -45,11 +45,9 @@ enum EFlag
 UENUM(Blueprintable, BlueprintType)
 enum EInteractType
 {
-	NOT_INTERACTABLE,
 	EQUIPPABLE,
 	PICKUP,
-	FLAGCAPTURE,
-	WORLD_OBJECTS
+	COLLECTIBLE
 };
 
 UENUM(Blueprintable, BlueprintType)
@@ -59,6 +57,7 @@ enum EFlagStatus
 	CAPTURED,
 	RETRIEVED,
 	DROPPED,
+	IN_OPPONENT_BASE
 };
 
 

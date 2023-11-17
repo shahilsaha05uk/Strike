@@ -28,6 +28,7 @@ ABaseWeapon::ABaseWeapon()
 	mUIComponent->SetTickMode(ETickMode::Automatic);
 	mUIComponent->SetVisibility(false);
 
+	WeaponSocket = "weapon_r";
 
 	StartShootingSignature.AddDynamic(this, &ThisClass::Fire);
 	StopShootingSignature.AddDynamic(this, &ThisClass::StopFire);
@@ -44,26 +45,13 @@ void ABaseWeapon::BeginPlay()
 void ABaseWeapon::Init_Implementation()
 {
 	bIsFiring = false;
-	
+	mInteractableDetails.ActorName = GetName();
+	mInteractableDetails.ActorReference = this;
+	mInteractableDetails.InteractType = EQUIPPABLE;
 }
 
-void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-                                                         UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
+void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-
-	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInputsInterface::StaticClass()))
-	{
-		mOwnerRef = Actor;
-		
-		FFocusedActorDetails Details;
-		Details.ActorName = GetDebugName(this);
-		Details.ActorReference = this;
-		Details.InteractType = EQUIPPABLE;
-		
-		IInputsInterface::Execute_UpdateFocusedActor(Actor, Details);
-	}
-	
-	mOwnerRef = Cast<APlayerCharacter>(Actor);
 	if(mOwnerRef)
 	{
 		mUIComponent->SetVisibility(true);
@@ -94,39 +82,7 @@ void ABaseWeapon::StopFire_Implementation()
 {
 	
 }
-
-/*
-ABaseWeapon* ABaseWeapon::EquipWeapon_Implementation()
-{
-	ServerEquip();
-
-	/*
-	if(mOwnerRef == nullptr) return nullptr;
-
-	UMeshComponent* OwnerMesh = IPlayerInputInterface::Execute_GetMeshComponent(mOwnerRef);
-	
-	const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-	
-	AttachToComponent(OwnerMesh, rules, WeaponSocket);
-
-	mUIComponent->SetVisibility(false);
-	
-	return this;
-}
-*/
-void ABaseWeapon::OnEquip_Implementation()
-{
-	
-}
-
-EInteractType ABaseWeapon::GetInteractType_Implementation()
-{
-	return EInteractType::EQUIPPABLE;
-}
-
 #pragma endregion
-
-
 
 #pragma region Server Methods
 
@@ -196,3 +152,28 @@ void ABaseWeapon::Blueprint_Multicast_EquipWeapon_Implementation()
 }
 
 #pragma endregion
+
+#pragma region Interface Implementation
+
+FInteractableDetails ABaseWeapon::GetInteractableDetails_Implementation()
+{
+	return 	mInteractableDetails;
+}
+
+void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
+{
+
+	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
+	{
+		const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+
+		UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(OwnerPlayer);
+
+		AttachToComponent(OwnerMesh, rules, WeaponSocket);
+
+		IPlayerInterface::Execute_SetWeapon(OwnerPlayer, this);
+	}
+}
+
+#pragma endregion
+

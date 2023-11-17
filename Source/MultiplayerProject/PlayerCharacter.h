@@ -7,17 +7,15 @@
 #include "GameFramework/Character.h"
 #include "InterfaceClasses/InputsInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
+#include "InterfaceClasses/PlayerInterface.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlayerInputInterface, public IInputsInterface
+class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlayerInputInterface, public IInputsInterface, public IPlayerInterface
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY()
-	FFocusedActorDetails mFocusedActorDetails;
-
 
 public:
 	APlayerCharacter();
@@ -28,10 +26,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	/*
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
-	class ABaseWeapon* mFocusedPickupActor;
-	*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
@@ -39,15 +33,14 @@ public:
 	class UWidgetComponent* mOverlayWidget;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	FName WeaponSocket;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName FlagSocket;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool bIsFiring;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	AActor* CollidedActor;
 
 	virtual void BeginPlay() override;
 	
@@ -59,16 +52,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnOverlapBegin(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	ABaseWeapon* GetWeapon();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetWeapon(class ABaseWeapon* Weapon);
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FFocusedActorDetails GetFocusedActorDetails();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetFocusedActorDetails(FFocusedActorDetails NewDetails);
-	
+	// Player Inputs Override
 	virtual void Move_Implementation(const FInputActionValue& Value) override;
 	virtual void Look_Implementation(const FInputActionValue& Value) override;
 	virtual void Jumping_Implementation(const FInputActionValue& Value) override;
@@ -81,30 +65,23 @@ public:
 	virtual void Interact_Implementation() override;
 	virtual void DropItem_Implementation() override;
 
+	// Player Interface
 	virtual UCameraComponent* GetFollowCamera_Implementation() override;
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;
+	virtual ABaseWeapon* GetWeapon_Implementation() override;
+	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
+
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
 	virtual void UpdateOverlayUI_Implementation() override;
 	virtual void InitHUD_Implementation(FPlayerDetails PlayerDetails) override;
-	virtual void UpdateFocusedActor_Implementation(FFocusedActorDetails Details) override;
+	virtual void UpdateFocusedActor_Implementation(FInteractableDetails Details) override;
 
 public:
-
-	// When the player picks up a weapon
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Equip();
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_WeaponEquip(ABaseWeapon* WeaponToEquip);
 	
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_WeaponEquip(ABaseWeapon* WeaponToEquip);
-
 	// When the player shoots
-	
 	UFUNCTION(Server, Unreliable, BlueprintCallable)
 	void Server_Shoot();
 
@@ -116,8 +93,7 @@ public:
 
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_StopShoot();
-
-
+	
 	// When the player buys a weapon
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
@@ -128,25 +104,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_SpawnWeapon(FWeaponDetails WeaponDetails);
 
-	// When the player Captures the Flag
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void CaptureFlag();
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_CaptureFlag();
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_CaptureFlag();
-	
-	// When the player interacts
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Collect();
-	
+	// Interaction
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Interact();
-	
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Client_Interact();
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_Interact(FFocusedActorDetails FocusedActorDetails);
-	
 };

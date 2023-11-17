@@ -75,6 +75,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int StartingMoney;
 
+	FSessionDetails(): Latency(0), MaxPlayers(8), CurrentNumberOfPlayers(0), StartingMoney(800)
+	{
+		
+	}
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -104,6 +108,10 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponAsset;
+
+	FWeaponDetails(): WeaponCost(0), WeaponImage(nullptr)
+	{
+	}
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -123,7 +131,7 @@ public:
 };
 
 USTRUCT(Blueprintable, BlueprintType)
-struct FFocusedActorDetails
+struct FInteractableDetails
 {
 	GENERATED_BODY()
 
@@ -137,11 +145,41 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AActor* ActorReference;
 
-	FFocusedActorDetails(): ActorName(""), InteractType(NOT_INTERACTABLE), ActorReference(nullptr)
+	FInteractableDetails(): ActorName(""), InteractType(PICKUP), ActorReference(nullptr)
 	{
-		
 	}
 };
+
+/*
+USTRUCT(Blueprintable, BlueprintType)
+struct FFlagDetails
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ETeam> FlagTeam;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ETeam> FlagBaseTeam;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<EFlagStatus> FlagStatus;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class AFlagBase* FlagBaseRef;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UStaticMeshComponent* FlagMeshRef;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class AActor* OwningActor;
+
+	FFlagDetails(): FlagTeam(NONE), FlagBaseTeam(), FlagStatus(), FlagBaseRef(nullptr), FlagMeshRef(nullptr),
+	                OwningActor(nullptr)
+	{
+	}
+};
+*/
 
 
 UCLASS()

@@ -140,15 +140,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintServer_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
 
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, ETeam Team, const FTransform& FindStartTransform);
+	// After the player is possessed
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_PostPossessed();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
-
-// When the Player Interacts
-
-
-
+	void BlueprintClient_PostPossessed();
+	
 };
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TextBlock.h"
 #include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/BaseClasses/BaseWidgetClasses/BaseButton.h"
 
@@ -25,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References", meta = (ExposeOnSpawn))
 	UBaseWidget* ParentRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References", meta = (ExposeOnSpawn))
+	UTextBlock* mCostTextRef;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite)
 	FOnSpawnWeaponSignature OnSpawnWeaponSignature;

@@ -63,7 +63,7 @@ void AInputController::Multicast_PawnSetup_Implementation(ETeam Team)
 void AInputController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	mPlayerState = Cast<AMP_PlayerState>(PlayerState);
+	Client_PostPossessed();
 }
 
 
@@ -130,6 +130,7 @@ void AInputController::SetupInputComponent()
 
 
 }
+
 
 void AInputController::DropItem_Implementation()
 {
@@ -320,13 +321,14 @@ void AInputController::Server_SpawnPawn_Implementation()
 	BlueprintServer_SpawnPawn(pawnClass, playerStart);
 }
 
-void AInputController::Multicast_SpawnPawn_Implementation(TSubclassOf<APawn> DefaultPawnClass, ETeam Team,
-	const FTransform& FindStartTransform)
+void AInputController::Client_PostPossessed_Implementation()
 {
-	BlueprintMulticast_SpawnPawn(DefaultPawnClass, FindStartTransform);
+	mPlayerState = Cast<AMP_PlayerState>(PlayerState);
 
 	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
 	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
+
+	BlueprintClient_PostPossessed();
 }
 
 #pragma endregion

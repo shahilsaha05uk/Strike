@@ -52,8 +52,11 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName WeaponSocket;
+
+public:
 	
 	virtual void BeginPlay() override;
+
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Init();
@@ -65,61 +68,40 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayWeaponSound();
-
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AttachWeaponToPlayer(AActor* OwnerPlayer);
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
 
 public:
-
-	// Server Methods
 
 	// Fire
-	UFUNCTION(Server, Unreliable, BlueprintCallable)
-	void Server_Fire();
-	UFUNCTION(BlueprintNativeEvent)
-	void Blueprint_Server_Fire();
-
-	// Stop Fire
-	UFUNCTION(Server, Unreliable, BlueprintCallable)
-	void Server_StopFire();
-	UFUNCTION(BlueprintNativeEvent)
-	void Blueprint_ServerStopFire();
-
-	// Equip Weapon
-	UFUNCTION(Server, Unreliable, BlueprintCallable)
-	void Server_Equip();
-	UFUNCTION(BlueprintNativeEvent)
-	void Blueprint_Server_EquipWeapon();
-	
-public:
-
-	// Multicast Methods
-
-	// Fire
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
-	void Multicast_Fire();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Blueprint_Multicast_Fire();
-
-	//Stop Fire
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
-	void Multicast_StopFire();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Blueprint_Multicast_StopFire();
-
-	// Equip Weapon
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
-	void Multicast_EquipWeapon();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Blueprint_Multicast_EquipWeapon();
-
-public:
-
-	// Server Method Callers
-	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Fire();
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StopFire();
+	
+	// Server Fire
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_Fire();
+
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_StopFire();
+
+	// Multicast Fire
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_Fire();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Blueprint_Multicast_Fire();
+
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_StopFire();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Blueprint_Multicast_StopFire();
+
+public:
 
 	virtual FInteractableDetails GetInteractableDetails_Implementation() override;
 	virtual void Interact_Implementation(AActor* OwnerPlayer) override;

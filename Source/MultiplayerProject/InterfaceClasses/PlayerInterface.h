@@ -25,6 +25,9 @@ public:
 
 	// Only for debugging
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void FlagSpawner(AActor* FlagRef);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UCameraComponent* GetFollowCamera();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UMeshComponent* GetMeshComponent();
@@ -33,6 +36,4 @@ public:
 	ABaseWeapon* GetWeapon();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetWeapon(class ABaseWeapon* Weapon);
-	
-
 };

@@ -62,6 +62,18 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void APlayerCharacter::OnRep_SetOwningRef()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Owning Actor is Valid now"));
+}
+
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlayerCharacter, mPrimaryWeapon);
+
+}
+
 void APlayerCharacter::Init_Implementation()
 {
 }
@@ -72,6 +84,8 @@ void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* Primit
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInteractableInterface::StaticClass()))
 	{
 		CollidedActor = Actor;
+
+		UE_LOG(LogTemp, Warning, TEXT("Collision Actor Name: %s"), *CollidedActor->GetName());
 	}
 }
 void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
@@ -177,6 +191,12 @@ void APlayerCharacter::UpdateFocusedActor_Implementation(FInteractableDetails De
 	
 }
 
+void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
+{
+
+	
+}
+
 #pragma region When the player Interacts
 
 void APlayerCharacter::Server_Interact_Implementation()
@@ -189,6 +209,7 @@ void APlayerCharacter::Client_Interact_Implementation()
 	if(CollidedActor == nullptr) return;
 	
 	IInteractableInterface::Execute_Interact(CollidedActor, this);
+	CollidedActor = nullptr;
 }
 
 #pragma endregion
@@ -230,7 +251,13 @@ void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDe
 
 void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 {
-	BlueprintMulticast_SpawnWeapon(WeaponDetails);
+	if(mPrimaryWeapon) mPrimaryWeapon->Destroy();
+	
+	FActorSpawnParameters SpawnsParams;
+	SpawnsParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
+
+	ABaseWeapon* WeaponToSpawn = Cast<ABaseWeapon>(GetWorld()->SpawnActor(WeaponDetails.WeaponAsset, &GetActorTransform(), SpawnsParams));
+	WeaponToSpawn->AttachWeaponToPlayer(this);
 }
 
 #pragma endregion

@@ -26,7 +26,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
+	UPROPERTY(ReplicatedUsing = OnRep_SetOwningRef, VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
@@ -43,6 +43,12 @@ public:
 	AActor* CollidedActor;
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnRep_SetOwningRef();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Init();
@@ -78,6 +84,7 @@ public:
 	virtual void UpdateOverlayUI_Implementation() override;
 	virtual void InitHUD_Implementation(FPlayerDetails PlayerDetails) override;
 	virtual void UpdateFocusedActor_Implementation(FInteractableDetails Details) override;
+	virtual void FlagSpawner_Implementation(AActor* FlagRef) override;
 
 public:
 	
@@ -100,9 +107,6 @@ public:
 	
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_SpawnWeapon(FWeaponDetails WeaponDetails);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_SpawnWeapon(FWeaponDetails WeaponDetails);
 
 	// Interaction
 	UFUNCTION(Server, Reliable, BlueprintCallable)

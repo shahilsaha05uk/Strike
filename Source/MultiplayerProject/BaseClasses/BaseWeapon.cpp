@@ -8,6 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "MultiplayerProject/PlayerCharacter.h"
 #include "MultiplayerProject/InterfaceClasses/PlayerInputInterface.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -42,6 +43,7 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 }
 
+
 void ABaseWeapon::Init_Implementation()
 {
 	bIsFiring = false;
@@ -52,7 +54,7 @@ void ABaseWeapon::Init_Implementation()
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	if(mOwnerRef)
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInterface::StaticClass()))
 	{
 		mUIComponent->SetVisibility(true);
 	}
@@ -61,49 +63,60 @@ void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* Pr
 void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 	UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInputInterface::StaticClass()))
+	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInterface::StaticClass()))
 	{
 		mUIComponent->SetVisibility(false);
 	}
 }
 
-
 void ABaseWeapon::PlayWeaponSound_Implementation()
 {
 }
 
-#pragma region Server Method Callers
+void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	mOwnerRef = OwnerPlayer;
+	
+	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 
+	UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(OwnerPlayer);
+
+	IPlayerInterface::Execute_SetWeapon(OwnerPlayer, this);
+
+	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
+}
+
+void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+}
+
+
+
+#pragma region When Weapon Is Fired
+
+// Fire
 void ABaseWeapon::Fire_Implementation()
 {
+	Server_Fire();
 }
 
 void ABaseWeapon::StopFire_Implementation()
 {
-	
+	Server_StopFire();
 }
-#pragma endregion
 
-#pragma region Server Methods
-
+// Server Fire
 void ABaseWeapon::Server_Fire_Implementation()
 {
-	Blueprint_Server_Fire();
+	Multicast_Fire();
 }
 
 void ABaseWeapon::Server_StopFire_Implementation()
 {
-	Blueprint_ServerStopFire();
+	Multicast_StopFire();
 }
 
-void ABaseWeapon::Server_Equip_Implementation()
-{
-	Blueprint_Server_EquipWeapon();
-}
-#pragma endregion
-
-#pragma region Multicast Methods
-
+// Multicast Fire
 void ABaseWeapon::Multicast_Fire_Implementation()
 {
 	Blueprint_Multicast_Fire();
@@ -114,40 +127,12 @@ void ABaseWeapon::Multicast_StopFire_Implementation()
 	Blueprint_Multicast_StopFire();
 }
 
-void ABaseWeapon::Multicast_EquipWeapon_Implementation()
-{
-	Blueprint_Multicast_EquipWeapon();
-}
-#pragma endregion
-
-#pragma region Blueprint Server Method Implementation
-
-void ABaseWeapon::Blueprint_Server_Fire_Implementation()
-{
-}
-
-void ABaseWeapon::Blueprint_ServerStopFire_Implementation()
-{
-}
-
-void ABaseWeapon::Blueprint_Server_EquipWeapon_Implementation()
-{
-	
-}
-
-#pragma endregion
-
-#pragma region Blueprint Client Method Implementation
-
+// BP Multicast
 void ABaseWeapon::Blueprint_Multicast_Fire_Implementation()
 {
 }
 
 void ABaseWeapon::Blueprint_Multicast_StopFire_Implementation()
-{
-}
-
-void ABaseWeapon::Blueprint_Multicast_EquipWeapon_Implementation()
 {
 }
 
@@ -162,16 +147,12 @@ FInteractableDetails ABaseWeapon::GetInteractableDetails_Implementation()
 
 void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
 {
-
 	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
 	{
-		const FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-
-		UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(OwnerPlayer);
-
-		AttachToComponent(OwnerMesh, rules, WeaponSocket);
-
-		IPlayerInterface::Execute_SetWeapon(OwnerPlayer, this);
+		AttachWeaponToPlayer(OwnerPlayer);
+		
+		mCollisionComponent->SetVisibility(false);
+		mCollisionComponent->SetGenerateOverlapEvents(false);
 	}
 }
 

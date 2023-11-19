@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
@@ -32,6 +33,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UMeshComponent* GetMeshComponent();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SpawnWeapon(FWeaponDetails WeaponDetails);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void RefreshPawn();
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	ABaseWeapon* GetWeapon();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

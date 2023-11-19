@@ -2,3 +2,10 @@
 
 
 #include "PlayerHUD.h"
+
+void UPlayerHUD::UpdateHealth(float Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player HUD has updated the Health"));
+
+	txtHealth->SetText(FText::AsNumber(Value));
+}

@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 
 #include "EnhancedInputComponent.h"
+#include "InputController.h"
 #include "BaseClasses/BaseWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -16,6 +17,7 @@
 #include "InterfaceClasses/PlayerStateInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "WidgetClasses/PlayerHUD.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -55,6 +57,10 @@ APlayerCharacter::APlayerCharacter()
 	mOverlayWidget->SetupAttachment(RootComponent);
 	
 	FlagSocket = "flagSocket";
+	bReplicates = true;
+
+	//mHealth = 100.f;
+	//Damage.AddDynamic(this, &APlayerCharacter::OnDamageTaken);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -62,22 +68,9 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-void APlayerCharacter::OnRep_SetOwningRef()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Owning Actor is Valid now"));
-}
-
-void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APlayerCharacter, mPrimaryWeapon);
-
-}
-
 void APlayerCharacter::Init_Implementation()
 {
 }
-
 
 void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
@@ -246,18 +239,17 @@ void APlayerCharacter::Multicast_StopShoot_Implementation()
 
 void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 {
-	Multicast_SpawnWeapon(WeaponDetails);
-}
-
-void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
-{
 	if(mPrimaryWeapon) mPrimaryWeapon->Destroy();
 	
 	FActorSpawnParameters SpawnsParams;
 	SpawnsParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
 
 	ABaseWeapon* WeaponToSpawn = Cast<ABaseWeapon>(GetWorld()->SpawnActor(WeaponDetails.WeaponAsset, &GetActorTransform(), SpawnsParams));
+	WeaponToSpawn->SetOwner(this);
+	WeaponToSpawn->SetInstigator(this);
+
 	WeaponToSpawn->AttachWeaponToPlayer(this);
+	Execute_SetWeapon(this, WeaponToSpawn);
 }
 
 #pragma endregion
@@ -285,4 +277,9 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 }
 #pragma endregion 
 
+
+void APlayerCharacter::RefreshPawn_Implementation()
+{
+	
+}
 

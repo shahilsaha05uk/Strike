@@ -35,9 +35,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	USoundBase* mSoundToPlay;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	class AActor* mOwnerRef;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	bool bIsFiring;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	FName WeaponSocket;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	FWeaponDetails mWeaponDetails;
@@ -50,8 +50,44 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FStopShootingSignature StopShootingSignature;
 
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	TEnumAsByte<ETraceTypeQuery> TraceChannel;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float TraceRange;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float DamageRate;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	FTimerHandle TimeHandler;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float mBulletSpeed;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float mInFirstDelay;
+;
+
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	FName WeaponSocket;
+	class AActor* mOwnerRef;
+
+	/*
+	UPROPERTY(ReplicatedUsing = OnRep_OwnerRef, BlueprintReadWrite, EditAnywhere, Category = "References")
+	class AActor* mOwnerRef;
+
+	UFUNCTION()
+	void OnRep_OwnerRef();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintOnRep_OwnerRef();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	*/
+	
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AttachWeaponToPlayer(AActor* OwnerPlayer);
+	UFUNCTION(Server, Reliable)
+	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer);
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
+
 
 public:
 	
@@ -69,11 +105,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayWeaponSound();
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void AttachWeaponToPlayer(AActor* OwnerPlayer);
-	UFUNCTION(NetMulticast, Unreliable)
-	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
-
 public:
 
 	// Fire
@@ -84,21 +115,23 @@ public:
 	void StopFire();
 	
 	// Server Fire
-	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Fire();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintServer_Fire(FHitResult Hit);
 
-	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_StopFire();
 
 	// Multicast Fire
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_Fire();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Blueprint_Multicast_Fire();
 
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_StopFire();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void Blueprint_Multicast_StopFire();
 
 public:

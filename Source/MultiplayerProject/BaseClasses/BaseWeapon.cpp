@@ -3,6 +3,7 @@
 
 #include "BaseWeapon.h"
 
+#include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -33,8 +34,24 @@ ABaseWeapon::ABaseWeapon()
 
 	StartShootingSignature.AddDynamic(this, &ThisClass::Fire);
 	StopShootingSignature.AddDynamic(this, &ThisClass::StopFire);
-	//UKismetSystemLibrary::Timer
+
+	bReplicates = true;
+	TraceRange = 20000.0f;
 }
+
+/*
+void ABaseWeapon::OnRep_OwnerRef()
+{
+	BlueprintOnRep_OwnerRef();
+}
+
+void ABaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseWeapon, mOwnerRef);
+	
+}*/
 
 void ABaseWeapon::BeginPlay()
 {
@@ -50,6 +67,8 @@ void ABaseWeapon::Init_Implementation()
 	mInteractableDetails.ActorName = GetName();
 	mInteractableDetails.ActorReference = this;
 	mInteractableDetails.InteractType = EQUIPPABLE;
+
+	DamageRate = mWeaponDetails.WeaponDamage;
 }
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
@@ -73,31 +92,15 @@ void ABaseWeapon::PlayWeaponSound_Implementation()
 {
 }
 
-void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
-{
-	mOwnerRef = OwnerPlayer;
-	
-	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-
-	UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(OwnerPlayer);
-
-	IPlayerInterface::Execute_SetWeapon(OwnerPlayer, this);
-
-	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
-}
-
-void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
-{
-}
-
 
 
 #pragma region When Weapon Is Fired
 
 // Fire
 void ABaseWeapon::Fire_Implementation()
-{
-	Server_Fire();
+{	
+	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mBulletSpeed, true, mInFirstDelay);
+
 }
 
 void ABaseWeapon::StopFire_Implementation()
@@ -108,7 +111,23 @@ void ABaseWeapon::StopFire_Implementation()
 // Server Fire
 void ABaseWeapon::Server_Fire_Implementation()
 {
-	Multicast_Fire();
+	if(GetOwner() == nullptr) return;
+
+	if(UKismetSystemLibrary::DoesImplementInterface(GetOwner(), UPlayerInterface::StaticClass()))
+	{
+		UCameraComponent* FollowCam = IPlayerInterface::Execute_GetFollowCamera(GetOwner());
+
+		FVector StartPos = FollowCam->GetComponentLocation();
+		FVector EndPos = StartPos + (FollowCam->GetForwardVector() * TraceRange);
+		TArray<AActor*> ActorsToIgnore = {};
+		ActorsToIgnore.Add(GetInstigator());
+		FHitResult hit;
+		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hit, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+
+		BlueprintServer_Fire(hit);
+		Multicast_Fire();
+	}
+	
 }
 
 void ABaseWeapon::Server_StopFire_Implementation()
@@ -124,17 +143,15 @@ void ABaseWeapon::Multicast_Fire_Implementation()
 
 void ABaseWeapon::Multicast_StopFire_Implementation()
 {
+	GetWorld()->GetTimerManager().ClearTimer(TimeHandler);
 	Blueprint_Multicast_StopFire();
+
 }
 
-// BP Multicast
 void ABaseWeapon::Blueprint_Multicast_Fire_Implementation()
 {
 }
 
-void ABaseWeapon::Blueprint_Multicast_StopFire_Implementation()
-{
-}
 
 #pragma endregion
 
@@ -149,12 +166,34 @@ void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
 	{
-		AttachWeaponToPlayer(OwnerPlayer);
-		
-		mCollisionComponent->SetVisibility(false);
-		mCollisionComponent->SetGenerateOverlapEvents(false);
+		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, mWeaponDetails);
+		this->Destroy();
 	}
+
 }
 
 #pragma endregion
+
+void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	Server_AttachWeaponToPlayer(OwnerPlayer);
+}
+
+void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	Multicast_AttachWeaponToPlayer(OwnerPlayer);
+}
+
+void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	mOwnerRef = OwnerPlayer;
+	UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(mOwnerRef);
+
+	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
+	
+	mCollisionComponent->SetVisibility(false);
+	mCollisionComponent->SetGenerateOverlapEvents(false);
+	mCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
 

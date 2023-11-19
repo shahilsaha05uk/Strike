@@ -21,7 +21,7 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
 	FPlayerDetails mPlayerDetails;
-	
+
 	AMP_PlayerState();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

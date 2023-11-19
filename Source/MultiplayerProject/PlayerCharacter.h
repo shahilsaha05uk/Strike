@@ -26,12 +26,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(ReplicatedUsing = OnRep_SetOwningRef, VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class UWidgetComponent* mOverlayWidget;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	class AInputController* mControllerRef;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	class AHUD* mHudRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName FlagSocket;
 
@@ -42,14 +46,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	AActor* CollidedActor;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player Properties")
+	class UPlayerHUD* mPlayerHud;
+
+	virtual void RefreshPawn_Implementation() override;
+
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void OnRep_SetOwningRef();
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-
-	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Init();
 
@@ -67,11 +70,11 @@ public:
 	virtual void StopAiming_Implementation() override;
 	virtual void StartShooting_Implementation() override;
 	virtual void StopShooting_Implementation() override;
-	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
 	virtual void Interact_Implementation() override;
 	virtual void DropItem_Implementation() override;
 
 	// Player Interface
+	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
 	virtual UCameraComponent* GetFollowCamera_Implementation() override;
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;
 	virtual ABaseWeapon* GetWeapon_Implementation() override;
@@ -105,9 +108,6 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
 	
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
-	void Multicast_SpawnWeapon(FWeaponDetails WeaponDetails);
-
 	// Interaction
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Interact();

@@ -104,12 +104,15 @@ public:
 	int WeaponCost;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float WeaponDamage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTexture2D* WeaponImage;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponAsset;
 
-	FWeaponDetails(): WeaponCost(0), WeaponImage(nullptr)
+	FWeaponDetails(): WeaponCost(0), WeaponDamage(0), WeaponImage(nullptr)
 	{
 	}
 };

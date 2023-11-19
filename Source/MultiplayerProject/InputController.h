@@ -25,7 +25,10 @@ private:
 	UFUNCTION()
 	void SpawnPawn();
 
-	
+	UPROPERTY()
+	TEnumAsByte<ETeam> mPlayerTeam;
+
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
@@ -77,6 +80,9 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 
 	virtual void SetupInputComponent() override;
+	
+	virtual void SetPlayerTeam_Implementation(ETeam Team) override;
+	virtual ETeam GetPlayerTeam_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSpawnWeapon(FWeaponDetails WeaponDetails);

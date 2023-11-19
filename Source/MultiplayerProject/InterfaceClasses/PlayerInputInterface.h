@@ -49,8 +49,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void DropItem();
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SpawnWeapon(FWeaponDetails WeaponDetails);
-	
 };

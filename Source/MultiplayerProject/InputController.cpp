@@ -11,6 +11,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "InterfaceClasses/InputsInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
+#include "InterfaceClasses/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -62,8 +63,8 @@ void AInputController::Multicast_PawnSetup_Implementation(ETeam Team)
 // On Possess
 void AInputController::OnPossess(APawn* InPawn)
 {
-	Super::OnPossess(InPawn);
 	Client_PostPossessed();
+	Super::OnPossess(InPawn);
 }
 
 
@@ -131,6 +132,16 @@ void AInputController::SetupInputComponent()
 
 }
 
+void AInputController::SetPlayerTeam_Implementation(ETeam Team)
+{
+	mPlayerTeam = Team;
+}
+
+ETeam AInputController::GetPlayerTeam_Implementation()
+{
+	return mPlayerTeam;
+}
+
 
 void AInputController::DropItem_Implementation()
 {
@@ -158,9 +169,9 @@ void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails
 {
 	APawn* pawn = GetPawn();
 
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInterface::StaticClass()))
 	{
-		IPlayerInputInterface::Execute_SpawnWeapon(pawn, WeaponDetails);
+		IPlayerInterface::Execute_SpawnWeapon(pawn, WeaponDetails);
 	}
 
 	mPlayerState->mPlayerDetails.CurrentMoney -= WeaponDetails.WeaponCost;

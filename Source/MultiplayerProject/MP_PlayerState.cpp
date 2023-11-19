@@ -3,6 +3,7 @@
 
 #include "MP_PlayerState.h"
 
+#include "MP_HUD.h"
 #include "InterfaceClasses/GameInstanceInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -30,6 +31,7 @@ void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
 
 	BlueprintInitialisation(Team);
 }
+
 
 FPlayerDetails AMP_PlayerState::GetPlayerDetails_Implementation()
 {

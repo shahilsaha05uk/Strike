@@ -33,11 +33,6 @@ void AInputController::BeginPlay()
 
 void AInputController::PawnSetup_Implementation(ETeam Team)
 {
-	/*if(UKismetSystemLibrary::DoesImplementInterface(PlayerState, UPlayerStateInterface::StaticClass()))
-	{
-		IPlayerStateInterface::Execute_InitialisePlayerState(PlayerState, Team);
-	}*/
-
 	Server_PawnSetup(Team);
 	SpawnPawn();
 }
@@ -52,11 +47,6 @@ void AInputController::Server_PawnSetup_Implementation(ETeam Team)
 void AInputController::Multicast_PawnSetup_Implementation(ETeam Team)
 {
 	BlueprintMulticast_PawnSetup(Team);
-	
-	/*if(UKismetSystemLibrary::DoesImplementInterface(PlayerState, UPlayerStateInterface::StaticClass()))
-	{
-		IPlayerStateInterface::Execute_InitialisePlayerState(PlayerState, Team);
-	}*/
 }
 
 // Initialises the Controller when it spawns

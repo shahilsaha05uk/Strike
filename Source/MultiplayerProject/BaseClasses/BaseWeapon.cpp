@@ -119,7 +119,7 @@ void ABaseWeapon::Server_Fire_Implementation()
 
 		FVector StartPos = FollowCam->GetComponentLocation();
 		FVector EndPos = StartPos + (FollowCam->GetForwardVector() * TraceRange);
-		TArray<AActor*> ActorsToIgnore = {};
+		TArray<AActor*> ActorsToIgnore = {this, GetOwner()};
 		ActorsToIgnore.Add(GetInstigator());
 		FHitResult hit;
 		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hit, true, FLinearColor::Red, FLinearColor::Green, 1.0f);

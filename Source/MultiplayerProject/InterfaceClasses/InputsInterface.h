@@ -23,13 +23,6 @@ class MULTIPLAYERPROJECT_API IInputsInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void InitHUD(FPlayerDetails PlayerDetails);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateOverlayUI();
-	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateFocusedActor(FInteractableDetails Details);
 

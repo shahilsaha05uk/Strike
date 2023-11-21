@@ -23,7 +23,7 @@ private:
 	void OnSpawn();
 
 	UFUNCTION()
-	void SpawnPawn();
+	void SpawnPawn(UDA_CharacterMeshDetails* CharacterDetails);
 
 	UPROPERTY()
 	TEnumAsByte<ETeam> mPlayerTeam;
@@ -65,17 +65,17 @@ public:
 #pragma region On Controller Spawn Methods
 	
 	virtual void BeginPlay() override;
-	virtual void PawnSetup_Implementation(ETeam Team) override;
+	virtual void PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails = nullptr) override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void Server_PawnSetup(ETeam Team);
+	void Server_PawnSetup(UDA_CharacterMeshDetails* CharacterDetails);
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void Multicast_PawnSetup(ETeam Team);
+	void Multicast_PawnSetup(UDA_CharacterMeshDetails* CharacterDetails);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_PawnSetup(ETeam Team);
+	void BlueprintServer_PawnSetup(UDA_CharacterMeshDetails* CharacterDetails);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_PawnSetup(ETeam Team);
+	void BlueprintMulticast_PawnSetup(UDA_CharacterMeshDetails* CharacterDetails);
 	
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -87,7 +87,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
 
-
+	virtual void RestartPlayer_Implementation() override;
 #pragma endregion
 
 	
@@ -141,10 +141,10 @@ public:
 // When the Player Spawns
 	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SpawnPawn();
+	void Server_SpawnPawn(UDA_CharacterMeshDetails* CharacterDetails);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_SpawnPawn(TSubclassOf<APawn> DefaultPawnClass, const FTransform& FindStartTransform);
+	void BlueprintServer_SpawnPawn(UDA_CharacterMeshDetails* CharacterDetails, const FTransform& FindStartTransform);
 
 	// After the player is possessed
 	UFUNCTION(Client, Reliable, BlueprintCallable)
@@ -152,6 +152,14 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_PostPossessed();
+
+
+	// Updating the Player Scoreboard
+	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;
+
+	// Update the Player HUD
+	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails) override;
+	
 	
 };
 

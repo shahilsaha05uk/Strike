@@ -29,9 +29,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
-	class UWidgetComponent* mOverlayWidget;
-	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AInputController* mControllerRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
@@ -84,10 +81,8 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
-	virtual void UpdateOverlayUI_Implementation() override;
-	virtual void InitHUD_Implementation(FPlayerDetails PlayerDetails) override;
-	virtual void UpdateFocusedActor_Implementation(FInteractableDetails Details) override;
 	virtual void FlagSpawner_Implementation(AActor* FlagRef) override;
+	virtual void UpdateFocusedActor_Implementation(FInteractableDetails InteractableDetails) override;
 
 public:
 	

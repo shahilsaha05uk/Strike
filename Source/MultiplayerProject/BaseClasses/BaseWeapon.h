@@ -69,18 +69,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AActor* mOwnerRef;
 
-	/*
-	UPROPERTY(ReplicatedUsing = OnRep_OwnerRef, BlueprintReadWrite, EditAnywhere, Category = "References")
-	class AActor* mOwnerRef;
-
-	UFUNCTION()
-	void OnRep_OwnerRef();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintOnRep_OwnerRef();
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	*/
-	
-
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void AttachWeaponToPlayer(AActor* OwnerPlayer);
 	UFUNCTION(Server, Reliable)
@@ -118,7 +106,7 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Fire();
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_Fire(FHitResult Hit);
+	void BlueprintServer_Fire(FHitResult hit);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_StopFire();

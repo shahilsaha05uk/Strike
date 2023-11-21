@@ -21,11 +21,16 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
 	UTextBlock* txtHealth;
 	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
+	UTextBlock* txtMoney;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	FMatchDetails mMatchDetails;
 
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHealth(float Value);
+	UFUNCTION(BlueprintCallable)
+	void UpdateMoney(int Value);
 	
 };

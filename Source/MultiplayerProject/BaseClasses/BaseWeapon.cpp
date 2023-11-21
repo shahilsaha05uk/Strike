@@ -113,6 +113,8 @@ void ABaseWeapon::Server_Fire_Implementation()
 {
 	if(GetOwner() == nullptr) return;
 
+	Multicast_Fire();
+
 	if(UKismetSystemLibrary::DoesImplementInterface(GetOwner(), UPlayerInterface::StaticClass()))
 	{
 		UCameraComponent* FollowCam = IPlayerInterface::Execute_GetFollowCamera(GetOwner());
@@ -125,7 +127,6 @@ void ABaseWeapon::Server_Fire_Implementation()
 		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hit, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 
 		BlueprintServer_Fire(hit);
-		Multicast_Fire();
 	}
 	
 }

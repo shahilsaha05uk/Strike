@@ -26,18 +26,20 @@ class MULTIPLAYERPROJECT_API IControllerInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void PawnSetup(ETeam Team);
+	void RestartPlayer();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void PawnSetup(UDA_CharacterMeshDetails* CharacterDetails = nullptr);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetPlayerTeam(ETeam Team);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ETeam GetPlayerTeam();
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void IA_Refresh();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void IA_RefreshController();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateScoreboard(int Value, ETeam Team);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHUD(FPlayerDetails PlayerDetails);

@@ -53,9 +53,6 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	mOverlayWidget = CreateDefaultSubobject<UWidgetComponent>("Overlay UI");
-	mOverlayWidget->SetupAttachment(RootComponent);
-	
 	FlagSocket = "flagSocket";
 	bReplicates = true;
 
@@ -169,24 +166,14 @@ void APlayerCharacter::DropItem_Implementation()
 	
 }
 
-void APlayerCharacter::UpdateOverlayUI_Implementation()
-{
-	
-}
-
-void APlayerCharacter::InitHUD_Implementation(FPlayerDetails PlayerDetails)
-{
-	
-}
-
-void APlayerCharacter::UpdateFocusedActor_Implementation(FInteractableDetails Details)
-{
-	
-}
-
 void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
 {
 
+	
+}
+
+void APlayerCharacter::UpdateFocusedActor_Implementation(FInteractableDetails InteractableDetails)
+{
 	
 }
 

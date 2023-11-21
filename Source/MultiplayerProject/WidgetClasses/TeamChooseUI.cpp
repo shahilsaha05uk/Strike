@@ -37,15 +37,10 @@ void UTeamChooseUI::OnDecisionMade()
 
 void UTeamChooseUI::OnTerroristButtonCLick_Implementation()
 {
-	if(!mHUD) return;
-	mHUD->OnTeamChosen.Broadcast(ETeam::TERRORIST);
-	OnDecisionMade();
+	//OnDecisionMade();
 }
 
 void UTeamChooseUI::OnCounterTerroristButtonCLick_Implementation()
 {
-	if(!mHUD) return;
-	
-	mHUD->OnTeamChosen.Broadcast(ETeam::COUNTER_TERRORIST);
-	OnDecisionMade();
+	//OnDecisionMade();
 }

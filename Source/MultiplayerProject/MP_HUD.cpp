@@ -29,7 +29,7 @@ UBaseWidget* AMP_HUD::WidgetInitialiser_Implementation(EWidgetType WidgetToSpawn
 {
 	UBaseWidget* Widget = (Execute_GetWidget(this, WidgetToSpawn) == nullptr)
 		                      ? WidgetCreator(WidgetToSpawn)
-		                      : GetWidget(WidgetToSpawn);
+		                      : Execute_GetWidget(this, WidgetToSpawn);
 
 	// Initialise the widget
 	switch (WidgetToSpawn) {
@@ -151,13 +151,13 @@ bool AMP_HUD::WidgetReferenceCheck(UBaseWidget* &WidgetRef, EWidgetType WidgetTo
 #pragma region Team Methods
 
 
-void AMP_HUD::OnDecisionMade_Implementation(ETeam Team)
+void AMP_HUD::OnDecisionMade_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
 {
 	APlayerController* PC = GetOwningPlayerController();
 
 	if(UKismetSystemLibrary::DoesImplementInterface(PC, UControllerInterface::StaticClass()))
 	{
-		IControllerInterface::Execute_PawnSetup(PC, Team);
+		IControllerInterface::Execute_PawnSetup(PC, CharacterDetails);
 	}
 }
 

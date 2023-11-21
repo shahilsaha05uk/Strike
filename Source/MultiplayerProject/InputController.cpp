@@ -15,8 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
-
-
+#include "WidgetClasses/PlayerHUD.h"
 
 
 AInputController::AInputController()
@@ -31,22 +30,22 @@ void AInputController::BeginPlay()
 	OnSpawn();
 }
 
-void AInputController::PawnSetup_Implementation(ETeam Team)
+void AInputController::PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
 {
-	Server_PawnSetup(Team);
-	SpawnPawn();
+	Server_PawnSetup(CharacterDetails);
+	SpawnPawn(CharacterDetails);
 }
 
-void AInputController::Server_PawnSetup_Implementation(ETeam Team)
+void AInputController::Server_PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
 {
-	BlueprintServer_PawnSetup(Team);
+	BlueprintServer_PawnSetup(CharacterDetails);
 	
-	Multicast_PawnSetup(Team);
+	Multicast_PawnSetup(CharacterDetails);
 }
 
-void AInputController::Multicast_PawnSetup_Implementation(ETeam Team)
+void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
 {
-	BlueprintMulticast_PawnSetup(Team);
+	BlueprintMulticast_PawnSetup(CharacterDetails);
 }
 
 // Initialises the Controller when it spawns
@@ -130,6 +129,26 @@ void AInputController::SetPlayerTeam_Implementation(ETeam Team)
 ETeam AInputController::GetPlayerTeam_Implementation()
 {
 	return mPlayerTeam;
+}
+
+void AInputController::RestartPlayer_Implementation()
+{
+	
+}
+
+void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)
+{
+	
+}
+
+void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails)
+{
+	AHUD* hud = GetHUD();
+	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
+	{
+		UPlayerHUD* PlayerHUD = Cast<UPlayerHUD>(IHUDInterface::Execute_GetWidget(hud, EWidgetType::PLAYER_HUD));
+		PlayerHUD->UpdateMoney(PlayerDetails.CurrentMoney);
+	}
 }
 
 
@@ -308,18 +327,18 @@ void AInputController::Client_OnSpawn_Implementation()
 #pragma region Spawning the Player
 
 // Spawns the Pawn and possess it
-void AInputController::SpawnPawn()
+void AInputController::SpawnPawn(UDA_CharacterMeshDetails* CharacterDetails)
 {
-	Server_SpawnPawn();
+	Server_SpawnPawn(CharacterDetails);
 }
 
-void AInputController::Server_SpawnPawn_Implementation()
+void AInputController::Server_SpawnPawn_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
 {
 	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
 	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
 	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
 
-	BlueprintServer_SpawnPawn(pawnClass, playerStart);
+	BlueprintServer_SpawnPawn(CharacterDetails, playerStart);
 }
 
 void AInputController::Client_PostPossessed_Implementation()

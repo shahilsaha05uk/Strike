@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
+#include "MultiplayerProject/DataAssetClasses/DA_CharacterMeshDetails.h"
 
 #include "TeamChooseUI.generated.h"
 
@@ -17,9 +18,6 @@ class MULTIPLAYERPROJECT_API UTeamChooseUI : public UBaseWidget
 
 private:
 
-	UFUNCTION()
-	void OnDecisionMade();
-
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -32,12 +30,20 @@ public:
 
 	virtual void InitialiseWidget(AMP_HUD* Hud, AInputController* InputController) override;
 
-	
+	UFUNCTION(BlueprintCallable)
+	void OnDecisionMade();
+
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnCounterTerroristButtonCLick();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnTerroristButtonCLick();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	TArray<UDA_CharacterMeshDetails*> TerroristArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	TArray<UDA_CharacterMeshDetails*> CounterTerroristArray;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AMP_PlayerState* PlayerStateRef;
 

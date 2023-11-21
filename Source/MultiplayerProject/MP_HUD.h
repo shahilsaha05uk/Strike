@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "BaseClasses/BaseHUD.h"
 #include "BaseClasses/BaseWidget.h"
+#include "DataAssetClasses/DA_CharacterMeshDetails.h"
 #include "InterfaceClasses/HUDInterface.h"
 #include "MP_HUD.generated.h"
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResumeGameSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeamChosenSignature, ETeam, Team);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeamChosenSignature, UDA_CharacterMeshDetails*, CharacterDetails);
 
 UCLASS()
 class MULTIPLAYERPROJECT_API AMP_HUD : public ABaseHUD, public IHUDInterface
@@ -68,7 +69,7 @@ public:
 #pragma region Team UI
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnDecisionMade(ETeam Team);
+	void OnDecisionMade(UDA_CharacterMeshDetails* CharacterDetails);
 
 #pragma endregion
 	

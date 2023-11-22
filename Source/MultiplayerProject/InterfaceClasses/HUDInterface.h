@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerProject/EnumClass.h"
+#include "MultiplayerProject/WidgetClasses/PlayerHUD.h"
 #include "UObject/Interface.h"
 #include "HUDInterface.generated.h"
 
@@ -30,4 +31,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	class UBaseWidget* GetWidget(EWidgetType WidgetToGet);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UPlayerHUD* OnPawnSpawn();
+
 };

@@ -10,8 +10,11 @@ void UMainMenu::NativeConstruct()
 	Super::NativeConstruct();
 	
 	HostGameButton->OnClicked.AddDynamic(this, &UMainMenu::OnHostGameButtonClick);
+	
 	ServerBrowserButton->OnClicked.AddDynamic(this, &UMainMenu::OnServerBrowserButtonClick);
+	
 	SettingsButton->OnClicked.AddDynamic(this, &UMainMenu::OnSettingsButtonClick);
+	
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::OnQuitButtonClick);
 }
 

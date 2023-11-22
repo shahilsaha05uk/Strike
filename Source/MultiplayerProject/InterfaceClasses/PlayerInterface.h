@@ -34,7 +34,7 @@ public:
 	UMeshComponent* GetMeshComponent();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SpawnWeapon(FWeaponDetails WeaponDetails);
+	ABaseWeapon* SpawnWeapon(FWeaponDetails WeaponDetails);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void RefreshPawn();

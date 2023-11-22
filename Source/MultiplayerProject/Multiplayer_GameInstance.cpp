@@ -29,7 +29,6 @@ FMatchDetails UMultiplayer_GameInstance::GetMatchDetails_Implementation()
 void UMultiplayer_GameInstance::SetSessionDetails_Implementation(FMatchDetails MatchDetails)
 {
 	mMatchDetails = MatchDetails;
-	//mPlayerDetails.CurrentMoney = mMatchDetails.StartingMoney;
 }
 
 void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)

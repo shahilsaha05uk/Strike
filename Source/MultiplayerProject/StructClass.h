@@ -51,6 +51,8 @@ public:
 	TEnumAsByte<ETeam> Team;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Score;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float Health;
 };
 
 USTRUCT(Blueprintable, BlueprintType)

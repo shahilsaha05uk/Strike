@@ -8,30 +8,38 @@
 ULAN_OnlineSubsystem::ULAN_OnlineSubsystem()
 {
 	mOnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &ULAN_OnlineSubsystem::OnCreateSessionComplete);
+
 	mOnFindSessionsCompleteDelegate =  FOnFindSessionsCompleteDelegate::CreateUObject(this, &ULAN_OnlineSubsystem::OnFindSessionsComplete);
+
 	mOnJoinSessionCompleteDelegate = FOnJoinSessionCompleteDelegate::CreateUObject(this, &ULAN_OnlineSubsystem::OnJoinSessionComplete);
 	
 	mOnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &ULAN_OnlineSubsystem::OnStartSessionComplete);
+
 	mOnDestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &ULAN_OnlineSubsystem::OnDestroySessionComplete);
+
 	mSessionInterface = Online::GetSessionInterface(GetWorld());
 }
 
 bool ULAN_OnlineSubsystem::TryTravelToCurrentSession()
 {
 	mSessionInterface = Online::GetSessionInterface(GetWorld());
+
 	if (!mSessionInterface.IsValid())
 	{
 		return false;
 	}
 
 	FString connectString;
+
 	if (!mSessionInterface->GetResolvedConnectString(NAME_GameSession, connectString))
 	{
 		return false;
 	}
 
 	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+
 	playerController->ClientTravel(connectString, TRAVEL_Absolute);
+
 	return true;
 }
 
@@ -61,7 +69,6 @@ void ULAN_OnlineSubsystem::CreateSession(int32 NumPublicConnections, FString Mat
 	mCreateSessionCompleteDelegateHandle = mSessionInterface->AddOnCreateSessionCompleteDelegate_Handle(mOnCreateSessionCompleteDelegate);
 
 	mLastSessionSettings = MakeShareable(new FOnlineSessionSettings());
-	
 	mLastSessionSettings->bIsLANMatch = false;
 	mLastSessionSettings->NumPublicConnections = NumPublicConnections;
 	mLastSessionSettings->bAllowJoinInProgress = true;
@@ -71,7 +78,6 @@ void ULAN_OnlineSubsystem::CreateSession(int32 NumPublicConnections, FString Mat
 	mLastSessionSettings->bUsesPresence = true;
 	mLastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	mLastSessionSettings->BuildUniqueId = 1;
-
 	
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!mSessionInterface->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *mLastSessionSettings))
@@ -82,6 +88,22 @@ void ULAN_OnlineSubsystem::CreateSession(int32 NumPublicConnections, FString Mat
 		mMultiplayerOnCreateSessionComplete.Broadcast(false);
 	}
 }
+
+void ULAN_OnlineSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	if (mSessionInterface)
+	{
+		mSessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(mCreateSessionCompleteDelegateHandle);
+	}
+
+	mMultiplayerOnCreateSessionComplete.Broadcast(bWasSuccessful);
+
+	StartSession();
+}
+
+#pragma endregion
+
+#pragma region Find Session
 
 void ULAN_OnlineSubsystem::FindSessions(int32 MaxSearchResults)
 {
@@ -103,77 +125,6 @@ void ULAN_OnlineSubsystem::FindSessions(int32 MaxSearchResults)
 		}
 	}
 
-}
-
-void ULAN_OnlineSubsystem::JoinSession(FSessionDetails SessionResult)
-{
-	if(!mSessionInterface.IsValid())
-	{
-		mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
-		return;
-	}
-	mJoinSessionCompleteDelegateHandle = mSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(mOnJoinSessionCompleteDelegate);
-	mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::Success);
-
-	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if(!mSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult.Result))
-	{
-		mSessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(mJoinSessionCompleteDelegateHandle);
-		mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
-	}
-}
-
-void ULAN_OnlineSubsystem::StartSession()
-{
-	if(!mSessionInterface.IsValid())
-	{
-		mMultiplayerOnStartSessionComplete.Broadcast(false);
-		return;
-	}
-	mStartSessionCompleteDelegateHandle = mSessionInterface->AddOnStartSessionCompleteDelegate_Handle(mOnStartSessionCompleteDelegate);
-	mMultiplayerOnStartSessionComplete.Broadcast(true);
-
-	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if(!mSessionInterface->StartSession(NAME_GameSession))
-	{
-		mSessionInterface->ClearOnStartSessionCompleteDelegate_Handle(mStartSessionCompleteDelegateHandle);
-		mMultiplayerOnStartSessionComplete.Broadcast(false);
-	}
-}
-void ULAN_OnlineSubsystem::DestroySession()
-{
-	if(!mSessionInterface.IsValid())
-	{
-		mMultiplayerOnDestroySessionComplete.Broadcast(false);
-		return;
-	}
-
-	mDestroySessionCompleteDelegateHandle = mSessionInterface->AddOnDestroySessionCompleteDelegate_Handle(mOnDestroySessionCompleteDelegate);
-	mMultiplayerOnDestroySessionComplete.Broadcast(true);
-
-	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if(!mSessionInterface->DestroySession(NAME_GameSession, mOnDestroySessionCompleteDelegate))
-	{
-		mSessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(mDestroySessionCompleteDelegateHandle);
-		mMultiplayerOnDestroySessionComplete.Broadcast(false);
-	}
-}
-
-
-#pragma endregion
-
-#pragma region These Methods are binded to the Delegates in the constructor
-
-void ULAN_OnlineSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
-{
-	if (mSessionInterface)
-	{
-		mSessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(mCreateSessionCompleteDelegateHandle);
-	}
-
-	mMultiplayerOnCreateSessionComplete.Broadcast(bWasSuccessful);
-
-	StartSession();
 }
 
 void ULAN_OnlineSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
@@ -204,6 +155,31 @@ void ULAN_OnlineSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	
 	mMultiplayerOnFindSessionsComplete.Broadcast(SessionDetails, bWasSuccessful);
 }
+#pragma endregion
+
+#pragma region Join Session
+
+void ULAN_OnlineSubsystem::JoinSession(FSessionDetails SessionResult)
+{
+	if(!mSessionInterface.IsValid())
+	{
+		mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
+		return;
+	}
+
+	mJoinSessionCompleteDelegateHandle = mSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(mOnJoinSessionCompleteDelegate);
+
+	mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::Success);
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if(!mSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult.Result))
+	{
+		mSessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(mJoinSessionCompleteDelegateHandle);
+
+		mMultiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
+	}
+}
 
 void ULAN_OnlineSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
@@ -217,6 +193,33 @@ void ULAN_OnlineSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessi
 	TryTravelToCurrentSession();
 }
 
+#pragma endregion
+
+#pragma region Start Session
+
+void ULAN_OnlineSubsystem::StartSession()
+{
+	if(!mSessionInterface.IsValid())
+	{
+		mMultiplayerOnStartSessionComplete.Broadcast(false);
+		
+		return;
+	}
+	
+	mStartSessionCompleteDelegateHandle = mSessionInterface->AddOnStartSessionCompleteDelegate_Handle(mOnStartSessionCompleteDelegate);
+
+	mMultiplayerOnStartSessionComplete.Broadcast(true);
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if(!mSessionInterface->StartSession(NAME_GameSession))
+	{
+		mSessionInterface->ClearOnStartSessionCompleteDelegate_Handle(mStartSessionCompleteDelegateHandle);
+
+		mMultiplayerOnStartSessionComplete.Broadcast(false);
+	}
+}
+
 void ULAN_OnlineSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
 {
 	if(mSessionInterface)
@@ -225,6 +228,33 @@ void ULAN_OnlineSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSu
 	}
 
 	mMultiplayerOnStartSessionComplete.Broadcast(bWasSuccessful);
+}
+
+#pragma endregion
+
+#pragma region Destroy Session
+
+
+void ULAN_OnlineSubsystem::DestroySession()
+{
+	if(!mSessionInterface.IsValid())
+	{
+		mMultiplayerOnDestroySessionComplete.Broadcast(false);
+		return;
+	}
+
+	mDestroySessionCompleteDelegateHandle = mSessionInterface->AddOnDestroySessionCompleteDelegate_Handle(mOnDestroySessionCompleteDelegate);
+
+	mMultiplayerOnDestroySessionComplete.Broadcast(true);
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if(!mSessionInterface->DestroySession(NAME_GameSession, mOnDestroySessionCompleteDelegate))
+	{
+		mSessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(mDestroySessionCompleteDelegateHandle);
+
+		mMultiplayerOnDestroySessionComplete.Broadcast(false);
+	}
 }
 
 void ULAN_OnlineSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)

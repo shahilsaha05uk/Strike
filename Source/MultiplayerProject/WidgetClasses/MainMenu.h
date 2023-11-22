@@ -18,24 +18,30 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget Properties")
 	class UButton* HostGameButton;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget Properties")
 	class UButton* ServerBrowserButton;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget Properties")
 	class UButton* SettingsButton;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget Properties")
 	class UButton* QuitButton;
 
+	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
 	void OnHostGameButtonClick();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
 	void OnServerBrowserButtonClick();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
 	void OnSettingsButtonClick();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
 	void OnQuitButtonClick();
 
 	
-	virtual void NativeConstruct() override;
 
 };

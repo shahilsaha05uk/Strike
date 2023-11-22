@@ -11,10 +11,10 @@
 #include "MultiplayerProject/InterfaceClasses/PlayerInputInterface.h"
 #include "Net/UnrealNetwork.h"
 
-// Sets default values
 ABaseWeapon::ABaseWeapon()
 {
 	mCollisionComponent = CreateDefaultSubobject<USphereComponent>("CollisionComponent");
+
 	RootComponent = mCollisionComponent;
 	
 	mProjectileSpawnLocation = CreateDefaultSubobject<USceneComponent>("ProjectileSpawn");
@@ -29,29 +29,16 @@ ABaseWeapon::ABaseWeapon()
 	mUIComponent->SetWidgetClass(mWidgetClass);
 	mUIComponent->SetTickMode(ETickMode::Automatic);
 	mUIComponent->SetVisibility(false);
-
-	WeaponSocket = "weapon_r";
-
+	
 	StartShootingSignature.AddDynamic(this, &ThisClass::Fire);
 	StopShootingSignature.AddDynamic(this, &ThisClass::StopFire);
 
 	bReplicates = true;
+
 	TraceRange = 20000.0f;
-}
-
-/*
-void ABaseWeapon::OnRep_OwnerRef()
-{
-	BlueprintOnRep_OwnerRef();
-}
-
-void ABaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ABaseWeapon, mOwnerRef);
 	
-}*/
+	WeaponSocket = "weapon_r";
+}
 
 void ABaseWeapon::BeginPlay()
 {
@@ -64,6 +51,7 @@ void ABaseWeapon::BeginPlay()
 void ABaseWeapon::Init_Implementation()
 {
 	bIsFiring = false;
+	
 	mInteractableDetails.ActorName = GetName();
 	mInteractableDetails.ActorReference = this;
 	mInteractableDetails.InteractType = EQUIPPABLE;
@@ -79,8 +67,7 @@ void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* Pr
 	}
 }
 
-void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-	UPrimitiveComponent* PrimitiveComponent1, int I)
+void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInterface::StaticClass()))
 	{
@@ -88,19 +75,62 @@ void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* Prim
 	}
 }
 
+FInteractableDetails ABaseWeapon::GetInteractableDetails_Implementation()
+{
+	return 	mInteractableDetails;
+}
+
+void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
+{
+	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
+	{
+		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, mWeaponDetails);
+		
+		this->Destroy();
+	}
+}
+
+// Playing the weapon Sound
 void ABaseWeapon::PlayWeaponSound_Implementation()
 {
 }
 
+// Attaching the weapon
+void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	Server_AttachWeaponToPlayer(OwnerPlayer);
+}
 
+void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	Multicast_AttachWeaponToPlayer(OwnerPlayer);
 
-#pragma region When Weapon Is Fired
+	mCollisionComponent->SetVisibility(false);
+	mCollisionComponent->SetGenerateOverlapEvents(false);
+	mCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+}
+
+void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+{
+	mOwnerRef = OwnerPlayer;
+
+	UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(mOwnerRef);
+
+	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+
+	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
+
+	mUIComponent->DestroyComponent();
+}
 
 // Fire
 void ABaseWeapon::Fire_Implementation()
 {	
 	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mBulletSpeed, true, mInFirstDelay);
 
+	Ammo--;
+	OnShootingSignature.Broadcast(Ammo);
 }
 
 void ABaseWeapon::StopFire_Implementation()
@@ -120,10 +150,15 @@ void ABaseWeapon::Server_Fire_Implementation()
 		UCameraComponent* FollowCam = IPlayerInterface::Execute_GetFollowCamera(GetOwner());
 
 		FVector StartPos = FollowCam->GetComponentLocation();
+		
 		FVector EndPos = StartPos + (FollowCam->GetForwardVector() * TraceRange);
+		
 		TArray<AActor*> ActorsToIgnore = {this, GetOwner()};
+		
 		ActorsToIgnore.Add(GetInstigator());
+		
 		FHitResult hit;
+		
 		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hit, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 
 		BlueprintServer_Fire(hit);
@@ -145,6 +180,7 @@ void ABaseWeapon::Multicast_Fire_Implementation()
 void ABaseWeapon::Multicast_StopFire_Implementation()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimeHandler);
+	
 	Blueprint_Multicast_StopFire();
 
 }
@@ -152,49 +188,3 @@ void ABaseWeapon::Multicast_StopFire_Implementation()
 void ABaseWeapon::Blueprint_Multicast_Fire_Implementation()
 {
 }
-
-
-#pragma endregion
-
-#pragma region Interface Implementation
-
-FInteractableDetails ABaseWeapon::GetInteractableDetails_Implementation()
-{
-	return 	mInteractableDetails;
-}
-
-void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
-{
-	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
-	{
-		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, mWeaponDetails);
-		this->Destroy();
-	}
-
-}
-
-#pragma endregion
-
-void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
-{
-	Server_AttachWeaponToPlayer(OwnerPlayer);
-}
-
-void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
-{
-	Multicast_AttachWeaponToPlayer(OwnerPlayer);
-}
-
-void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
-{
-	mOwnerRef = OwnerPlayer;
-	UMeshComponent* OwnerMesh = IPlayerInterface::Execute_GetMeshComponent(mOwnerRef);
-
-	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
-	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
-	
-	mCollisionComponent->SetVisibility(false);
-	mCollisionComponent->SetGenerateOverlapEvents(false);
-	mCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-

@@ -16,9 +16,11 @@ void UTeamChooseUI::NativeConstruct()
 	Super::NativeConstruct();
 
 	GameInstance = Cast<UMultiplayer_GameInstance>(GetGameInstance());
+	
 	PlayerStateRef = Cast<AMP_PlayerState>(ControllerRef->PlayerState);
 	
 	btnCounterTerrorist->OnClicked.AddDynamic(this, &ThisClass::OnCounterTerroristButtonCLick);
+	
 	btnTerrorist->OnClicked.AddDynamic(this, &ThisClass::OnTerroristButtonCLick);
 }
 
@@ -30,6 +32,7 @@ void UTeamChooseUI::InitialiseWidget(AMP_HUD* Hud, AInputController* InputContro
 void UTeamChooseUI::OnDecisionMade()
 {
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(ControllerRef);
+	
 	ControllerRef->SetShowMouseCursor(false);
 
 	DestroyWidget();
@@ -37,10 +40,10 @@ void UTeamChooseUI::OnDecisionMade()
 
 void UTeamChooseUI::OnTerroristButtonCLick_Implementation()
 {
-	//OnDecisionMade();
+
 }
 
 void UTeamChooseUI::OnCounterTerroristButtonCLick_Implementation()
 {
-	//OnDecisionMade();
+
 }

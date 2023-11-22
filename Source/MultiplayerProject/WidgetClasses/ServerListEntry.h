@@ -22,10 +22,13 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	UTextBlock* txtServerName;
+
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	UTextBlock* txtLatency;
+
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	UTextBlock* txtPlayerCount;
+
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	UButton* btnJoin;
 

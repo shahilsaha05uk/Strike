@@ -27,6 +27,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FInteractableDetails GetInteractableDetails();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Interact(AActor* OwnerPlayer);
 };

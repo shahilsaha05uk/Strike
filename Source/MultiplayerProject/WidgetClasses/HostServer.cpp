@@ -11,14 +11,18 @@
 void UHostServer::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
 	mMultiplayerSubsystem = GetGameInstance()->GetSubsystem<ULAN_OnlineSubsystem>();
+	
 	if(btnHost) btnHost->OnClicked.AddDynamic(this, &UHostServer::OnHost);
+	
 	if(CloseButton) CloseButton->OnClicked.AddDynamic(this, &ThisClass::DestroyWidget);
 }
 
 void UHostServer::OnHost_Implementation()
 {
 	mMatchDetails.MaxPlayers = MaxPlayerEntry->FieldValue;
+	
 	mMatchDetails.StartingMoney = StartingMoneyEntry->FieldValue;
 
 	Cast<UMultiplayer_GameInstance>(GetGameInstance())->SetSessionDetails(mMatchDetails);

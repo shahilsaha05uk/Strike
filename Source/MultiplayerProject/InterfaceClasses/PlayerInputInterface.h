@@ -27,22 +27,31 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Move(const FInputActionValue& Value);
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Look(const FInputActionValue& Value);
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Jumping(const FInputActionValue& Value);
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopJump();
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StartAiming();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopAiming();
+
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StartShooting();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopShooting();
+
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact();

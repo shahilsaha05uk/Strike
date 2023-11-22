@@ -31,6 +31,7 @@ void UBaseWidget::PauseGame_Implementation(bool Value)
 void UBaseWidget::ResumeGame_Implementation()
 {
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(GetOwningPlayer());
+
 	GetOwningPlayer()->SetShowMouseCursor(false);
 
 	DestroyWidget();
@@ -50,3 +51,5 @@ void UBaseWidget::QuitGame_Implementation()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, false);
 }
+
+

@@ -19,12 +19,15 @@ class MULTIPLAYERPROJECT_API UMultiplayer_GameInstance : public UGameInstance, p
 	GENERATED_BODY()
 
 public:
+	
 	class ULAN_OnlineSubsystem* mMultiplayerSessionsSubsystem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
 	FOnFindSessionComplete OnFindSessionComplete;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	TSoftObjectPtr<UWorld> mTravelMap;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	TSoftObjectPtr<UWorld> mMainMenuLevel;
 
@@ -32,6 +35,7 @@ public:
 	FMatchDetails mMatchDetails;
 	
 	virtual void Init() override;
+
 	virtual FMatchDetails GetMatchDetails_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -39,15 +43,17 @@ public:
 	
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);
+
 	void OnFindSessions(const TArray<FSessionDetails>& OnlineSessionSearchResults, bool bWasSuccessful);
+
 	void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+
 	UFUNCTION()
 	void OnStartSession(bool bBWasSuccessful);
+
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);
 
-
-public:
 
 	UFUNCTION(BlueprintCallable)
 	FString GetLevelPath(TSoftObjectPtr<UWorld> Map, bool shouldListen = false);

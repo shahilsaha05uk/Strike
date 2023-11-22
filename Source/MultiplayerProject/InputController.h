@@ -82,7 +82,6 @@ public:
 	virtual void SetupInputComponent() override;
 	
 	virtual void SetPlayerTeam_Implementation(ETeam Team) override;
-	virtual ETeam GetPlayerTeam_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
@@ -90,6 +89,11 @@ public:
 	virtual void RestartPlayer_Implementation() override;
 #pragma endregion
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnShooting(int& AmmoValue);
+	
+
+	
 	
 #pragma region Player Actions
 
@@ -156,10 +160,6 @@ public:
 
 	// Updating the Player Scoreboard
 	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;
-
-	// Update the Player HUD
-	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails) override;
-	
-	
+	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails);
 };
 

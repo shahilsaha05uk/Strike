@@ -3,12 +3,23 @@
 
 #include "PlayerHUD.h"
 
-void UPlayerHUD::UpdateHealth(float Value)
+void UPlayerHUD::UpdateHUD_Implementation(FPlayerDetails PlayerDetails)
 {
-	txtHealth->SetText(FText::AsNumber(Value));
 }
 
-void UPlayerHUD::UpdateMoney(int Value)
+void UPlayerHUD::UpdateScore_Implementation(int Score, ETeam Team)
 {
-	txtMoney->SetText(FText::AsNumber(Value));
+}
+
+void UPlayerHUD::UpdateHealth_Implementation(float Value)
+{
+}
+
+void UPlayerHUD::UpdateMoney_Implementation(int Value)
+{
+}
+
+void UPlayerHUD::UpdateAmmo_Implementation(int Value)
+{
+	
 }

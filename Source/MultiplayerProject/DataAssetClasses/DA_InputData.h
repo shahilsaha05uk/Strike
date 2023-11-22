@@ -19,22 +19,25 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Move;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Look;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Jump;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Crouch;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Aim;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Shoot;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_Interact;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
 	UInputAction* IA_DropItem;
-
-	// ONLY FOR DEBUGGING
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Data")
-	UInputAction* IA_TestAction;
 };

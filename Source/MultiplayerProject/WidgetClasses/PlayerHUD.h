@@ -24,13 +24,29 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
 	UTextBlock* txtMoney;
 	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
+	UTextBlock* txtCT;
+	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
+	UTextBlock* txtT;
+	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
+	UTextBlock* txtAmmo;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	FMatchDetails mMatchDetails;
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateHUD(FPlayerDetails PlayerDetails);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateScore(int Score, ETeam Team);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateHealth(float Value);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateMoney(int Value);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateAmmo(int Value);
 	
 };

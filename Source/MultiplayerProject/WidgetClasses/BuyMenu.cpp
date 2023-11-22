@@ -11,9 +11,11 @@ void UBuyMenu::NativeConstruct()
 	Super::NativeConstruct();
 
 	OnUpdateList.AddDynamic(this, &ThisClass::UpdateList);
+	
 	CloseButton->OnClicked.AddDynamic(this, &ThisClass::ResumeGame);
 
 	GetOwningPlayer()->SetShowMouseCursor(true);
+	
 	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(GetOwningPlayer());
 }
 

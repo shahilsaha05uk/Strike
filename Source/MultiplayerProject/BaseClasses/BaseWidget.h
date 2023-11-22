@@ -29,21 +29,24 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AHUD* mHudRef;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AMP_HUD* mHUD;
 	
 	virtual void NativeConstruct() override;
+	
 	virtual void InitialiseWidget(class AMP_HUD* Hud = nullptr, AInputController* InputController = nullptr);
-
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void DestroyWidget();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void QuitGame();
+	void ResumeGame();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ResumeGame();
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PauseGame(bool Value);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void QuitGame();
+	
 };

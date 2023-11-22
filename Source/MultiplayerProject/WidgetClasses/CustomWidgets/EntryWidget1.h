@@ -18,6 +18,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget")
 	class UTextBlock* txtLabel;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget")
 	class UEditableText* txtField;
 	

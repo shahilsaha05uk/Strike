@@ -9,7 +9,6 @@
 #include "DataAssetClasses/DA_InputData.h"
 #include "DataAssetClasses/DA_UIInputs.h"
 #include "GameFramework/GameModeBase.h"
-#include "InterfaceClasses/InputsInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "InterfaceClasses/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -126,12 +125,12 @@ void AInputController::SetPlayerTeam_Implementation(ETeam Team)
 	mPlayerTeam = Team;
 }
 
-ETeam AInputController::GetPlayerTeam_Implementation()
+void AInputController::RestartPlayer_Implementation()
 {
-	return mPlayerTeam;
+	
 }
 
-void AInputController::RestartPlayer_Implementation()
+void AInputController::OnShooting_Implementation(int& AmmoValue)
 {
 	
 }
@@ -184,8 +183,6 @@ void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails
 	}
 
 	mPlayerState->mPlayerDetails.CurrentMoney -= WeaponDetails.WeaponCost;
-
-	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
 
 // Input Action Methods

@@ -30,5 +30,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FPlayerDetails GetPlayerDetails();
-	
 };

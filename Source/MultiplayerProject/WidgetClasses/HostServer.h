@@ -19,6 +19,7 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UButton* btnHost;
+
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UButton* CloseButton;
 	

@@ -27,7 +27,9 @@ public:
 	FMatchDetails mMatchDetails;
 	
 	IOnlineSessionPtr mSessionInterface;
+
 	TSharedPtr<class FOnlineSessionSettings> mLastSessionSettings;
+
 	TSharedPtr<FOnlineSessionSearch> mLastSessionSearch;
 
 	/*
@@ -36,28 +38,39 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateSession(int32 NumPublicConnections, FString MatchType);
+
 	UFUNCTION(BlueprintCallable)
 	void FindSessions(int32 MaxSearchResults);
+
 	UFUNCTION(BlueprintCallable)
 	void JoinSession(FSessionDetails SessionResult);
+
 	UFUNCTION(BlueprintCallable)
 	void StartSession();
+
 	UFUNCTION(BlueprintCallable)
 	void DestroySession();
 
 	// Custom Delegates for communicating with the Menu
 	FMultiplayerOnCreateSessionComplete mMultiplayerOnCreateSessionComplete;
+
 	FMultiplayerOnFindSessionsComplete mMultiplayerOnFindSessionsComplete;
+
 	FMultiplayerOnJoinSessionComplete mMultiplayerOnJoinSessionComplete;
+
 	FMultiplayerOnStartSessionComplete mMultiplayerOnStartSessionComplete;
+
 	FMultiplayerOnDestroySessionComplete mMultiplayerOnDestroySessionComplete;
 protected:
 
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	
 	void OnFindSessionsComplete(bool bWasSuccessful);
+	
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-
+	
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
+	
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 	
 private:

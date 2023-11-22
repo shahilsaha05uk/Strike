@@ -13,7 +13,6 @@
 #include "DataAssetClasses/DA_InputData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "InterfaceClasses/PickupInterface.h"
 #include "InterfaceClasses/PlayerStateInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -169,11 +168,6 @@ void APlayerCharacter::DropItem_Implementation()
 void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
 {
 
-	
-}
-
-void APlayerCharacter::UpdateFocusedActor_Implementation(FInteractableDetails InteractableDetails)
-{
 	
 }
 

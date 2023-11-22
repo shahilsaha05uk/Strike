@@ -147,6 +147,12 @@ bool AMP_HUD::WidgetReferenceCheck(UBaseWidget* &WidgetRef, EWidgetType WidgetTo
 
 }
 
+UPlayerHUD* AMP_HUD::OnPawnSpawn_Implementation()
+{
+	UPlayerHUD* tmpHUD = Cast<UPlayerHUD>(Execute_WidgetInitialiser(this, EWidgetType::PLAYER_HUD));
+
+	return tmpHUD;
+}
 
 #pragma region Team Methods
 

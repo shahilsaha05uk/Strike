@@ -17,7 +17,12 @@ ULAN_OnlineSubsystem::ULAN_OnlineSubsystem()
 
 	mOnDestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &ULAN_OnlineSubsystem::OnDestroySessionComplete);
 
-	mSessionInterface = Online::GetSessionInterface(GetWorld());
+
+	const UWorld* world = UObject::GetWorld(); 
+	if(Online::GetSubsystem(world))
+	{
+		mSessionInterface = Online::GetSessionInterface(world);
+	}
 }
 
 bool ULAN_OnlineSubsystem::TryTravelToCurrentSession()
@@ -42,7 +47,6 @@ bool ULAN_OnlineSubsystem::TryTravelToCurrentSession()
 
 	return true;
 }
-
 
 #pragma region Create Session
 

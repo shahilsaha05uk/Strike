@@ -5,13 +5,12 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
-#include "InterfaceClasses/InputsInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "InterfaceClasses/PlayerInterface.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlayerInputInterface, public IInputsInterface, public IPlayerInterface
+class MULTIPLAYERPROJECT_API APlayerCharacter : public ACharacter, public IPlayerInputInterface, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -82,8 +81,6 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
 	virtual void FlagSpawner_Implementation(AActor* FlagRef) override;
-	virtual void UpdateFocusedActor_Implementation(FInteractableDetails InteractableDetails) override;
-
 public:
 	
 	// When the player shoots

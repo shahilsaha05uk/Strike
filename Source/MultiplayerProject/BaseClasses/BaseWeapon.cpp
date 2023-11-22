@@ -71,7 +71,10 @@ void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* Prim
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UPlayerInterface::StaticClass()))
 	{
-		mUIComponent->SetVisibility(false);
+		if(mUIComponent)
+		{
+			mUIComponent->SetVisibility(false);
+		}
 	}
 }
 

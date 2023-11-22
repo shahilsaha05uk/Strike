@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseClasses/BaseHUD.h"
 #include "BaseClasses/BaseWidget.h"
 #include "DataAssetClasses/DA_CharacterMeshDetails.h"
+#include "GameFramework/HUD.h"
 #include "InterfaceClasses/HUDInterface.h"
 #include "MP_HUD.generated.h"
 
@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResumeGameSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeamChosenSignature, UDA_CharacterMeshDetails*, CharacterDetails);
 
 UCLASS()
-class MULTIPLAYERPROJECT_API AMP_HUD : public ABaseHUD, public IHUDInterface
+class MULTIPLAYERPROJECT_API AMP_HUD : public AHUD, public IHUDInterface
 {
 	GENERATED_BODY()
 
@@ -82,8 +82,6 @@ public:
 	virtual UBaseWidget* GetWidget_Implementation(EWidgetType WidgetToGet) override;
 	virtual void WidgetDestroyer_Implementation(EWidgetType WidgetToDestroy) override;
 	virtual UBaseWidget* WidgetInitialiser_Implementation(EWidgetType WidgetToSpawn) override;
-
 	
-
-
+	virtual UPlayerHUD* OnPawnSpawn_Implementation() override;
 };

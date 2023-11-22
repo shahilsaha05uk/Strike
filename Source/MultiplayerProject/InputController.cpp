@@ -9,6 +9,7 @@
 #include "DataAssetClasses/DA_InputData.h"
 #include "DataAssetClasses/DA_UIInputs.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameFramework/HUD.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "InterfaceClasses/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -183,6 +184,7 @@ void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails
 	}
 
 	mPlayerState->mPlayerDetails.CurrentMoney -= WeaponDetails.WeaponCost;
+	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
 
 // Input Action Methods

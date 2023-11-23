@@ -45,5 +45,8 @@ public:
 	void SetWeapon(class ABaseWeapon* Weapon);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateHealthBar(float Health);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool IsDead();
 };

@@ -57,6 +57,7 @@ APlayerCharacter::APlayerCharacter()
 	bIsDead = false;
 	//mHealth = 100.f;
 	//Damage.AddDynamic(this, &APlayerCharacter::OnDamageTaken);
+
 }
 
 void APlayerCharacter::BeginPlay()
@@ -257,12 +258,33 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 	mPrimaryWeapon = Weapon;
 }
 
+#pragma endregion 
+
 bool APlayerCharacter::IsDead_Implementation()
 {
 	return bIsDead;
 }
-#pragma endregion 
 
+
+void APlayerCharacter::UpdateHealthBar_Implementation(float Health)
+{
+	Server_UpdateHealthBar(Health);
+}
+
+void APlayerCharacter::Server_UpdateHealthBar_Implementation(float Health)
+{
+	Multicast_UpdateHealthBar(Health);
+}
+
+void APlayerCharacter::Multicast_UpdateHealthBar_Implementation(float Health)
+{
+	BlueprintMulticast_UpdateHealthBar(Health);
+}
+
+void APlayerCharacter::BlueprintMulticast_UpdateHealthBar_Implementation(float Health)
+{
+	
+}
 
 void APlayerCharacter::RefreshPawn_Implementation()
 {

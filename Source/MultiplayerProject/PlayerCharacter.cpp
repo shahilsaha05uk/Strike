@@ -231,6 +231,8 @@ void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDe
 	WeaponToSpawn->SetInstigator(this);
 
 	WeaponToSpawn->AttachWeaponToPlayer(this);
+
+	BlueprintServer_SpawnWeapon(WeaponToSpawn);
 	Execute_SetWeapon(this, WeaponToSpawn);
 }
 
@@ -265,6 +267,15 @@ bool APlayerCharacter::IsDead_Implementation()
 	return bIsDead;
 }
 
+void APlayerCharacter::Dead_Implementation(AController* InstigatedBy)
+{
+	Multicast_OnDead(InstigatedBy);
+}
+
+void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy)
+{
+	BlueprintMulticast_OnDead(InstigatedBy);
+}
 
 void APlayerCharacter::UpdateHealthBar_Implementation(float Health)
 {

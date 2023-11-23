@@ -24,7 +24,8 @@ enum EWidgetType
 	SHOP_MENU,
 	TEAM_MENU,
 	FIND_SERVER_MENU,
-	HOST_SERVER_MENU
+	HOST_SERVER_MENU,
+	SCOREBOARD
 };
 
 UENUM(Blueprintable, BlueprintType)

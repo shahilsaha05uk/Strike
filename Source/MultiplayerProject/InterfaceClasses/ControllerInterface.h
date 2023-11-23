@@ -37,7 +37,10 @@ public:
 	void UpdateScoreboard(int Value, ETeam Team);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-		void UpdatePlayerHealthUI(float Health);
+	void ShowScoreboard();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdatePlayerHealthUI(float Health);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHUD(FPlayerDetails PlayerDetails);
 };

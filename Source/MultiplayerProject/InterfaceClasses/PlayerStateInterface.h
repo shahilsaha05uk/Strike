@@ -30,4 +30,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FPlayerDetails GetPlayerDetails();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateKills();
+
 };

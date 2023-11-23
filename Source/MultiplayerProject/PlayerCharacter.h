@@ -76,6 +76,13 @@ public:
 	virtual ABaseWeapon* GetWeapon_Implementation() override;
 	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
 	virtual bool IsDead_Implementation() override;
+	virtual void Dead_Implementation(AController* InstigatedBy) override;
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void Multicast_OnDead(AController* InstigatedBy);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintMulticast_OnDead(AController* InstigatedBy);
 
 	virtual void UpdateHealthBar_Implementation(float Health) override;
 	

@@ -48,5 +48,7 @@ public:
 	void UpdateHealthBar(float Health);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Dead(AController* InstigatedBy);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool IsDead();
 };

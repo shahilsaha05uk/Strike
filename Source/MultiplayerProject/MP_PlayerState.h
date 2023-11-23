@@ -23,6 +23,8 @@ public:
 	FPlayerDetails mPlayerDetails;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
+	int Kills;
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	float Health;
 
 	AMP_PlayerState();
@@ -36,7 +38,10 @@ public:
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void UpdatePlayerUI(AActor* DamagedActor, float Damage);
+	void UpdatePlayerUI(AActor* DamagedActor, float HealthValue);
+	
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void UpdatePlayerOnDead(AController* InstigatedBy, AActor* DamagedActor);
 	
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -44,6 +49,7 @@ public:
 	
 	virtual void InitialisePlayerState_Implementation(ETeam Team) override;
 	virtual FPlayerDetails GetPlayerDetails_Implementation() override;
+	virtual void UpdateKills_Implementation() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

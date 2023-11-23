@@ -157,6 +157,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_PostPossessed();
 
+	virtual void ShowScoreboard_Implementation() override;
 
 	// Updating the Player Scoreboard
 	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;

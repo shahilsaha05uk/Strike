@@ -136,6 +136,11 @@ void AInputController::OnShooting_Implementation(int& AmmoValue)
 	
 }
 
+void AInputController::ShowScoreboard_Implementation()
+{
+	
+}
+
 void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)
 {
 	

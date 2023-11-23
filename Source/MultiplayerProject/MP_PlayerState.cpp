@@ -13,13 +13,13 @@
 AMP_PlayerState::AMP_PlayerState()
 {
 	bReplicates = true;
+	Kills = 0;
 }
 
 void AMP_PlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 	OnPawnSet.AddDynamic(this, &AMP_PlayerState::OnPawnPossessed);
-
 }
 
 void AMP_PlayerState::OnPawnPossessed_Implementation(APlayerState* Player, APawn* Pawn, APawn* OldPawn)
@@ -27,6 +27,7 @@ void AMP_PlayerState::OnPawnPossessed_Implementation(APlayerState* Player, APawn
 	if(Pawn != nullptr && UKismetSystemLibrary::DoesImplementInterface(Pawn, UPlayerInterface::StaticClass()))
 	{
 		Pawn->OnTakeAnyDamage.AddDynamic(this, &AMP_PlayerState::OnDamageTaken);
+		Health = 100.0f;
 	}
 }
 
@@ -43,37 +44,47 @@ void AMP_PlayerState::OnDamageTaken_Implementation(AActor* DamagedActor, float D
 
 		if(DamagedActorPlayerDetails.Team == InstigatorPlayerDetails.Team) return;
 
-		Health -= Damage;
+		Health = ((Health - Damage) <= 0)? 0.0f : (Health - Damage);
 
+		if(Health <= 0.0f)
+		{
+			UpdatePlayerUI(DamagedActor, Health);
+			UpdatePlayerOnDead(InstigatedBy, DamagedActor);
+			
+			return;
+		}
+		
 		UpdatePlayerUI(DamagedActor, Health);
 
+		IPlayerStateInterface::Execute_UpdateKills(InstigatedBy->PlayerState);
 	}
 }
 
-void AMP_PlayerState::UpdatePlayerUI_Implementation(AActor* DamagedActor, float Damage)
+void AMP_PlayerState::UpdatePlayerUI_Implementation(AActor* DamagedActor, float HealthValue)
 {
-	if(Health <= 0.0f)
+	//TODO: Call the Health Bar Update method from the Player
+	if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
 	{
-		if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor->GetOwner(), UPlayerInterface::StaticClass()))
-		{
-			//TODO: Call the Dead Method from the Damaged Actor
-		}
+		IPlayerInterface::Execute_UpdateHealthBar(DamagedActor, HealthValue);
 	}
-	else
-	{
-		//TODO: Call the Health Bar Update method from the Player
-		if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
-		{
-			IPlayerInterface::Execute_UpdateHealthBar(DamagedActor, Health);
-		}
 
-		//TODO: Call the HealthHUD update from the Controller
-		if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor->GetOwner(), UControllerInterface::StaticClass()))
-		{
-			IControllerInterface::Execute_UpdatePlayerHealthUI(DamagedActor->GetOwner(), Health);
-		}
+	//TODO: Call the HealthHUD update from the Controller
+	if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor->GetOwner(), UControllerInterface::StaticClass()))
+	{
+		IControllerInterface::Execute_UpdatePlayerHealthUI(DamagedActor->GetOwner(), HealthValue);
 	}
 }
+void AMP_PlayerState::UpdatePlayerOnDead_Implementation(AController* InstigatedBy, AActor* DamagedActor)
+{
+	
+	if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
+	{
+		//TODO: Call the Dead Method from the Damaged Actor
+		IPlayerInterface::Execute_Dead(DamagedActor, InstigatedBy);
+	}
+	return;
+}
+
 
 void AMP_PlayerState::BlueprintInitialisation_Implementation(ETeam Team)
 {
@@ -99,6 +110,11 @@ void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
 FPlayerDetails AMP_PlayerState::GetPlayerDetails_Implementation()
 {
 	return mPlayerDetails;
+}
+
+void AMP_PlayerState::UpdateKills_Implementation()
+{
+	Kills++;
 }
 
 void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

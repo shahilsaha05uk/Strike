@@ -88,7 +88,6 @@ void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
 	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
 	{
 		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, mWeaponDetails);
-		
 		this->Destroy();
 	}
 }

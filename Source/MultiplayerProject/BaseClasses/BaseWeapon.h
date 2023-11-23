@@ -79,6 +79,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	int Ammo;
 	
+	/*
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	bool bIsPickedUp;
+	
+	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float mInFirstDelay;
 
@@ -88,6 +93,7 @@ public:
 	virtual void BeginPlay() override;
 	
 public:
+	
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Init();

@@ -116,6 +116,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
 	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintServer_SpawnWeapon(ABaseWeapon* Weapon);
+	
 	// Interaction
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Interact();

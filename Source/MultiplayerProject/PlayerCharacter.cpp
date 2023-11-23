@@ -231,6 +231,8 @@ void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDe
 	WeaponToSpawn->SetInstigator(this);
 
 	WeaponToSpawn->AttachWeaponToPlayer(this);
+
+	BlueprintServer_SpawnWeapon(WeaponToSpawn);
 	Execute_SetWeapon(this, WeaponToSpawn);
 }
 

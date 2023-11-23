@@ -17,6 +17,7 @@ void AMP_PlayerState::BlueprintInitialisation_Implementation(ETeam Team)
 {
 }
 
+
 void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
 {
 	FMatchDetails MatchDetails;
@@ -42,4 +43,5 @@ void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AMP_PlayerState, mPlayerDetails);
+	DOREPLIFETIME(AMP_PlayerState, Health);
 }

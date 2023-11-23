@@ -54,7 +54,7 @@ APlayerCharacter::APlayerCharacter()
 
 	FlagSocket = "flagSocket";
 	bReplicates = true;
-
+	bIsDead = false;
 	//mHealth = 100.f;
 	//Damage.AddDynamic(this, &APlayerCharacter::OnDamageTaken);
 }
@@ -255,6 +255,11 @@ ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 {
 	mPrimaryWeapon = Weapon;
+}
+
+bool APlayerCharacter::IsDead_Implementation()
+{
+	return bIsDead;
 }
 #pragma endregion 
 

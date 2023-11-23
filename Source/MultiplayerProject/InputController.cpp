@@ -151,6 +151,10 @@ void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetai
 	}
 }
 
+void AInputController::UpdatePlayerHealthUI_Implementation(float Health)
+{
+}
+
 
 void AInputController::DropItem_Implementation()
 {

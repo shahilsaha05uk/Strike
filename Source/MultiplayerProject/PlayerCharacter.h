@@ -38,6 +38,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool bIsDead;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool bIsFiring;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	AActor* CollidedActor;
@@ -75,7 +77,7 @@ public:
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;
 	virtual ABaseWeapon* GetWeapon_Implementation() override;
 	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
-
+	virtual bool IsDead_Implementation() override;
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }

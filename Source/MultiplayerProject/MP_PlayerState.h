@@ -22,6 +22,12 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Player Properties")
 	FPlayerDetails mPlayerDetails;
 
+	UPROPERTY(ReplicatedUsing = OnRep_Health, BlueprintReadWrite, EditAnywhere)
+	float Health;
+	
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnRep_Health();
+
 	AMP_PlayerState();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

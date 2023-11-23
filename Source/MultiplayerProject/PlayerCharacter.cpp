@@ -74,8 +74,6 @@ void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* Primit
 	if(UKismetSystemLibrary::DoesImplementInterface(Actor, UInteractableInterface::StaticClass()))
 	{
 		CollidedActor = Actor;
-
-		UE_LOG(LogTemp, Warning, TEXT("Collision Actor Name: %s"), *CollidedActor->GetName());
 	}
 }
 void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)

@@ -124,6 +124,8 @@ void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPla
 	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
 
 	mUIComponent->DestroyComponent();
+
+	mCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Fire

@@ -43,4 +43,7 @@ public:
 	ABaseWeapon* GetWeapon();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetWeapon(class ABaseWeapon* Weapon);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool IsDead();
 };

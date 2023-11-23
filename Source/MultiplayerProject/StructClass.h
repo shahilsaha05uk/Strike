@@ -49,10 +49,6 @@ public:
 	int CurrentMoney;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ETeam> Team;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Score;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Health;
 };
 
 USTRUCT(Blueprintable, BlueprintType)

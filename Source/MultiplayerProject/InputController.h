@@ -161,5 +161,6 @@ public:
 	// Updating the Player Scoreboard
 	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;
 	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails);
+	virtual void UpdatePlayerHealthUI_Implementation(float Health);
 };
 

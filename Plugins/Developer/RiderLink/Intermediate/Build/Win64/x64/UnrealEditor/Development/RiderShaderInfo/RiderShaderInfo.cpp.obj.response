@@ -1,4 +1,4 @@
-C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Source\RiderShaderInfo\RiderShaderInfo.cpp
+"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Source\RiderShaderInfo\RiderShaderInfo.cpp"
 /I .
 /I Runtime\TraceLog\Public
 /I Runtime\Core\Public
@@ -7,17 +7,17 @@ C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\
 /I Runtime\Json\Public
 /I Runtime\RenderCore\Public
 /I Runtime\RHI\Public
-/I C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Source
+/I "G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Source"
 /external:W0
 /external:I ThirdParty\mimalloc\include
-/external:I "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.36.32532\INCLUDE"
-/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt"
-/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\shared"
-/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um"
-/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\winrt"
-/FI"C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\Definitions.h"
-/Fo"C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
-/sourceDependencies C:\Users\s015695k\Desktop\Year4_Multiplayer_Project\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.dep.json
+/external:I "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\INCLUDE"
+/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt"
+/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\shared"
+/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\um"
+/external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\winrt"
+/FI"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\Definitions.h"
+/Fo"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+/sourceDependencies "G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.dep.json"
 /Zc:inline
 /nologo
 /Oi

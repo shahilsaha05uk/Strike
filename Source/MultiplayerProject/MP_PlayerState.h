@@ -24,9 +24,21 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	float Health;
-	
+
 	AMP_PlayerState();
 
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnPawnPossessed(APlayerState* Player, APawn* Pawn, APawn* OldPawn);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void UpdatePlayerUI(AActor* DamagedActor, float Damage);
+	
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void BlueprintInitialisation(ETeam Team);
 	

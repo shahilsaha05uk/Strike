@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "InterfaceClasses/PlayerInterface.h"
@@ -44,9 +45,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	AActor* CollidedActor;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player Properties")
-	class UPlayerHUD* mPlayerHud;
-
 	virtual void RefreshPawn_Implementation() override;
 
 	virtual void BeginPlay() override;
@@ -78,6 +76,15 @@ public:
 	virtual ABaseWeapon* GetWeapon_Implementation() override;
 	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
 	virtual bool IsDead_Implementation() override;
+
+	virtual void UpdateHealthBar_Implementation(float Health) override;
+	
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_UpdateHealthBar(float Health);
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_UpdateHealthBar(float Health);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void BlueprintMulticast_UpdateHealthBar(float Health);
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }

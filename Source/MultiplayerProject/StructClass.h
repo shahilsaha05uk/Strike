@@ -44,7 +44,7 @@ struct FPlayerDetails
 public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FName PlayerName;
+	FText PlayerName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int CurrentMoney;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

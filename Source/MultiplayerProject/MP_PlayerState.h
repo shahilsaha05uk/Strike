@@ -40,9 +40,6 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void UpdatePlayerUI(AActor* DamagedActor, float HealthValue);
 	
-	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void UpdatePlayerOnDead(AController* InstigatedBy, AActor* DamagedActor);
-	
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void BlueprintInitialisation(ETeam Team);

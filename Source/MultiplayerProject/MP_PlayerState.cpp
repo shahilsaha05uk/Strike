@@ -49,8 +49,11 @@ void AMP_PlayerState::OnDamageTaken_Implementation(AActor* DamagedActor, float D
 		if(Health <= 0.0f)
 		{
 			UpdatePlayerUI(DamagedActor, Health);
-			UpdatePlayerOnDead(InstigatedBy, DamagedActor);
-			
+			if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
+			{
+				//TODO: Call the Dead Method from the Damaged Actor
+				IPlayerInterface::Execute_Dead(DamagedActor, InstigatedBy);
+			}			
 			return;
 		}
 		
@@ -74,22 +77,10 @@ void AMP_PlayerState::UpdatePlayerUI_Implementation(AActor* DamagedActor, float 
 		IControllerInterface::Execute_UpdatePlayerHealthUI(DamagedActor->GetOwner(), HealthValue);
 	}
 }
-void AMP_PlayerState::UpdatePlayerOnDead_Implementation(AController* InstigatedBy, AActor* DamagedActor)
-{
-	
-	if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
-	{
-		//TODO: Call the Dead Method from the Damaged Actor
-		IPlayerInterface::Execute_Dead(DamagedActor, InstigatedBy);
-	}
-	return;
-}
-
 
 void AMP_PlayerState::BlueprintInitialisation_Implementation(ETeam Team)
 {
 }
-
 
 void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
 {

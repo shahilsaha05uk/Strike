@@ -78,26 +78,6 @@ void AMP_PlayerState::UpdatePlayerUI_Implementation(AActor* DamagedActor, float 
 	}
 }
 
-void AMP_PlayerState::BlueprintInitialisation_Implementation(ETeam Team)
-{
-}
-
-void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
-{
-	FMatchDetails MatchDetails;
-	UGameInstance* Instance = GetGameInstance();
-	if(UKismetSystemLibrary::DoesImplementInterface(Instance, UGameInstance::StaticClass()))
-	{
-		MatchDetails = IGameInstanceInterface::Execute_GetMatchDetails(Instance);
-	}
-
-	mPlayerDetails.Team = Team;
-	mPlayerDetails.CurrentMoney = (Team == TERRORIST)? 1000: 2000;
-
-	BlueprintInitialisation(Team);
-}
-
-
 FPlayerDetails AMP_PlayerState::GetPlayerDetails_Implementation()
 {
 	return mPlayerDetails;
@@ -114,4 +94,51 @@ void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AMP_PlayerState, mPlayerDetails);
 	DOREPLIFETIME(AMP_PlayerState, Health);
 }
+
+// Initialisation of the Player State
+
+/*
+ * the InitialisePlayerState_Implementation() method is called from the Controller On a multicast
+ * 
+ */
+
+void AMP_PlayerState::Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+
+}
+
+/*
+void AMP_PlayerState::Server_Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+	BlueprintServer_Initialise(CharacterDetails);
+}
+
+void AMP_PlayerState::Multicast_Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+	BlueprintMulticast_Initialise(CharacterDetails);
+}
+
+void AMP_PlayerState::Client_Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+	BlueprintClient_Initialise(CharacterDetails);
+}
+*/
+
+
+/*
+void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
+{
+	FMatchDetails MatchDetails;
+	UGameInstance* Instance = GetGameInstance();
+	if(UKismetSystemLibrary::DoesImplementInterface(Instance, UGameInstance::StaticClass()))
+	{
+		MatchDetails = IGameInstanceInterface::Execute_GetMatchDetails(Instance);
+	}
+
+	mPlayerDetails.Team = Team;
+	mPlayerDetails.CurrentMoney = MatchDetails.StartingMoney;
+
+	BlueprintInitialisation(Team);
+}
+*/
 

@@ -26,7 +26,7 @@ class MULTIPLAYERPROJECT_API IPlayerStateInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void InitialisePlayerState(ETeam Team);
+	void Initialise(UDA_CharacterMeshDetails* CharacterDetails);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FPlayerDetails GetPlayerDetails();

@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerProject/EnumClass.h"
 #include "MultiplayerProject/StructClass.h"
 #include "UObject/Interface.h"
-#include "GameInstanceInterface.generated.h"
+#include "PlayerHUDInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UGameInstanceInterface : public UInterface
+class UPlayerHUDInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +18,7 @@ class UGameInstanceInterface : public UInterface
 /**
  * 
  */
-class MULTIPLAYERPROJECT_API IGameInstanceInterface
+class MULTIPLAYERPROJECT_API IPlayerHUDInterface
 {
 	GENERATED_BODY()
 
@@ -25,17 +26,16 @@ class MULTIPLAYERPROJECT_API IGameInstanceInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FMatchDetails GetMatchDetails();
-
+	void UpdateHUD(FPlayerDetails PlayerDetails);
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetMatchDetails(FMatchDetails MatchDetails);
-
-	/*
+	void UpdateScore(int Score, ETeam Team);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FPlayerDetails GetPlayerDetails();
-
+	void UpdateHealth(float Value);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetPlayerDetails(FPlayerDetails PlayerDetails);
+	void UpdateMoney(int Value);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateAmmo(int Value);
+	
 
-*/
 };

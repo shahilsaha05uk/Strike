@@ -44,6 +44,8 @@ public:
 	bool bIsFiring;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	AActor* CollidedActor;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	AActor* mFlagRef;
 
 	virtual void RefreshPawn_Implementation() override;
 
@@ -77,21 +79,13 @@ public:
 	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
 	virtual bool IsDead_Implementation() override;
 	virtual void Dead_Implementation(AController* InstigatedBy) override;
-
+	
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_OnDead(AController* InstigatedBy);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_OnDead(AController* InstigatedBy);
 
-	virtual void UpdateHealthBar_Implementation(float Health) override;
-	
-	UFUNCTION(Server, Unreliable, BlueprintCallable)
-	void Server_UpdateHealthBar(float Health);
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
-	void Multicast_UpdateHealthBar(float Health);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void BlueprintMulticast_UpdateHealthBar(float Health);
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
@@ -124,4 +118,25 @@ public:
 	void Server_Interact();
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Client_Interact();
+
+	// Updating Overhead UI
+	virtual void UpdateHealthBar_Implementation(float Health) override;
+
+	UFUNCTION(Server, Unreliable, BlueprintCallable)
+	void Server_UpdateHealthBar(float Health);
+	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
+	void Multicast_UpdateHealthBar(float Health);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void BlueprintMulticast_UpdateHealthBar(float Health);
+	
+
+
+	// Flag Interaction
+	UFUNCTION(Server, Reliable)
+	void Server_DropFlag();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DropFlag();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintMulticast_DropFlag();
 };

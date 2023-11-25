@@ -28,7 +28,10 @@ void AMP_PlayerState::OnPawnPossessed_Implementation(APlayerState* Player, APawn
 	{
 		Pawn->OnTakeAnyDamage.AddDynamic(this, &AMP_PlayerState::OnDamageTaken);
 		Health = 100.0f;
+		
 	}
+
+	
 }
 
 void AMP_PlayerState::OnDamageTaken_Implementation(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
@@ -94,6 +97,7 @@ void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AMP_PlayerState, mPlayerDetails);
 	DOREPLIFETIME(AMP_PlayerState, Health);
 }
+
 
 // Initialisation of the Player State
 

@@ -51,4 +51,5 @@ public:
 	void Dead(AController* InstigatedBy);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool IsDead();
+
 };

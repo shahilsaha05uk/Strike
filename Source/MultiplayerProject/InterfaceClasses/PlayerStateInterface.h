@@ -33,5 +33,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateKills();
-
 };

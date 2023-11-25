@@ -35,7 +35,8 @@ void AInputController::BeginPlay()
 // On Possess
 void AInputController::OnPossess(APawn* InPawn)
 {
-	Client_PostPossessed();
+	FPlayerDetails PlayerDetails = IPlayerStateInterface::Execute_GetPlayerDetails(PlayerState);
+	Client_PostPossessed(PlayerDetails);
 	Super::OnPossess(InPawn);
 }
 
@@ -346,14 +347,14 @@ void AInputController::Server_SpawnPawn_Implementation(UDA_CharacterMeshDetails*
 	//BlueprintServer_SpawnPawn(CharacterDetails, playerStart);
 }
 
-void AInputController::Client_PostPossessed_Implementation()
+void AInputController::Client_PostPossessed_Implementation(FPlayerDetails PlayerDetails)
 {
 	mPlayerState = Cast<AMP_PlayerState>(PlayerState);
 
 	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
 	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
 
-	BlueprintClient_PostPossessed();
+	BlueprintClient_PostPossessed(PlayerDetails);
 }
 
 #pragma endregion

@@ -162,10 +162,10 @@ public:
 
 // After the player is possessed
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_PostPossessed();
+	void Client_PostPossessed(FPlayerDetails PlayerDetails);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_PostPossessed();
+	void BlueprintClient_PostPossessed(FPlayerDetails PlayerDetails);
 
 	virtual void ShowScoreboard_Implementation(FPlayerDetails PlayerDetails) override;
 

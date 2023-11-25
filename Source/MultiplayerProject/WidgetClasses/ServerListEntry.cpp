@@ -3,6 +3,7 @@
 
 #include "ServerListEntry.h"
 
+#include "GameFramework/GameStateBase.h"
 #include "MultiplayerProject/SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UServerListEntry::NativeConstruct()
@@ -20,8 +21,13 @@ void UServerListEntry::OnJoin_Implementation()
 void UServerListEntry::UpdateEntry(FSessionDetails SessionDetails)
 {
 	txtServerName->SetText(FText::FromString(SessionDetails.SessionName));
-	
-	txtPlayerCount->SetText(FText::Format(FText::FromString(TEXT("{0} / {0}")), FText::AsNumber(SessionDetails.CurrentNumberOfPlayers), FText::AsNumber(SessionDetails.MaxPlayers)));
+
+			
+	if(const AGameStateBase* GameState = GetWorld()->GetGameState())
+	{
+		const int CurrentPlayers = SessionDetails.MaxPlayers - GameState->PlayerArray.Num();
+		txtPlayerCount->SetText(FText::Format(FText::FromString(TEXT("{0} / {0}")), FText::AsNumber(CurrentPlayers), FText::AsNumber(SessionDetails.MaxPlayers)));
+	}
 
 	txtLatency->SetText(FText::Format(FText::FromString(TEXT("{0} ms")), FText::AsNumber(SessionDetails.Latency)));
 }

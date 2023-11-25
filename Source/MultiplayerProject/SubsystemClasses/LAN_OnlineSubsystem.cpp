@@ -4,6 +4,7 @@
 #include "LAN_OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemUtils.h"
+#include "GameFramework/GameStateBase.h"
 
 ULAN_OnlineSubsystem::ULAN_OnlineSubsystem()
 {
@@ -113,6 +114,8 @@ void ULAN_OnlineSubsystem::FindSessions(int32 MaxSearchResults)
 {
 	if(mSessionInterface)
 	{
+		mSessionInterface->CancelFindSessions();
+		
 		mFindSessionsCompleteDelegateHandle = mSessionInterface->AddOnFindSessionsCompleteDelegate_Handle(mOnFindSessionsCompleteDelegate);
 
 		mLastSessionSearch = MakeShareable(new FOnlineSessionSearch());;
@@ -150,10 +153,10 @@ void ULAN_OnlineSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 		FSessionDetails detail;
 		detail.Result = s;
 		detail.SessionID = s.GetSessionIdStr();
-		detail.SessionName = s.Session.OwningUserName;
+		detail.SessionName = FPlatformProcess::ComputerName();
 		detail.Latency = s.PingInMs;
-		detail.MaxPlayers = s.Session.NumOpenPublicConnections + s.Session.NumOpenPrivateConnections;
-		detail.CurrentNumberOfPlayers = s.Session.NumOpenPublicConnections - s.Session.SessionSettings.NumPublicConnections;
+		detail.MaxPlayers = s.Session.SessionSettings.NumPublicConnections;
+
 		SessionDetails.Add(detail);
 	}
 	

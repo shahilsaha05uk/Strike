@@ -11,6 +11,7 @@
 #include "InputController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSpawnWeaponSignature, FWeaponDetails, WeaponDetails);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPawnDeadSignature, AController*, InstigatorController);
 
 UCLASS()
 class MULTIPLAYERPROJECT_API AInputController : public APlayerController, public IControllerInterface
@@ -37,15 +38,25 @@ public:
 	class UDA_UIInputs* UIInputs;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	APawn* mPlayerRef;
+	APlayerCharacter* mPlayerRef;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AMP_PlayerState* mPlayerState;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	bool bHasRestarted;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	AHUD* mHudRef;
+
 	UPROPERTY(BlueprintReadWrite, BlueprintCallable, BlueprintAssignable, Category = "References")
 	FSpawnWeaponSignature SpawnWeaponSignature;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category = "References")
+	FOnPawnDeadSignature OnPawnDeadSignature;
+
+	UPROPERTY(BlueprintReadWrite, Category = "References")
+	UDA_CharacterMeshDetails* CharacterMeshDetails;;
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -86,7 +97,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
 
-	virtual void RestartPlayer_Implementation() override;
 #pragma endregion
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -150,18 +160,38 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintServer_SpawnPawn(UDA_CharacterMeshDetails* CharacterDetails, const FTransform& FindStartTransform);
 
-	// After the player is possessed
+// After the player is possessed
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_PostPossessed();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_PostPossessed();
 
-	virtual void ShowScoreboard_Implementation() override;
+	virtual void ShowScoreboard_Implementation(FPlayerDetails PlayerDetails) override;
 
-	// Updating the Player Scoreboard
+// Updating the Player Scoreboard
 	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;
 	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails);
 	virtual void UpdatePlayerHealthUI_Implementation(float Health);
+
+
+// When the player Dies
+
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnPlayerDead(AController* InstigatorController);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void RequestNewPlayer();
+	
+	virtual void RestartPlayer_Implementation() override;
+
+// Ask the Game Mode to take a game decision when the player Dies
+
+	UFUNCTION(Server, Reliable)
+	void Server_RequestGameModeDecision(AController* InstigatorController);
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintServer_RequestGameModeDecision(AController* InstigatorController);
 };
 

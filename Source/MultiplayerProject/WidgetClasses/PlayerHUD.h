@@ -6,13 +6,14 @@
 #include "Components/TextBlock.h"
 #include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
+#include "MultiplayerProject/InterfaceClasses/PlayerHUDInterface.h"
 #include "PlayerHUD.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MULTIPLAYERPROJECT_API UPlayerHUD : public UBaseWidget
+class MULTIPLAYERPROJECT_API UPlayerHUD : public UBaseWidget, public IPlayerHUDInterface
 {
 	GENERATED_BODY()
 
@@ -37,16 +38,9 @@ public:
 	FMatchDetails mMatchDetails;
 
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateHUD(FPlayerDetails PlayerDetails);
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateScore(int Score, ETeam Team);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateHealth(float Value);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateMoney(int Value);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateAmmo(int Value);
-	
+	virtual void UpdateHUD_Implementation(FPlayerDetails PlayerDetails) override;
+	virtual void UpdateAmmo_Implementation(int Value) override;
+	virtual void UpdateHealth_Implementation(float Value) override;
+	virtual void UpdateMoney_Implementation(int Value) override;
+	virtual void UpdateScore_Implementation(int Score, ETeam Team) override;
 };

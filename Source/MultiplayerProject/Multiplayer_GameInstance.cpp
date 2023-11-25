@@ -5,6 +5,7 @@
 
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystem.h"
+#include "Net/UnrealNetwork.h"
 #include "SubsystemClasses/LAN_OnlineSubsystem.h"
 
 void UMultiplayer_GameInstance::Init()
@@ -19,16 +20,6 @@ void UMultiplayer_GameInstance::Init()
 		mMultiplayerSessionsSubsystem->mMultiplayerOnJoinSessionComplete.AddUObject(this,  &ThisClass::OnJoinSession);
 		mMultiplayerSessionsSubsystem->mMultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 		mMultiplayerSessionsSubsystem->mMultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	}
-}
-
-FMatchDetails UMultiplayer_GameInstance::GetMatchDetails_Implementation()
-{
-	return mMatchDetails;
-}
-
-void UMultiplayer_GameInstance::SetSessionDetails_Implementation(FMatchDetails MatchDetails)
-{
-	mMatchDetails = MatchDetails;
 }
 
 void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)
@@ -93,4 +84,17 @@ FString UMultiplayer_GameInstance::GetLevelPath(TSoftObjectPtr<UWorld> Map, bool
 		path.Append("?listen");
 	}
 	return path;
+}
+
+
+// Getters and Setters
+
+FMatchDetails UMultiplayer_GameInstance::GetMatchDetails_Implementation()
+{
+	return mMatchDetails;
+}
+
+void UMultiplayer_GameInstance::SetSessionDetails_Implementation(FMatchDetails MatchDetails)
+{
+	mMatchDetails = MatchDetails;
 }

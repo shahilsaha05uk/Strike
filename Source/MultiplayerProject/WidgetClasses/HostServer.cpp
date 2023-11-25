@@ -21,11 +21,12 @@ void UHostServer::NativeConstruct()
 
 void UHostServer::OnHost_Implementation()
 {
+	
 	mMatchDetails.MaxPlayers = MaxPlayerEntry->FieldValue;
 	
 	mMatchDetails.StartingMoney = StartingMoneyEntry->FieldValue;
 
-	Cast<UMultiplayer_GameInstance>(GetGameInstance())->SetSessionDetails(mMatchDetails);
-	
+	IGameInstanceInterface::Execute_SetMatchDetails(GetGameInstance(), mMatchDetails);
+
 	mMultiplayerSubsystem->CreateSession(mMatchDetails.MaxPlayers, "CaptureTheFlag");
 }

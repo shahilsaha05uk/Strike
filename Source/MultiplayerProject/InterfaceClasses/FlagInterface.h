@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MultiplayerProject/StructClass.h"
+#include "MultiplayerProject/EnumClass.h"
 #include "UObject/Interface.h"
-#include "GameInstanceInterface.generated.h"
+#include "FlagInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UGameInstanceInterface : public UInterface
+class UFlagInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +17,7 @@ class UGameInstanceInterface : public UInterface
 /**
  * 
  */
-class MULTIPLAYERPROJECT_API IGameInstanceInterface
+class MULTIPLAYERPROJECT_API IFlagInterface
 {
 	GENERATED_BODY()
 
@@ -25,17 +25,13 @@ class MULTIPLAYERPROJECT_API IGameInstanceInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FMatchDetails GetMatchDetails();
-
+	void OnDropped();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetMatchDetails(FMatchDetails MatchDetails);
-
-	/*
+	void OnPickedUp(APlayerState* PlayerState);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FPlayerDetails GetPlayerDetails();
+	ETeam GetFlagTeam();
 
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetPlayerDetails(FPlayerDetails PlayerDetails);
-
-*/
+	void ResetFlag();
 };

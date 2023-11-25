@@ -12,7 +12,9 @@
 #include "Components/WidgetComponent.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "InterfaceClasses/FlagInterface.h"
 #include "InterfaceClasses/PlayerStateInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -159,16 +161,7 @@ void APlayerCharacter::Interact_Implementation()
 	Server_Interact();
 }
 
-void APlayerCharacter::DropItem_Implementation()
-{
-	
-}
 
-void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
-{
-
-	
-}
 
 #pragma region When the player Interacts
 
@@ -275,6 +268,15 @@ void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy
 	BlueprintMulticast_OnDead(InstigatedBy);
 }
 
+
+void APlayerCharacter::RefreshPawn_Implementation()
+{
+	
+}
+
+
+// Updating the health Bar
+
 void APlayerCharacter::UpdateHealthBar_Implementation(float Health)
 {
 	Server_UpdateHealthBar(Health);
@@ -295,8 +297,49 @@ void APlayerCharacter::BlueprintMulticast_UpdateHealthBar_Implementation(float H
 	
 }
 
-void APlayerCharacter::RefreshPawn_Implementation()
+// Interaction with the flag
+
+void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
 {
+	if(!UKismetSystemLibrary::DoesImplementInterface(FlagRef, UFlagInterface::StaticClass())) return;
 	
+	ETeam FlagTeam = IFlagInterface::Execute_GetFlagTeam(FlagRef);
+
+	AController* C = GetController();
+	if(C != nullptr)
+	{
+		APlayerState* pState = C->PlayerState;
+		FPlayerDetails PlayerDetails = IPlayerStateInterface::Execute_GetPlayerDetails(pState);
+
+		if(PlayerDetails.Team == FlagTeam)
+		{
+			mFlagRef = FlagRef;
+
+			IFlagInterface::Execute_OnPickedUp(mFlagRef, C->PlayerState);
+
+			FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+			mFlagRef->AttachToComponent(GetMesh(), rules);
+		}
+		else
+		{
+			IFlagInterface::Execute_ResetFlag(mFlagRef);
+		}
+	}
 }
 
+void APlayerCharacter::DropItem_Implementation()
+{
+	Server_DropFlag();
+}
+
+void APlayerCharacter::Server_DropFlag_Implementation()
+{
+	Multicast_DropFlag();
+}
+
+void APlayerCharacter::Multicast_DropFlag_Implementation()
+{
+	BlueprintMulticast_DropFlag();
+}
+
+// On Session Ends Methods

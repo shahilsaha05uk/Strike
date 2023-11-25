@@ -21,17 +21,11 @@ public:
 	int32 StartingMoney;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 TotalRounds;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bBotsAllowed;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsLanMatch;
 
 	FMatchDetails()
 	: MaxPlayers(4)
 	, StartingMoney(1000)
 	, TotalRounds(10)
-	, bBotsAllowed(false)
-	, bIsLanMatch(false)
 	{}
 	
 };
@@ -42,13 +36,16 @@ struct FPlayerDetails
 	GENERATED_BODY()
 
 public:
-	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText PlayerName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int CurrentMoney;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ETeam> Team;
+
+	// Combat Properties
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Kills;
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -150,37 +147,6 @@ public:
 	{
 	}
 };
-
-/*
-USTRUCT(Blueprintable, BlueprintType)
-struct FFlagDetails
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TEnumAsByte<ETeam> FlagTeam;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TEnumAsByte<ETeam> FlagBaseTeam;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TEnumAsByte<EFlagStatus> FlagStatus;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class AFlagBase* FlagBaseRef;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UStaticMeshComponent* FlagMeshRef;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class AActor* OwningActor;
-
-	FFlagDetails(): FlagTeam(NONE), FlagBaseTeam(), FlagStatus(), FlagBaseRef(nullptr), FlagMeshRef(nullptr),
-	                OwningActor(nullptr)
-	{
-	}
-};
-*/
 
 
 UCLASS()

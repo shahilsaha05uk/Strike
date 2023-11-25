@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MP_PlayerState.h"
+#include "PlayerCharacter.h"
 #include "DataAssetClasses/DA_InputData.h"
 #include "DataAssetClasses/DA_UIInputs.h"
 #include "GameFramework/GameModeBase.h"
@@ -28,24 +29,6 @@ void AInputController::BeginPlay()
 	Super::BeginPlay();
 
 	OnSpawn();
-}
-
-void AInputController::PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
-{
-	Server_PawnSetup(CharacterDetails);
-	SpawnPawn(CharacterDetails);
-}
-
-void AInputController::Server_PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
-{
-	BlueprintServer_PawnSetup(CharacterDetails);
-	
-	Multicast_PawnSetup(CharacterDetails);
-}
-
-void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
-{
-	BlueprintMulticast_PawnSetup(CharacterDetails);
 }
 
 // Initialises the Controller when it spawns
@@ -126,22 +109,7 @@ void AInputController::SetPlayerTeam_Implementation(ETeam Team)
 	mPlayerTeam = Team;
 }
 
-void AInputController::RestartPlayer_Implementation()
-{
-	
-}
-
 void AInputController::OnShooting_Implementation(int& AmmoValue)
-{
-	
-}
-
-void AInputController::ShowScoreboard_Implementation()
-{
-	
-}
-
-void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)
 {
 	
 }
@@ -152,34 +120,16 @@ void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetai
 	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
 	{
 		UPlayerHUD* PlayerHUD = Cast<UPlayerHUD>(IHUDInterface::Execute_GetWidget(hud, EWidgetType::PLAYER_HUD));
-		PlayerHUD->UpdateMoney(PlayerDetails.CurrentMoney);
+
+		IPlayerHUDInterface::Execute_UpdateMoney(PlayerHUD, PlayerDetails.CurrentMoney);
 	}
 }
 
 void AInputController::UpdatePlayerHealthUI_Implementation(float Health)
 {
-}
+	UBaseWidget* pHUD = IHUDInterface::Execute_GetWidget(GetHUD(), EWidgetType::PLAYER_HUD);
 
-
-void AInputController::DropItem_Implementation()
-{
-	APawn* pawn = GetPawn();
-
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
-	{
-		IPlayerInputInterface::Execute_DropItem(pawn);
-	}
-
-}
-
-void AInputController::Interact_Implementation()
-{
-	APawn* pawn = GetPawn();
-
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
-	{
-		IPlayerInputInterface::Execute_Interact(pawn);
-	}
+	IPlayerHUDInterface::Execute_UpdateHealth(pHUD, Health);
 }
 
 
@@ -280,6 +230,27 @@ void AInputController::StopShooting_Implementation()
 	}
 }
 
+void AInputController::DropItem_Implementation()
+{
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_DropItem(pawn);
+	}
+
+}
+
+void AInputController::Interact_Implementation()
+{
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_Interact(pawn);
+	}
+}
+
 #pragma endregion
 
 #pragma region UI Action Methods
@@ -311,8 +282,7 @@ void AInputController::OpenShop_Implementation()
 #pragma endregion
 
 
-// Controller Management Methods
-
+// After the Controller Has spawned
 #pragma region On Controller Spawn
 
 void AInputController::OnSpawn()
@@ -327,11 +297,27 @@ void AInputController::Server_OnSpawn_Implementation()
 
 void AInputController::Client_OnSpawn_Implementation()
 {
-	BlueprintClient_OnSpawn();
+	AHUD* Hud = GetHUD();
+
+	if(Hud != nullptr)
+	{
+		mHudRef = Hud;
+
+		if(UKismetSystemLibrary::DoesImplementInterface(mHudRef, UHUDInterface::StaticClass()))
+		{
+			UBaseWidget* teamWidget = IHUDInterface::Execute_WidgetInitialiser(mHudRef, TEAM_MENU);
+			teamWidget->ControllerRef = this;
+
+			teamWidget->AddToViewport();
+		}
+	}
+	
+	//BlueprintClient_OnSpawn();
 }
 
 #pragma endregion
 
+// Spawning the Player
 #pragma region Spawning the Player
 
 // Spawns the Pawn and possess it
@@ -342,11 +328,22 @@ void AInputController::SpawnPawn(UDA_CharacterMeshDetails* CharacterDetails)
 
 void AInputController::Server_SpawnPawn_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
 {
+	CharacterMeshDetails = CharacterDetails;
+
 	AGameModeBase* gameMode = UGameplayStatics::GetGameMode(GetWorld());
 	const TSubclassOf<APawn> pawnClass = gameMode->DefaultPawnClass;
 	const FTransform playerStart = gameMode->FindPlayerStart(this)->GetActorTransform();
 
-	BlueprintServer_SpawnPawn(CharacterDetails, playerStart);
+	FActorSpawnParameters PawnSpawnParams;
+	PawnSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
+	
+	mPlayerRef = GetWorld()->SpawnActor<APlayerCharacter>(CharacterMeshDetails->PlayerActor, playerStart, PawnSpawnParams);
+	
+	Possess(mPlayerRef);
+	
+	OnPawnDeadSignature.AddDynamic(this, &ThisClass::OnPlayerDead);
+
+	//BlueprintServer_SpawnPawn(CharacterDetails, playerStart);
 }
 
 void AInputController::Client_PostPossessed_Implementation()
@@ -360,3 +357,80 @@ void AInputController::Client_PostPossessed_Implementation()
 }
 
 #pragma endregion
+
+// Before the Pawn has Spawned
+
+void AInputController::PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+	if(UKismetSystemLibrary::DoesImplementInterface(PlayerState, UPlayerStateInterface::StaticClass()))
+	{
+		IPlayerStateInterface::Execute_Initialise(PlayerState, CharacterDetails);
+		Execute_SetPlayerTeam(this, CharacterDetails->PlayerTeam);
+	}
+	
+	Server_PawnSetup(CharacterDetails);
+	SpawnPawn(CharacterDetails);
+}
+
+void AInputController::Server_PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+	BlueprintServer_PawnSetup(CharacterDetails);
+	
+	Multicast_PawnSetup(CharacterDetails);
+}
+
+void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+{
+	Execute_SetPlayerTeam(this, CharacterDetails->PlayerTeam);
+
+	BlueprintMulticast_PawnSetup(CharacterDetails);
+}
+
+
+// Show Scoreboard
+
+void AInputController::ShowScoreboard_Implementation(FPlayerDetails PlayerDetails)
+{
+	
+}
+
+void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)
+{
+	
+}
+
+
+// When the player Dies
+
+void AInputController::OnPlayerDead_Implementation(AController* InstigatorController)
+{
+	OnPawnDeadSignature.RemoveDynamic(this, &ThisClass::OnPlayerDead);
+
+	Server_RequestGameModeDecision(InstigatorController);
+
+	UnPossess();
+
+
+	mPlayerRef->Destroy();
+
+
+	FTimerHandle TimeHandler;
+	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &AInputController::RequestNewPlayer, 3.0f, false, 0.0f);
+}
+
+void AInputController::RequestNewPlayer_Implementation()
+{
+	
+}
+
+void AInputController::Server_RequestGameModeDecision_Implementation(AController* InstigatorController)
+{
+	BlueprintServer_RequestGameModeDecision(InstigatorController);
+}
+
+void AInputController::RestartPlayer_Implementation()
+{
+	bHasRestarted = true;
+	
+	Execute_PawnSetup(this, CharacterMeshDetails);
+}

@@ -34,13 +34,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	FMatchDetails mMatchDetails;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FPlayerDetails mPlayerDetails;
+	
 	virtual void Init() override;
 
 	virtual FMatchDetails GetMatchDetails_Implementation() override;
+	virtual void SetSessionDetails_Implementation(FMatchDetails MatchDetails);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetSessionDetails(FMatchDetails MatchDetails);
-	
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);
 

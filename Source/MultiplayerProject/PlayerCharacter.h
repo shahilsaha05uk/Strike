@@ -44,7 +44,7 @@ public:
 	bool bIsFiring;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	AActor* CollidedActor;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AActor* mFlagRef;
 
 	virtual void RefreshPawn_Implementation() override;
@@ -72,27 +72,33 @@ public:
 	virtual void DropItem_Implementation() override;
 
 	// Player Interface
-	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
 	virtual UCameraComponent* GetFollowCamera_Implementation() override;
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;
-	virtual ABaseWeapon* GetWeapon_Implementation() override;
-	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
-	virtual bool IsDead_Implementation() override;
-	virtual void Dead_Implementation(AController* InstigatedBy) override;
-	
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_OnDead(AController* InstigatedBy);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_OnDead(AController* InstigatedBy);
-
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
 	virtual void FlagSpawner_Implementation(AActor* FlagRef) override;
 public:
+
+	// Weapon Related methods
+	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
+	virtual ABaseWeapon* GetWeapon_Implementation() override;
+	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
 	
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintServer_SpawnWeapon(ABaseWeapon* Weapon);
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
+	
+
 	// When the player shoots
 	UFUNCTION(Server, Unreliable, BlueprintCallable)
 	void Server_Shoot();
@@ -105,13 +111,6 @@ public:
 
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_StopShoot();
-	
-	// When the player buys a weapon
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
-	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_SpawnWeapon(ABaseWeapon* Weapon);
 	
 	// Interaction
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -129,7 +128,18 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void BlueprintMulticast_UpdateHealthBar(float Health);
 	
+	// When the player dies
+	virtual bool IsDead_Implementation() override;
+	virtual void Dead_Implementation(AController* InstigatedBy) override;
+	
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void Multicast_OnDead(AController* InstigatedBy);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintMulticast_OnDead(AController* InstigatedBy);
+
+	UFUNCTION(BlueprintCallable)
+	void OnDeadTimerFinished(AController* InstigatedBy);
 
 	// Flag Interaction
 	UFUNCTION(Server, Reliable)
@@ -139,4 +149,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_DropFlag();
+
+	// On Session End
+
+	virtual void OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore) override;
 };

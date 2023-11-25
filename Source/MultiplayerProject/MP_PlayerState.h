@@ -67,5 +67,7 @@ public:
 	virtual FPlayerDetails GetPlayerDetails_Implementation() override;
 	virtual void UpdateKills_Implementation() override;
 
+	virtual void OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore) override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

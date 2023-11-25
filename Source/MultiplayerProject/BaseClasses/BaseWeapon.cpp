@@ -98,14 +98,16 @@ void ABaseWeapon::PlayWeaponSound_Implementation()
 }
 
 // Attaching the weapon
-void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer, FWeaponDetails WeaponDetails)
 {
-	Server_AttachWeaponToPlayer(OwnerPlayer);
+	mWeaponDetails = WeaponDetails;
+	
+	Server_AttachWeaponToPlayer(OwnerPlayer, WeaponDetails);
 }
 
-void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer, FWeaponDetails WeaponDetails)
 {
-	Multicast_AttachWeaponToPlayer(OwnerPlayer);
+	Multicast_AttachWeaponToPlayer(OwnerPlayer, WeaponDetails);
 
 	mCollisionComponent->SetVisibility(false);
 	mCollisionComponent->SetGenerateOverlapEvents(false);
@@ -113,7 +115,7 @@ void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer
 
 }
 
-void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
+void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer, FWeaponDetails WeaponDetails)
 {
 	mOwnerRef = OwnerPlayer;
 
@@ -133,7 +135,7 @@ void ABaseWeapon::Fire_Implementation()
 {	
 	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mBulletSpeed, true, mInFirstDelay);
 
-	Ammo--;
+	mWeaponDetails.TotalBullets--;
 	OnShootingSignature.Broadcast(Ammo);
 }
 

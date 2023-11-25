@@ -24,7 +24,7 @@ public:
 	class UButton* CloseButton;
 	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
-	class UEntryWidget1* MaxPlayerEntry; 
+	class UEntryWidget1* TargetScoreEntry; 
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere, Category = "Widgets")
 	class UEntryWidget1* StartingMoneyEntry; 

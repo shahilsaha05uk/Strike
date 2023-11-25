@@ -16,16 +16,13 @@ struct FMatchDetails
 public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 MaxPlayers;
+	int32 TargetScore;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 StartingMoney;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 TotalRounds;
 
 	FMatchDetails()
-	: MaxPlayers(4)
-	, StartingMoney(1000)
-	, TotalRounds(10)
+	: TargetScore(0)
+	, StartingMoney(200)
 	{}
 	
 };
@@ -99,6 +96,8 @@ public:
 	int WeaponCost;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int TotalBullets;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float WeaponDamage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -107,7 +106,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponAsset;
 
-	FWeaponDetails(): WeaponCost(0), WeaponDamage(0), WeaponImage(nullptr)
+	FWeaponDetails(): WeaponCost(0), TotalBullets(0), WeaponDamage(0), WeaponImage(nullptr)
 	{
 	}
 };

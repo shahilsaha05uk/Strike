@@ -26,6 +26,9 @@ public:
 	UTextBlock* txtMoney;
 	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
+	UTextBlock* txtTarget;
+	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
 	UTextBlock* txtCT;
 	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "Widget Properties")
@@ -39,6 +42,8 @@ public:
 
 
 	virtual void UpdateHUD_Implementation(FPlayerDetails PlayerDetails) override;
+
+	virtual void UpdateTarget_Implementation(int Target) override;
 	virtual void UpdateAmmo_Implementation(int Value) override;
 	virtual void UpdateHealth_Implementation(float Value) override;
 	virtual void UpdateMoney_Implementation(int Value) override;

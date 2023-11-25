@@ -114,13 +114,13 @@ public:
 	
 	// Attaching the weapon
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void AttachWeaponToPlayer(AActor* OwnerPlayer);
+	void AttachWeaponToPlayer(AActor* OwnerPlayer, FWeaponDetails WeaponDetails);
 
 	UFUNCTION(Server, Reliable)
-	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer);
+	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer, FWeaponDetails WeaponDetails);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
+	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer, FWeaponDetails WeaponDetails);
 
 	
 	// Fire

@@ -41,6 +41,18 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHealthUI(float Health);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHUD(FPlayerDetails PlayerDetails);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateWeaponDetailsHUD(FWeaponDetails WeaponDetails);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnPlayerDead(AController* InstigatorController);
+
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
+	
 };

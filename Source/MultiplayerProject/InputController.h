@@ -94,17 +94,9 @@ public:
 	
 	virtual void SetPlayerTeam_Implementation(ETeam Team) override;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
-
 #pragma endregion
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnShooting(int& AmmoValue);
-	
 
-	
-	
 #pragma region Player Actions
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -141,6 +133,17 @@ public:
 
 #pragma endregion
 
+
+// Weapon Related Methods
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnShooting(int& AmmoValue);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
+
+	virtual void UpdateWeaponDetailsHUD_Implementation(FWeaponDetails WeaponDetails) override;
+
 // When the Controller Spawns
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -162,10 +165,10 @@ public:
 
 // After the player is possessed
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_PostPossessed(FPlayerDetails PlayerDetails);
+	void Client_PostPossessed(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_PostPossessed(FPlayerDetails PlayerDetails);
+	void BlueprintClient_PostPossessed(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails);
 
 	virtual void ShowScoreboard_Implementation(FPlayerDetails PlayerDetails) override;
 
@@ -177,9 +180,7 @@ public:
 
 // When the player Dies
 
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnPlayerDead(AController* InstigatorController);
+	virtual void OnPlayerDead_Implementation(AController* InstigatorController) override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void RequestNewPlayer();
@@ -193,5 +194,9 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintServer_RequestGameModeDecision(AController* InstigatorController);
+
+// On session End
+
+	virtual void OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore) override;
 };
 

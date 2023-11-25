@@ -49,8 +49,8 @@ void AFlagActor::OnDropped_Implementation()
 
 	mRoot->DetachFromComponent(DetachRules);
 
-	FVector tmpLoc = mRoot->GetComponentLocation();
-	tmpLoc.Z = 0.0f;
+	FVector tmpLoc = mFlagMesh->GetComponentLocation();
+	tmpLoc.Z = mInitialTransform.GetLocation().Z;
 
 	mRoot->SetWorldLocation(tmpLoc, false, nullptr, ETeleportType::None);
 	mRoot->SetWorldRotation(FRotator::ZeroRotator, false, nullptr, ETeleportType::None);

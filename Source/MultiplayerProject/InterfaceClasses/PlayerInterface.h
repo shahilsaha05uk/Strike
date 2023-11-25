@@ -52,4 +52,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool IsDead();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
+
+
 };

@@ -25,8 +25,7 @@ private:
 
 	UFUNCTION()
 	class UBaseWidget* WidgetCreator(EWidgetType WidgetToSpawn);
-
-
+	
 	bool WidgetReferenceCheck(UBaseWidget* &WidgetRef, EWidgetType WidgetToSpawn);
 	void UpdateWidgetMap(UBaseWidget* Widget, EWidgetType WidgetToUpdate);
 	

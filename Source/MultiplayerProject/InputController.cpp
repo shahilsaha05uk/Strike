@@ -348,8 +348,7 @@ void AInputController::Server_SpawnPawn_Implementation(UDA_CharacterMeshDetails*
 	Possess(mPlayerRef);
 	
 	OnPawnDeadSignature.AddDynamic(this, &ThisClass::OnPlayerDead);
-
-	//BlueprintServer_SpawnPawn(CharacterDetails, playerStart);
+	
 }
 
 void AInputController::Client_PostPossessed_Implementation(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails)

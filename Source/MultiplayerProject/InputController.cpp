@@ -11,6 +11,7 @@
 #include "DataAssetClasses/DA_UIInputs.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/HUD.h"
+#include "InterfaceClasses/GameInstanceInterface.h"
 #include "InterfaceClasses/PlayerInputInterface.h"
 #include "InterfaceClasses/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -21,6 +22,8 @@
 
 AInputController::AInputController()
 {
+	SpawnWeaponSignature.AddDynamic(this, &ThisClass::OnSpawnWeapon);
+
 	bReplicates = true;
 }
 
@@ -36,7 +39,10 @@ void AInputController::BeginPlay()
 void AInputController::OnPossess(APawn* InPawn)
 {
 	FPlayerDetails PlayerDetails = IPlayerStateInterface::Execute_GetPlayerDetails(PlayerState);
-	Client_PostPossessed(PlayerDetails);
+
+	FMatchDetails MatchDetails = IGameInstanceInterface::Execute_GetMatchDetails(GetGameInstance());
+	
+	Client_PostPossessed(PlayerDetails, MatchDetails);
 	Super::OnPossess(InPawn);
 }
 
@@ -275,7 +281,6 @@ void AInputController::OpenShop_Implementation()
 	{
 		UBaseWidget* ShopWidget = IHUDInterface::Execute_WidgetInitialiser(hud, EWidgetType::SHOP_MENU);
 		ShopWidget->ControllerRef = this;
-		SpawnWeaponSignature.AddDynamic(this, &ThisClass::OnSpawnWeapon);
 		ShopWidget->AddToViewport();
 	}
 }
@@ -347,14 +352,14 @@ void AInputController::Server_SpawnPawn_Implementation(UDA_CharacterMeshDetails*
 	//BlueprintServer_SpawnPawn(CharacterDetails, playerStart);
 }
 
-void AInputController::Client_PostPossessed_Implementation(FPlayerDetails PlayerDetails)
+void AInputController::Client_PostPossessed_Implementation(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails)
 {
 	mPlayerState = Cast<AMP_PlayerState>(PlayerState);
 
 	PlayerCameraManager->ViewPitchMin = mMinCamPitch;
 	PlayerCameraManager->ViewPitchMax = mMaxCamPitch;
 
-	BlueprintClient_PostPossessed(PlayerDetails);
+	BlueprintClient_PostPossessed(PlayerDetails, MatchDetails);
 }
 
 #pragma endregion
@@ -390,14 +395,29 @@ void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetai
 
 // Show Scoreboard
 
-void AInputController::ShowScoreboard_Implementation(FPlayerDetails PlayerDetails)
+void AInputController::UpdateWeaponDetailsHUD_Implementation(int Ammo)
 {
-	
+	AHUD* Hud = GetHUD();
+	if(UKismetSystemLibrary::DoesImplementInterface(Hud, UHUDInterface::StaticClass()))
+	{
+		UBaseWidget* bWidget = IHUDInterface::Execute_GetWidget(Hud, EWidgetType::PLAYER_HUD);
+		if(!bWidget) return;
+		IPlayerHUDInterface::Execute_UpdateAmmo(bWidget, Ammo);
+	}
 }
 
 void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)
 {
-	
+	AHUD* hud = GetHUD();
+	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
+	{
+		UBaseWidget* pHud = IHUDInterface::Execute_GetWidget(hud, PLAYER_HUD);
+
+		if(UKismetSystemLibrary::DoesImplementInterface(pHud, UPlayerHUDInterface::StaticClass()))
+		{
+			IPlayerHUDInterface::Execute_UpdateScore(pHud, Value, Team);
+		}
+	}
 }
 
 
@@ -410,11 +430,9 @@ void AInputController::OnPlayerDead_Implementation(AController* InstigatorContro
 	Server_RequestGameModeDecision(InstigatorController);
 
 	UnPossess();
-
-
+	
 	mPlayerRef->Destroy();
-
-
+	
 	FTimerHandle TimeHandler;
 	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &AInputController::RequestNewPlayer, 3.0f, false, 0.0f);
 }
@@ -434,4 +452,9 @@ void AInputController::RestartPlayer_Implementation()
 	bHasRestarted = true;
 	
 	Execute_PawnSetup(this, CharacterMeshDetails);
+}
+
+void AInputController::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)
+{
+	
 }

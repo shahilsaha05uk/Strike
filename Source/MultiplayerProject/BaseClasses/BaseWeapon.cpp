@@ -8,6 +8,7 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MultiplayerProject/PlayerCharacter.h"
+#include "MultiplayerProject/DataAssetClasses/DA_WeaponDetails.h"
 #include "MultiplayerProject/InterfaceClasses/PlayerInputInterface.h"
 #include "Net/UnrealNetwork.h"
 
@@ -30,9 +31,6 @@ ABaseWeapon::ABaseWeapon()
 	mUIComponent->SetTickMode(ETickMode::Automatic);
 	mUIComponent->SetVisibility(false);
 	
-	StartShootingSignature.AddDynamic(this, &ThisClass::Fire);
-	StopShootingSignature.AddDynamic(this, &ThisClass::StopFire);
-
 	bReplicates = true;
 
 	TraceRange = 20000.0f;
@@ -47,6 +45,14 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ABaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseWeapon, mWeaponDetails);
+	DOREPLIFETIME(ABaseWeapon, mAmmo);
+	
+}
 
 void ABaseWeapon::Init_Implementation()
 {
@@ -56,7 +62,7 @@ void ABaseWeapon::Init_Implementation()
 	mInteractableDetails.ActorReference = this;
 	mInteractableDetails.InteractType = EQUIPPABLE;
 
-	DamageRate = mWeaponDetails.WeaponDamage;
+	//DamageRate = mWeaponDetails.WeaponDamage;
 }
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
@@ -87,7 +93,7 @@ void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
 	{
-		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, mWeaponDetails);
+		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, WeaponAsset->WeaponDetails);
 		this->Destroy();
 	}
 }
@@ -101,10 +107,18 @@ void ABaseWeapon::PlayWeaponSound_Implementation()
 void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 {
 	Server_AttachWeaponToPlayer(OwnerPlayer);
+
+	mFireRate = mWeaponDetails.TimePerShot;
+	mDamageRate = mWeaponDetails.WeaponDamage;
+	mAmmo = mWeaponDetails.TotalBullets;
+
+	UE_LOG(LogTemp, Warning, TEXT("Fire Rate: %f"), mFireRate);
 }
 
 void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 {
+	mWeaponDetails = WeaponAsset->WeaponDetails;
+
 	Multicast_AttachWeaponToPlayer(OwnerPlayer);
 
 	mCollisionComponent->SetVisibility(false);
@@ -131,10 +145,7 @@ void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPla
 // Fire
 void ABaseWeapon::Fire_Implementation()
 {	
-	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mBulletSpeed, true, mInFirstDelay);
-
-	Ammo--;
-	OnShootingSignature.Broadcast(Ammo);
+	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mFireRate, true, mInFirstDelay);
 }
 
 void ABaseWeapon::StopFire_Implementation()
@@ -147,7 +158,9 @@ void ABaseWeapon::Server_Fire_Implementation()
 {
 	if(GetOwner() == nullptr) return;
 
-	Multicast_Fire();
+	mAmmo--;
+	UE_LOG(LogTemp, Warning, TEXT("Server Ammo: %d"), mAmmo);
+
 
 	if(UKismetSystemLibrary::DoesImplementInterface(GetOwner(), UPlayerInterface::StaticClass()))
 	{
@@ -166,9 +179,24 @@ void ABaseWeapon::Server_Fire_Implementation()
 		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hit, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 
 		BlueprintServer_Fire(hit);
+
+		Client_Fire();
 	}
 	
+	Multicast_Fire();
 }
+void ABaseWeapon::Client_Fire_Implementation()
+{
+
+	AActor* owner = GetOwner();
+	if(UKismetSystemLibrary::DoesImplementInterface(owner, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_OnShooting(owner, mAmmo);
+		UE_LOG(LogTemp, Warning, TEXT("Client Ammo: %d"), mAmmo);
+	}
+
+}
+
 
 void ABaseWeapon::Server_StopFire_Implementation()
 {
@@ -178,6 +206,8 @@ void ABaseWeapon::Server_StopFire_Implementation()
 // Multicast Fire
 void ABaseWeapon::Multicast_Fire_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Multicasted Ammo: %d"), mAmmo);
+
 	Blueprint_Multicast_Fire();
 }
 

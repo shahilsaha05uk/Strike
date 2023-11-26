@@ -7,6 +7,11 @@ void UPlayerHUD::UpdateHUD_Implementation(FPlayerDetails PlayerDetails)
 {
 }
 
+void UPlayerHUD::UpdateTarget_Implementation(int Target)
+{
+	
+}
+
 void UPlayerHUD::UpdateScore_Implementation(int Score, ETeam Team)
 {
 }

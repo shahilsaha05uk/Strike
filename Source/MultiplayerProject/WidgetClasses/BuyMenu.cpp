@@ -29,7 +29,7 @@ void UBuyMenu::GoToMainMenu_Implementation()
 	
 }
 
-void UBuyMenu::UpdateList_Implementation(UDA_WeaponDetails* WeaponDetails)
+void UBuyMenu::UpdateList_Implementation(UDA_WeaponBuy* WeaponDetails)
 {
 	
 }

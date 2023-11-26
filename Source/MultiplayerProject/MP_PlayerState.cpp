@@ -91,6 +91,11 @@ void AMP_PlayerState::UpdateKills_Implementation()
 	Kills++;
 }
 
+void AMP_PlayerState::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)
+{
+	
+}
+
 void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

@@ -50,6 +50,9 @@ public:
 	void StartShooting();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnShooting(int val);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopShooting();
 
 	

@@ -37,10 +37,19 @@ public:
 	void UpdateScoreboard(int Value, ETeam Team);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void ShowScoreboard(FPlayerDetails PlayerDetails);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHealthUI(float Health);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdatePlayerHUD(FPlayerDetails PlayerDetails);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateWeaponDetailsHUD(int Ammo);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnPlayerDead(AController* InstigatorController);
+
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
+	
 };

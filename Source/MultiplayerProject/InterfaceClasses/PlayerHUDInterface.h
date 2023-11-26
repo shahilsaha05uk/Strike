@@ -29,6 +29,8 @@ public:
 	void UpdateHUD(FPlayerDetails PlayerDetails);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateTarget(int Target);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateScore(int Score, ETeam Team);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateHealth(float Value);

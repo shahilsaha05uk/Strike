@@ -32,5 +32,8 @@ public:
 	FPlayerDetails GetPlayerDetails();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateKills();
 };

@@ -76,16 +76,6 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	int mAmmo;
 
-	/*
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	USoundBase* mSoundToPlay;
-
-
-	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	bool bIsPickedUp;
-	
-	*/
 public:
 	// Engine methods
 	
@@ -96,6 +86,8 @@ public:
 public:
 	
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Request_HUDUpdate();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Init();
 	
@@ -120,6 +112,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer);
 
+	UFUNCTION(Client, Reliable)
+	void Client_AttachWeaponToPlayer();
+
+	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
 

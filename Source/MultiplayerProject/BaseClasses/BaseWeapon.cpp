@@ -54,6 +54,16 @@ void ABaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	
 }
 
+void ABaseWeapon::Request_HUDUpdate_Implementation()
+{
+	AActor* owner = GetOwner();
+	if(UKismetSystemLibrary::DoesImplementInterface(owner, UPlayerInputInterface::StaticClass()))
+	{
+		IPlayerInputInterface::Execute_OnShooting(owner, mAmmo);
+		UE_LOG(LogTemp, Warning, TEXT("Client Ammo: %d"), mAmmo);
+	}
+}
+
 void ABaseWeapon::Init_Implementation()
 {
 	bIsFiring = false;
@@ -110,15 +120,16 @@ void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 
 	mFireRate = mWeaponDetails.TimePerShot;
 	mDamageRate = mWeaponDetails.WeaponDamage;
-	mAmmo = mWeaponDetails.TotalBullets;
-
 	UE_LOG(LogTemp, Warning, TEXT("Fire Rate: %f"), mFireRate);
 }
 
 void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 {
 	mWeaponDetails = WeaponAsset->WeaponDetails;
-
+	mAmmo = mWeaponDetails.TotalBullets;
+	
+	Client_AttachWeaponToPlayer();
+	
 	Multicast_AttachWeaponToPlayer(OwnerPlayer);
 
 	mCollisionComponent->SetVisibility(false);
@@ -140,6 +151,11 @@ void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPla
 	mUIComponent->DestroyComponent();
 
 	mCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ABaseWeapon::Client_AttachWeaponToPlayer_Implementation()
+{
+	Request_HUDUpdate();
 }
 
 // Fire
@@ -185,9 +201,11 @@ void ABaseWeapon::Server_Fire_Implementation()
 	
 	Multicast_Fire();
 }
+
 void ABaseWeapon::Client_Fire_Implementation()
 {
-
+	Request_HUDUpdate();
+	/*
 	AActor* owner = GetOwner();
 	if(UKismetSystemLibrary::DoesImplementInterface(owner, UPlayerInputInterface::StaticClass()))
 	{
@@ -195,8 +213,8 @@ void ABaseWeapon::Client_Fire_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("Client Ammo: %d"), mAmmo);
 	}
 
+*/
 }
-
 
 void ABaseWeapon::Server_StopFire_Implementation()
 {

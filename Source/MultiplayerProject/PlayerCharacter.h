@@ -26,7 +26,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup Property")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
@@ -49,8 +49,14 @@ public:
 
 	virtual void RefreshPawn_Implementation() override;
 
+	//Engine Methods
+	
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Init();
 
@@ -61,13 +67,19 @@ public:
 	
 	// Player Inputs Override
 	virtual void Move_Implementation(const FInputActionValue& Value) override;
+
 	virtual void Look_Implementation(const FInputActionValue& Value) override;
+
 	virtual void Jumping_Implementation(const FInputActionValue& Value) override;
 	virtual void StopJump_Implementation() override;
+	
 	virtual void StartAiming_Implementation() override;
 	virtual void StopAiming_Implementation() override;
+	
 	virtual void StartShooting_Implementation() override;
+	virtual void OnShooting_Implementation(int val) override;
 	virtual void StopShooting_Implementation() override;
+	
 	virtual void Interact_Implementation() override;
 	virtual void DropItem_Implementation() override;
 

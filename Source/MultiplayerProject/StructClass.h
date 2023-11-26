@@ -6,6 +6,7 @@
 #include "EnumClass.h"
 #include "OnlineSessionSettings.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Sound/SoundCue.h"
 #include "StructClass.generated.h"
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -96,9 +97,14 @@ public:
 	int WeaponCost;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float TimePerShot;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int TotalBullets;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float WeaponDamage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	USoundCue* WeaponSound;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTexture2D* WeaponImage;
@@ -106,7 +112,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponAsset;
 
-	FWeaponDetails(): WeaponCost(0), TotalBullets(0), WeaponDamage(0), WeaponImage(nullptr)
+	FWeaponDetails(): WeaponCost(0), TimePerShot(0), TotalBullets(0), WeaponDamage(0), WeaponSound(nullptr),
+	                  WeaponImage(nullptr)
 	{
 	}
 };

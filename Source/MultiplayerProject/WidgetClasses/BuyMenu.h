@@ -7,7 +7,7 @@
 #include "MultiplayerProject/BaseClasses/BaseWidget.h"
 #include "BuyMenu.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateListSignature, UDA_WeaponDetails*, WeaponDetails);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateListSignature, UDA_WeaponBuy*, WeaponDetails);
 UCLASS()
 class MULTIPLAYERPROJECT_API UBuyMenu : public UBaseWidget
 {
@@ -25,7 +25,7 @@ public:
 	FOnUpdateListSignature OnUpdateList;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private")
-	TArray<class UDA_WeaponDetails*> WeaponArray;
+	TArray<class UDA_WeaponBuy*> WeaponArray;
 
 	virtual void NativeConstruct() override;
 
@@ -33,7 +33,7 @@ public:
 	void ClearList();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateList(UDA_WeaponDetails* WeaponDetails);
+	void UpdateList(UDA_WeaponBuy* WeaponDetails);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnBack();

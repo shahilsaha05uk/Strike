@@ -22,6 +22,8 @@
 
 AInputController::AInputController()
 {
+	SpawnWeaponSignature.AddDynamic(this, &ThisClass::OnSpawnWeapon);
+
 	bReplicates = true;
 }
 
@@ -279,7 +281,6 @@ void AInputController::OpenShop_Implementation()
 	{
 		UBaseWidget* ShopWidget = IHUDInterface::Execute_WidgetInitialiser(hud, EWidgetType::SHOP_MENU);
 		ShopWidget->ControllerRef = this;
-		SpawnWeaponSignature.AddDynamic(this, &ThisClass::OnSpawnWeapon);
 		ShopWidget->AddToViewport();
 	}
 }
@@ -394,16 +395,15 @@ void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetai
 
 // Show Scoreboard
 
-void AInputController::UpdateWeaponDetailsHUD_Implementation(FWeaponDetails WeaponDetails)
+void AInputController::UpdateWeaponDetailsHUD_Implementation(int Ammo)
 {
-	UBaseWidget* bWidget = IHUDInterface::Execute_GetWidget(GetHUD(), EWidgetType::PLAYER_HUD);
-	
-	IPlayerHUDInterface::Execute_UpdateAmmo(bWidget, WeaponDetails.TotalBullets);
-}
-
-void AInputController::ShowScoreboard_Implementation(FPlayerDetails PlayerDetails)
-{
-	
+	AHUD* Hud = GetHUD();
+	if(UKismetSystemLibrary::DoesImplementInterface(Hud, UHUDInterface::StaticClass()))
+	{
+		UBaseWidget* bWidget = IHUDInterface::Execute_GetWidget(Hud, EWidgetType::PLAYER_HUD);
+		if(!bWidget) return;
+		IPlayerHUDInterface::Execute_UpdateAmmo(bWidget, Ammo);
+	}
 }
 
 void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)

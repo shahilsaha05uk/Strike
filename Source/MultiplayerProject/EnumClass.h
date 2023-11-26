@@ -9,6 +9,7 @@
 UENUM(Blueprintable, BlueprintType)
 enum EWeaponType
 {
+	None,
 	Primary,
 	Secondary,
 	Equipment

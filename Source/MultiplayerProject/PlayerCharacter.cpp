@@ -16,6 +16,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "InterfaceClasses/FlagInterface.h"
 #include "InterfaceClasses/PlayerStateInterface.h"
+#include "InterfaceClasses/WeaponInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "WidgetClasses/PlayerHUD.h"
@@ -65,6 +66,13 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayerCharacter, mPrimaryWeapon);
 }
 
 void APlayerCharacter::Init_Implementation()
@@ -143,16 +151,6 @@ void APlayerCharacter::StopAiming_Implementation()
 	isAiming = false;
 }
 
-void APlayerCharacter::StartShooting_Implementation()
-{
-	Server_Shoot();
-}
-
-void APlayerCharacter::StopShooting_Implementation()
-{
-	Server_StopShoot();
-}
-
 void APlayerCharacter::Interact_Implementation()
 {
 	Server_Interact();
@@ -177,34 +175,6 @@ void APlayerCharacter::Client_Interact_Implementation()
 
 #pragma endregion
 
-#pragma region When the Player Shoots
-
-void APlayerCharacter::Server_Shoot_Implementation()
-{
-	Multicast_Shoot();
-}
-
-void APlayerCharacter::Server_StopShoot_Implementation()
-{
-	Multicast_StopShoot();
-}
-
-void APlayerCharacter::Multicast_Shoot_Implementation()
-{
-	if(mPrimaryWeapon == nullptr) return;
-	bIsFiring = true;
-	mPrimaryWeapon->StartShootingSignature.Broadcast();
-}
-
-void APlayerCharacter::Multicast_StopShoot_Implementation()
-{
-	if(mPrimaryWeapon == nullptr) return;
-	bIsFiring = false;
-	mPrimaryWeapon->StopShootingSignature.Broadcast();
-}
-
-#pragma endregion
-
 #pragma region When the player Spawns weapon
 
 void APlayerCharacter::SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
@@ -220,21 +190,22 @@ void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDe
 	SpawnsParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
 
 	ABaseWeapon* WeaponToSpawn = Cast<ABaseWeapon>(GetWorld()->SpawnActor(WeaponDetails.WeaponAsset, &GetActorTransform(), SpawnsParams));
+
 	WeaponToSpawn->SetOwner(this);
+
 	WeaponToSpawn->SetInstigator(this);
 
-	WeaponToSpawn->AttachWeaponToPlayer(this, WeaponDetails);
+	WeaponToSpawn->AttachWeaponToPlayer(this);
 
 	BlueprintServer_SpawnWeapon(WeaponToSpawn);
 	
-
-	Execute_SetWeapon(this, WeaponToSpawn);
+	mPrimaryWeapon = WeaponToSpawn;
 	Client_SpawnWeapon(WeaponDetails, WeaponToSpawn);
 }
 
 void APlayerCharacter::Client_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon)
 {
-	IControllerInterface::Execute_UpdateWeaponDetailsHUD(GetController(), WeaponDetails);
+	//IControllerInterface::Execute_UpdateWeaponDetailsHUD(GetController(), );
 
 }
 
@@ -250,6 +221,64 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 
 
 #pragma endregion
+
+#pragma region When the Player Shoots
+
+void APlayerCharacter::StartShooting_Implementation()
+{
+	Server_Shoot();
+}
+
+void APlayerCharacter::OnShooting_Implementation(int val)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character Ammo: %d"), val);
+
+	AController* C = GetController();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(C, UControllerInterface::StaticClass()))
+	{
+		IControllerInterface::Execute_UpdateWeaponDetailsHUD(C, val);
+	}
+}
+
+void APlayerCharacter::StopShooting_Implementation()
+{
+	Server_StopShoot();
+}
+
+void APlayerCharacter::Server_Shoot_Implementation()
+{
+	Multicast_Shoot();
+}
+
+void APlayerCharacter::Server_StopShoot_Implementation()
+{
+	Multicast_StopShoot();
+}
+
+void APlayerCharacter::Multicast_Shoot_Implementation()
+{
+	if(mPrimaryWeapon == nullptr) return;
+
+	if(UKismetSystemLibrary::DoesImplementInterface(mPrimaryWeapon, UWeaponInterface::StaticClass()))
+	{
+		IWeaponInterface::Execute_Fire(mPrimaryWeapon);
+		bIsFiring = true;
+	}
+}
+
+void APlayerCharacter::Multicast_StopShoot_Implementation()
+{
+	if(mPrimaryWeapon == nullptr) return;
+	if(UKismetSystemLibrary::DoesImplementInterface(mPrimaryWeapon, UWeaponInterface::StaticClass()))
+	{
+		IWeaponInterface::Execute_StopFire(mPrimaryWeapon);
+		bIsFiring = false;
+	}
+}
+
+#pragma endregion
+
 
 #pragma region Getters and Setters
 

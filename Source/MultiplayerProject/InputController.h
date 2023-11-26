@@ -142,7 +142,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
 
-	virtual void UpdateWeaponDetailsHUD_Implementation(FWeaponDetails WeaponDetails) override;
+	virtual void UpdateWeaponDetailsHUD_Implementation(int Ammo) override;
 
 // When the Controller Spawns
 
@@ -169,8 +169,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_PostPossessed(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails);
-
-	virtual void ShowScoreboard_Implementation(FPlayerDetails PlayerDetails) override;
 
 // Updating the Player Scoreboard
 	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;

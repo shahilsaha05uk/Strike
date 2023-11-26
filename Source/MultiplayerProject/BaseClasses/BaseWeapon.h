@@ -6,17 +6,17 @@
 #include "GameFramework/Actor.h"
 #include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/InterfaceClasses/InteractableInterface.h"
+#include "MultiplayerProject/InterfaceClasses/WeaponInterface.h"
 #include "BaseWeapon.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartShootingSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStopShootingSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShootingSignature, int&, AmmoValue);
-
 UCLASS()
-class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IInteractableInterface
+class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IInteractableInterface, public IWeaponInterface
 {
 	GENERATED_BODY()
-	
+
+private:
+
+
 public:
 	ABaseWeapon();
 	
@@ -33,9 +33,6 @@ public:
 	TSubclassOf<UUserWidget> mWidgetClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	USoundBase* mSoundToPlay;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	bool bIsFiring;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
@@ -46,51 +43,55 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FInteractableDetails mInteractableDetails;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	TEnumAsByte<ETraceTypeQuery> TraceChannel;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	FTimerHandle TimeHandler;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	FWeaponDetails mWeaponDetails;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
-	FInteractableDetails mInteractableDetails;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
-	FStartShootingSignature StartShootingSignature;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
-	FStopShootingSignature StopShootingSignature;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, BlueprintAssignable, Category = "Private")
-	FOnShootingSignature OnShootingSignature;
-
 	// Weapon related Properties
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	TEnumAsByte<ETraceTypeQuery> TraceChannel;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
+	class UDA_WeaponDetails* WeaponAsset;
 	
+
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float mInFirstDelay;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float mFireRate;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float TraceRange;
-	
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	float DamageRate;
+	float mDamageRate;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	FTimerHandle TimeHandler;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	float mBulletSpeed;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	int Ammo;
-	
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	int mAmmo;
+
 	/*
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	USoundBase* mSoundToPlay;
+
+
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	bool bIsPickedUp;
 	
 	*/
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	float mInFirstDelay;
-
 public:
 	// Engine methods
 	
 	virtual void BeginPlay() override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 public:
 	
@@ -114,25 +115,27 @@ public:
 	
 	// Attaching the weapon
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void AttachWeaponToPlayer(AActor* OwnerPlayer, FWeaponDetails WeaponDetails);
+	void AttachWeaponToPlayer(AActor* OwnerPlayer);
 
 	UFUNCTION(Server, Reliable)
-	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer, FWeaponDetails WeaponDetails);
+	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer, FWeaponDetails WeaponDetails);
+	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
 
 	
 	// Fire
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Fire();
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void StopFire();
+
+	virtual void Fire_Implementation() override;
+	virtual void StopFire_Implementation() override;
+
 	
 	// Server Fire
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_Fire();
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_Fire();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintServer_Fire(FHitResult hit);

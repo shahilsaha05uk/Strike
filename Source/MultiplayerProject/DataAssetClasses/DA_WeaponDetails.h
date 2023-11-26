@@ -11,7 +11,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class MULTIPLAYERPROJECT_API UDA_WeaponDetails : public UDataAsset
 {
 	GENERATED_BODY()
@@ -22,5 +22,5 @@ public:
 	TEnumAsByte<EWeaponType> WeaponType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
-	TArray<FWeaponDetails> WeaponDetails;
+	FWeaponDetails WeaponDetails;
 };

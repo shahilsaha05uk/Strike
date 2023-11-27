@@ -12,7 +12,7 @@ enum EWeaponType
 	None,
 	Primary,
 	Secondary,
-	Equipment
+	Ammo
 };
 
 

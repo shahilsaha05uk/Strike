@@ -43,7 +43,11 @@ public:
 	ABaseWeapon* GetWeapon();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetWeapon(class ABaseWeapon* Weapon);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AddAmmo(int Value);
 
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateHealthBar(float Health);
 	

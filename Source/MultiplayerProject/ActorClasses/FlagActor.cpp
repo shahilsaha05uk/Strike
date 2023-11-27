@@ -66,7 +66,6 @@ ETeam AFlagActor::GetFlagTeam_Implementation()
 	return mFlagTeam;
 }
 
-
 void AFlagActor::Interact_Implementation(AActor* OwnerPlayer)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
@@ -80,15 +79,16 @@ FInteractableDetails AFlagActor::GetInteractableDetails_Implementation()
 	return {};
 }
 
-
-void AFlagActor::OnSphereColliderBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent,
-                                                             AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                                             const FHitResult& SweepResult)
+void AFlagActor::ResetFlag_Implementation()
 {
-	if(UKismetSystemLibrary::DoesImplementInterface(OtherActor, UPlayerInterface::StaticClass()))
-	{
-		
-	}
+	mRoot->SetWorldTransform(mInitialTransform);
+}
+
+
+void AFlagActor::OnSphereColliderBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
 }
 
 void AFlagActor::OnSphereColliderEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -104,10 +104,5 @@ void AFlagActor::OnBoxColliderBeginOverlap_Implementation(UPrimitiveComponent* O
 void AFlagActor::OnBoxColliderEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-}
-
-void AFlagActor::ResetFlag_Implementation()
-{
-	mRoot->SetWorldTransform(mInitialTransform);
 }
 

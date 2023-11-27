@@ -38,7 +38,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	bool bIsDead;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool bIsFiring;
@@ -54,8 +54,6 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Init();
@@ -86,12 +84,21 @@ public:
 	// Player Interface
 	virtual UCameraComponent* GetFollowCamera_Implementation() override;
 	virtual UMeshComponent* GetMeshComponent_Implementation() override;
+
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
 	virtual void FlagSpawner_Implementation(AActor* FlagRef) override;
 public:
+
+	// Updating the Weapon Properties
+	virtual void AddAmmo_Implementation(int Value) override;
+
+	/*
+	UFUNCTION(Client, Reliable)
+	void Client_AddAmmo(int Value);
+	*/
 
 	// Weapon Related methods
 	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;

@@ -73,6 +73,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerCharacter, mPrimaryWeapon);
+	DOREPLIFETIME(APlayerCharacter, bIsDead);
+	//DOREPLIFETIME(APlayerCharacter, mFlagRef);
 }
 
 void APlayerCharacter::Init_Implementation()
@@ -279,6 +281,14 @@ void APlayerCharacter::Multicast_StopShoot_Implementation()
 
 #pragma endregion
 
+// Updating the Weapon Properties
+
+void APlayerCharacter::AddAmmo_Implementation(int Value)
+{
+	if(mPrimaryWeapon == nullptr) return;
+
+	mPrimaryWeapon->Server_AddAmmo(Value);
+}
 
 #pragma region Getters and Setters
 
@@ -393,10 +403,7 @@ void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
 		}
 		else
 		{
-			if(mFlagRef)
-			{
-				IFlagInterface::Execute_ResetFlag(mFlagRef);
-			}
+			IFlagInterface::Execute_ResetFlag(FlagRef);
 		}
 	}
 }

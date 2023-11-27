@@ -7,6 +7,7 @@
 #include "MultiplayerProject/StructClass.h"
 #include "MultiplayerProject/InterfaceClasses/InteractableInterface.h"
 #include "MultiplayerProject/InterfaceClasses/WeaponInterface.h"
+#include "NiagaraComponent.h"
 #include "BaseWeapon.generated.h"
 
 UCLASS()
@@ -21,14 +22,17 @@ public:
 	ABaseWeapon();
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actor Components")
-	class USceneComponent* mProjectileSpawnLocation;
+	UNiagaraComponent* mParticleComponent;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actor Components")
 	class USphereComponent* mCollisionComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actor Components")
 	class UWidgetComponent* mUIComponent;
-
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actor Components")
+	class USkeletalMeshComponent* mWeapon;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actor Components")
 	TSubclassOf<UUserWidget> mWidgetClass;
 	
@@ -36,7 +40,10 @@ public:
 	bool bIsFiring;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	FName WeaponSocket;
+	FName mWeaponSocket;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
+	FName mMuzzleSocket;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AActor* mOwnerRef;
@@ -59,7 +66,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Private")
 	class UDA_WeaponDetails* WeaponAsset;
 	
-
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float mInFirstDelay;
@@ -71,11 +77,19 @@ public:
 	float TraceRange;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float MuzzleDuration;
+
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	
+	
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	USoundBase* mWeaponSound;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float mDamageRate;
 	
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	int mAmmo;
-
 public:
 	// Engine methods
 	
@@ -102,6 +116,10 @@ public:
 
 	// -------------------------------------------------------------------------------------
 
+	UFUNCTION(Server, Reliable)
+	void Server_AddAmmo(int Value);
+
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayWeaponSound();
 	

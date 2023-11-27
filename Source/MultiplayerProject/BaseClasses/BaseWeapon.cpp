@@ -14,16 +14,21 @@
 
 ABaseWeapon::ABaseWeapon()
 {
+	mWeaponSocket = "weapon_r";
+	
 	mCollisionComponent = CreateDefaultSubobject<USphereComponent>("CollisionComponent");
 
 	RootComponent = mCollisionComponent;
-	
-	mProjectileSpawnLocation = CreateDefaultSubobject<USceneComponent>("ProjectileSpawn");
-	mProjectileSpawnLocation->SetupAttachment(RootComponent);
+
+	mWeapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	mWeapon->SetupAttachment(RootComponent);
 	
 	mCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnComponentBeginOverlap);
 	mCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ABaseWeapon::OnComponentEndOverlap);
 
+	mParticleComponent = CreateDefaultSubobject<UNiagaraComponent>("ParticleComp");
+	mParticleComponent->SetupAttachment(mWeapon, mMuzzleSocket);
+	
 	mUIComponent = CreateDefaultSubobject<UWidgetComponent>("Popup Component");
 	mUIComponent->SetupAttachment(mCollisionComponent);
 	mUIComponent->SetDrawAtDesiredSize(true);
@@ -35,7 +40,6 @@ ABaseWeapon::ABaseWeapon()
 
 	TraceRange = 20000.0f;
 	
-	WeaponSocket = "weapon_r";
 }
 
 void ABaseWeapon::BeginPlay()
@@ -51,6 +55,7 @@ void ABaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(ABaseWeapon, mWeaponDetails);
 	DOREPLIFETIME(ABaseWeapon, mAmmo);
+	DOREPLIFETIME(ABaseWeapon, mWeaponSound);
 	
 }
 
@@ -108,6 +113,14 @@ void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
 	}
 }
 
+void ABaseWeapon::Server_AddAmmo_Implementation(int Value)
+{
+	mAmmo += Value;
+
+	Request_HUDUpdate();
+
+}
+
 // Playing the weapon Sound
 void ABaseWeapon::PlayWeaponSound_Implementation()
 {
@@ -120,6 +133,12 @@ void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 
 	mFireRate = mWeaponDetails.TimePerShot;
 	mDamageRate = mWeaponDetails.WeaponDamage;
+	mWeaponSound = mWeaponDetails.WeaponSound;
+
+	MuzzleDuration = mWeaponSound->Duration;
+	mParticleComponent->SetNiagaraVariableFloat("Duration", MuzzleDuration);
+	mParticleComponent->SetVariableFloat("Duration", MuzzleDuration);
+	
 	UE_LOG(LogTemp, Warning, TEXT("Fire Rate: %f"), mFireRate);
 }
 
@@ -146,7 +165,7 @@ void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPla
 
 	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 
-	AttachToComponent(OwnerMesh, AttachmentRules, WeaponSocket);
+	AttachToComponent(OwnerMesh, AttachmentRules, mWeaponSocket);
 
 	mUIComponent->DestroyComponent();
 
@@ -160,7 +179,7 @@ void ABaseWeapon::Client_AttachWeaponToPlayer_Implementation()
 
 // Fire
 void ABaseWeapon::Fire_Implementation()
-{	
+{
 	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mFireRate, true, mInFirstDelay);
 }
 
@@ -173,8 +192,15 @@ void ABaseWeapon::StopFire_Implementation()
 void ABaseWeapon::Server_Fire_Implementation()
 {
 	if(GetOwner() == nullptr) return;
+	if(mAmmo <= 0)
+	{
+		Request_HUDUpdate();
+		return;
+	}
 
 	mAmmo--;
+	Multicast_Fire();
+
 	UE_LOG(LogTemp, Warning, TEXT("Server Ammo: %d"), mAmmo);
 
 
@@ -199,21 +225,13 @@ void ABaseWeapon::Server_Fire_Implementation()
 		Client_Fire();
 	}
 	
-	Multicast_Fire();
+
+
 }
 
 void ABaseWeapon::Client_Fire_Implementation()
 {
 	Request_HUDUpdate();
-	/*
-	AActor* owner = GetOwner();
-	if(UKismetSystemLibrary::DoesImplementInterface(owner, UPlayerInputInterface::StaticClass()))
-	{
-		IPlayerInputInterface::Execute_OnShooting(owner, mAmmo);
-		UE_LOG(LogTemp, Warning, TEXT("Client Ammo: %d"), mAmmo);
-	}
-
-*/
 }
 
 void ABaseWeapon::Server_StopFire_Implementation()

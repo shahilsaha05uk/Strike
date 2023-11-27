@@ -66,6 +66,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitialCamTransform = FollowCamera->GetRelativeTransform();
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -74,6 +76,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	DOREPLIFETIME(APlayerCharacter, mPrimaryWeapon);
 	DOREPLIFETIME(APlayerCharacter, bIsDead);
+	DOREPLIFETIME(APlayerCharacter, isAiming);
 	//DOREPLIFETIME(APlayerCharacter, mFlagRef);
 }
 
@@ -145,12 +148,12 @@ void APlayerCharacter::StopJump_Implementation()
 
 void APlayerCharacter::StartAiming_Implementation()
 {
-	isAiming = true;
+	Server_IsAiming(true);
 }
 
 void APlayerCharacter::StopAiming_Implementation()
 {
-	isAiming = false;
+	Server_IsAiming(false);
 }
 
 void APlayerCharacter::Interact_Implementation()
@@ -355,6 +358,16 @@ void APlayerCharacter::RefreshPawn_Implementation()
 	
 }
 
+// When the Player Is Aiming
+void APlayerCharacter::Server_IsAiming_Implementation(bool Value)
+{
+	isAiming = Value;
+}
+
+void APlayerCharacter::OnRep_IsAiming()
+{
+	BlueprintOnRep_IsAiming();
+}
 
 // Updating the health Bar
 

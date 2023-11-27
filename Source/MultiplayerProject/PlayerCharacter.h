@@ -29,6 +29,10 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Properties")
+	FTransform InitialCamTransform;
+
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AInputController* mControllerRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
@@ -36,7 +40,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName FlagSocket;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	UPROPERTY(ReplicatedUsing = OnRep_IsAiming, BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	bool bIsDead;
@@ -48,6 +52,15 @@ public:
 	AActor* mFlagRef;
 
 	virtual void RefreshPawn_Implementation() override;
+
+	UFUNCTION(Server, Reliable)
+	void Server_IsAiming(bool Value);
+	
+	UFUNCTION()
+	void OnRep_IsAiming();
+	
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void BlueprintOnRep_IsAiming();
 
 	//Engine Methods
 	

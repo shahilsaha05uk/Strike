@@ -24,14 +24,19 @@ void AMP_PlayerState::BeginPlay()
 
 void AMP_PlayerState::OnPawnPossessed_Implementation(APlayerState* Player, APawn* Pawn, APawn* OldPawn)
 {
+	if(OldPawn != nullptr)
+	{
+		APlayerState* pState = OldPawn->GetPlayerState();
+		FPlayerDetails OldPlayerDetails = IPlayerStateInterface::Execute_GetPlayerDetails(pState);
+		mPlayerDetails.CurrentMoney = OldPlayerDetails.CurrentMoney;
+	}
+	
 	if(Pawn != nullptr && UKismetSystemLibrary::DoesImplementInterface(Pawn, UPlayerInterface::StaticClass()))
 	{
 		Pawn->OnTakeAnyDamage.AddDynamic(this, &AMP_PlayerState::OnDamageTaken);
 		Health = 100.0f;
 		
 	}
-
-	
 }
 
 void AMP_PlayerState::OnDamageTaken_Implementation(AActor* DamagedActor, float Damage, const UDamageType* DamageType,

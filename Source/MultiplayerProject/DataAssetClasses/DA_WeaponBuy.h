@@ -22,4 +22,10 @@ public:
 	TEnumAsByte<EWeaponType> WeaponType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UDA_WeaponDetails*> WeaponArray;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Buying Properties")
+	bool bIsForBuy;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Buying Properties")
+	int ItemCost;
+	
 };

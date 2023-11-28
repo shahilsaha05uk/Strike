@@ -120,6 +120,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopShooting();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AddAmmo(int Value);
 #pragma endregion
 
 #pragma region UI Actions

@@ -32,11 +32,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite)
 	FOnSpawnWeaponSignature OnSpawnWeaponSignature;
-
 	
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnClick();
+
 	
 };

@@ -258,6 +258,11 @@ void AInputController::Interact_Implementation()
 	}
 }
 
+void AInputController::AddAmmo_Implementation(int Value)
+{
+	mPlayerState->mPlayerDetails.CurrentMoney -= Value;
+	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
+}
 #pragma endregion
 
 #pragma region UI Action Methods

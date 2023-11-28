@@ -44,26 +44,6 @@ public:
 	
 	virtual void Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails) override;
 
-	/*
-	UFUNCTION(Server, Reliable)
-	void Server_Initialise(UDA_CharacterMeshDetails* CharacterDetails);
-	UFUNCTION(Client, Reliable)
-	void Client_Initialise(UDA_CharacterMeshDetails* CharacterDetails);
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_Initialise(UDA_CharacterMeshDetails* CharacterDetails);
-	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_Initialise(UDA_CharacterMeshDetails* CharacterDetails);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_Initialise(UDA_CharacterMeshDetails* CharacterDetails);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_Initialise(UDA_CharacterMeshDetails* CharacterDetails);
-	*/
-
-
-
 	virtual FPlayerDetails GetPlayerDetails_Implementation() override;
 	virtual void UpdateKills_Implementation() override;
 

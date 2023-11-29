@@ -128,10 +128,6 @@ void AMP_HUD::WidgetDestroyer_Implementation(EWidgetType WidgetToDestroy)
 UBaseWidget* AMP_HUD::GetWidget_Implementation(EWidgetType WidgetToGet)
 {
 	UBaseWidget* Widget = nullptr;
-	if(WidgetReferenceCheck(Widget, WidgetToGet))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Widget is valid"));
-	}
 	return Widget;
 }
 

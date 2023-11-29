@@ -112,21 +112,6 @@ void AMP_PlayerState::UpdateHealth_Implementation(float Value)
 void AMP_PlayerState::Server_UpdateHealth_Implementation(float Value)
 {
 	Health = Value;
-
-	/*Health = Value;
-
-	APawn* pawn = GetPawn();
-
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInterface::StaticClass()))
-	{
-		IPlayerInterface::Execute_UpdateHealthBar(pawn, Health);
-	}
-
-	//TODO: Call the HealthHUD update from the Controller
-	if(UKismetSystemLibrary::DoesImplementInterface(pawn->GetOwner(), UControllerInterface::StaticClass()))
-	{
-		IControllerInterface::Execute_UpdatePlayerHealthUI(pawn->GetOwner(), Health);
-	}*/
 }
 
 void AMP_PlayerState::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)

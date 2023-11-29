@@ -39,8 +39,6 @@ void UBaseWidget::ResumeGame_Implementation()
 
 void UBaseWidget::DestroyWidget_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Destroy Widget"));
-
 	if(UKismetSystemLibrary::DoesImplementInterface(mHudRef, UHUDInterface::StaticClass()))
 	{
 		IHUDInterface::Execute_WidgetDestroyer(mHudRef, mWidgetType);

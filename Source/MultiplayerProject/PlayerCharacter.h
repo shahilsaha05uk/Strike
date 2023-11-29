@@ -135,6 +135,10 @@ public:
 	
 	UFUNCTION(Server, Unreliable, BlueprintCallable)
 	void Server_StopShoot();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_OnStopShoot();
+	
 	
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_Shoot();

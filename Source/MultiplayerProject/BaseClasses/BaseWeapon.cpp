@@ -68,7 +68,6 @@ void ABaseWeapon::Request_HUDUpdate_Implementation()
 	if(UKismetSystemLibrary::DoesImplementInterface(owner, UPlayerInputInterface::StaticClass()))
 	{
 		IPlayerInputInterface::Execute_OnShooting(owner, mAmmo);
-		UE_LOG(LogTemp, Warning, TEXT("Client Ammo: %d"), mAmmo);
 	}
 }
 
@@ -79,8 +78,6 @@ void ABaseWeapon::Init_Implementation()
 	mInteractableDetails.ActorName = GetName();
 	mInteractableDetails.ActorReference = this;
 	mInteractableDetails.InteractType = EQUIPPABLE;
-
-	//DamageRate = mWeaponDetails.WeaponDamage;
 }
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
@@ -199,8 +196,6 @@ void ABaseWeapon::Server_Fire_Implementation()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Server Ammo: %d"), mAmmo);
-	
 	if(UKismetSystemLibrary::DoesImplementInterface(GetOwner(), UPlayerInterface::StaticClass()))
 	{
 		FHitResult hit;
@@ -241,8 +236,6 @@ void ABaseWeapon::Server_StopFire_Implementation()
 // Multicast Fire
 void ABaseWeapon::Multicast_Fire_Implementation(FHitResult hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Multicasted Ammo: %d"), mAmmo);
-
 	Blueprint_Multicast_Fire(hit);
 }
 
@@ -251,7 +244,6 @@ void ABaseWeapon::Multicast_StopFire_Implementation()
 	GetWorld()->GetTimerManager().ClearTimer(TimeHandler);
 	
 	Blueprint_Multicast_StopFire();
-
 }
 
 FVector ABaseWeapon::SpreadTrace(FVector InputTrace)

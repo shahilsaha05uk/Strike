@@ -58,9 +58,6 @@ APlayerCharacter::APlayerCharacter()
 	FlagSocket = "flagSocket";
 	bReplicates = true;
 	bIsDead = false;
-	//mHealth = 100.f;
-	//Damage.AddDynamic(this, &APlayerCharacter::OnDamageTaken);
-
 }
 
 void APlayerCharacter::BeginPlay()
@@ -77,7 +74,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, mPrimaryWeapon);
 	DOREPLIFETIME(APlayerCharacter, bIsDead);
 	DOREPLIFETIME(APlayerCharacter, isAiming);
-	//DOREPLIFETIME(APlayerCharacter, mFlagRef);
 }
 
 void APlayerCharacter::Init_Implementation()
@@ -210,7 +206,6 @@ void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDe
 
 void APlayerCharacter::Client_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon)
 {
-	//IControllerInterface::Execute_UpdateWeaponDetailsHUD(GetController(), );
 
 }
 
@@ -238,8 +233,6 @@ void APlayerCharacter::StartShooting_Implementation()
 
 void APlayerCharacter::OnShooting_Implementation(int val)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Character Ammo: %d"), val);
-
 	AController* C = GetController();
 
 	if(UKismetSystemLibrary::DoesImplementInterface(C, UControllerInterface::StaticClass()))
@@ -251,6 +244,8 @@ void APlayerCharacter::OnShooting_Implementation(int val)
 void APlayerCharacter::StopShooting_Implementation()
 {
 	Server_StopShoot();
+
+	BlueprintClient_OnStopShoot();
 }
 
 void APlayerCharacter::Server_Shoot_Implementation()
@@ -353,7 +348,7 @@ void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy
 		Server_DropFlag();
 	}
 
-	AController* CachedInstigatedBy = InstigatedBy; // Capture the InstigatedBy parameter
+	AController* CachedInstigatedBy = InstigatedBy;
 	FTimerHandle TimerHandle;
 
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);

@@ -232,6 +232,8 @@ void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 void APlayerCharacter::StartShooting_Implementation()
 {
 	Server_Shoot();
+
+	BlueprintClient_OnShoot();
 }
 
 void APlayerCharacter::OnShooting_Implementation(int val)

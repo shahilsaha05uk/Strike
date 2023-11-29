@@ -318,10 +318,19 @@ void APlayerCharacter::Dead_Implementation(AController* InstigatedBy)
 	Multicast_OnDead(InstigatedBy);
 }
 
+void APlayerCharacter::Client_OnDead_Implementation(AController* InstigatedBy)
+{
+	AController* C = GetController();
+	
+	if(UKismetSystemLibrary::DoesImplementInterface(C, UControllerInterface::StaticClass()))
+	{
+		IControllerInterface::Execute_UpdateWeaponDetailsHUD(C, 0);
+	}
+}
+
 void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy)
 {
 	if(InstigatedBy == nullptr) return;
-
 	FPlayerDetails PlayerDetails = IPlayerStateInterface::Execute_GetPlayerDetails(InstigatedBy->PlayerState);
 
 	if(mPrimaryWeapon != nullptr)
@@ -330,6 +339,11 @@ void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy
 	}
 	
 	bIsDead = true;
+
+	if(mFlagRef)
+	{
+		Server_DropFlag();
+	}
 
 	AController* CachedInstigatedBy = InstigatedBy; // Capture the InstigatedBy parameter
 	FTimerHandle TimerHandle;

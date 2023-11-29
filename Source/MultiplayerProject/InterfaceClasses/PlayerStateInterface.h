@@ -35,5 +35,6 @@ public:
 	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateKills();
+	void UpdateHealth(float Value);
+
 };

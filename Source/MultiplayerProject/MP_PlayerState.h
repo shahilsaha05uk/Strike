@@ -45,9 +45,15 @@ public:
 	virtual void Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails) override;
 
 	virtual FPlayerDetails GetPlayerDetails_Implementation() override;
-	virtual void UpdateKills_Implementation() override;
+
+	virtual void UpdateHealth_Implementation(float Value) override;
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_UpdateHealth(float Value);
+	
 
 	virtual void OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 };

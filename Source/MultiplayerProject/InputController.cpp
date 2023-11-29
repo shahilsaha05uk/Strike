@@ -134,9 +134,14 @@ void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetai
 
 void AInputController::UpdatePlayerHealthUI_Implementation(float Health)
 {
-	UBaseWidget* pHUD = IHUDInterface::Execute_GetWidget(GetHUD(), EWidgetType::PLAYER_HUD);
+	AHUD* hud = GetHUD();
 
-	IPlayerHUDInterface::Execute_UpdateHealth(pHUD, Health);
+	if(hud)
+	{
+		UBaseWidget* pHUD = IHUDInterface::Execute_GetWidget(hud, EWidgetType::PLAYER_HUD);
+		
+		IPlayerHUDInterface::Execute_UpdateHealth(pHUD, Health);
+	}
 }
 
 
@@ -260,6 +265,13 @@ void AInputController::Interact_Implementation()
 
 void AInputController::AddAmmo_Implementation(int Value)
 {
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInterface::StaticClass()))
+	{
+		IPlayerInterface::Execute_AddAmmo(pawn, Value);
+	}
+
 	mPlayerState->mPlayerDetails.CurrentMoney -= Value;
 	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
@@ -401,6 +413,11 @@ void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetai
 
 void AInputController::UpdateWeaponDetailsHUD_Implementation(int Ammo)
 {
+	Client_UpdateWeaponDetails(Ammo);
+}
+
+void AInputController::Client_UpdateWeaponDetails_Implementation(int Ammo)
+{
 	AHUD* Hud = GetHUD();
 	if(UKismetSystemLibrary::DoesImplementInterface(Hud, UHUDInterface::StaticClass()))
 	{
@@ -433,8 +450,6 @@ void AInputController::OnPlayerDead_Implementation(AController* InstigatorContro
 
 	Server_RequestGameModeDecision(InstigatorController);
 
-	UnPossess();
-	
 	mPlayerRef->Destroy();
 	
 	FTimerHandle TimeHandler;

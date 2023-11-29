@@ -26,6 +26,9 @@ public:
 	class UButton* SettingsButton;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget Properties")
+	class UButton* GameInfoButton;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget), Category = "Widget Properties")
 	class UButton* QuitButton;
 
 	virtual void NativeConstruct() override;
@@ -38,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
 	void OnSettingsButtonClick();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
+	void OnGameInfoButtonClick();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Clicked Methods")
 	void OnQuitButtonClick();

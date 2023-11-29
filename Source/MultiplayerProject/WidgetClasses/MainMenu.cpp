@@ -15,7 +15,14 @@ void UMainMenu::NativeConstruct()
 	
 	SettingsButton->OnClicked.AddDynamic(this, &UMainMenu::OnSettingsButtonClick);
 	
+	GameInfoButton->OnClicked.AddDynamic(this, &UMainMenu::OnGameInfoButtonClick);
+	
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::OnQuitButtonClick);
+}
+
+void UMainMenu::OnGameInfoButtonClick_Implementation()
+{
+	
 }
 
 void UMainMenu::OnHostGameButtonClick_Implementation()

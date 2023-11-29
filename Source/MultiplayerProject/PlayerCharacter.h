@@ -108,11 +108,6 @@ public:
 	// Updating the Weapon Properties
 	virtual void AddAmmo_Implementation(int Value) override;
 
-	/*
-	UFUNCTION(Client, Reliable)
-	void Client_AddAmmo(int Value);
-	*/
-
 	// Weapon Related methods
 	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
 	virtual ABaseWeapon* GetWeapon_Implementation() override;
@@ -135,6 +130,9 @@ public:
 	UFUNCTION(Server, Unreliable, BlueprintCallable)
 	void Server_Shoot();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_OnShoot();
+	
 	UFUNCTION(Server, Unreliable, BlueprintCallable)
 	void Server_StopShoot();
 	

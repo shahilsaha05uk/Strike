@@ -462,6 +462,7 @@ void AInputController::OnPlayerDead_Implementation(AController* InstigatorContro
 	mPlayerRef->Destroy();
 	
 	FTimerHandle TimeHandler;
+	
 	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &AInputController::RequestNewPlayer, 3.0f, false, 0.0f);
 }
 

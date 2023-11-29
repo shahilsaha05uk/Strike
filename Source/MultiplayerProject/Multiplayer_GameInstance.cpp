@@ -31,8 +31,7 @@ void UMultiplayer_GameInstance::OnCreateSession(bool bWasSuccessful)
 		if(World)
 		{
 			FString LevelPath = GetLevelPath(mTravelMap, true);
-			
-			UE_LOG(LogTemp, Warning, TEXT("Path: %s"), *LevelPath);
+
 			World->ServerTravel(LevelPath);
 		}
 	}

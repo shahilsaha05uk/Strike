@@ -167,6 +167,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_OnDead(AController* InstigatedBy);
 
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_OnDead(AController* InstigatedBy);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_OnDead(AController* InstigatedBy);
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_OnDead(AController* InstigatedBy);
 

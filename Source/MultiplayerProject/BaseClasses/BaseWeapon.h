@@ -71,6 +71,9 @@ public:
 	float mInFirstDelay;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	float mSpread;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float mFireRate;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
@@ -159,14 +162,18 @@ public:
 
 	// Multicast Fire
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_Fire();
+	void Multicast_Fire(FHitResult hit);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Blueprint_Multicast_Fire();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void Blueprint_Multicast_Fire(FHitResult hit);
 
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void Multicast_StopFire();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void Blueprint_Multicast_StopFire();
+
+
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	FVector SpreadTrace(FVector InputTrace);
 };

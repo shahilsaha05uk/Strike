@@ -49,10 +49,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	AHUD* mHudRef;
 
-	UPROPERTY(BlueprintReadWrite, BlueprintCallable, BlueprintAssignable, Category = "References")
+	UPROPERTY(BlueprintReadWrite, BlueprintCallable, BlueprintAssignable, EditAnywhere, Category = "References")
 	FSpawnWeaponSignature SpawnWeaponSignature;
 
-	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category = "References")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, EditAnywhere, Category = "References")
 	FOnPawnDeadSignature OnPawnDeadSignature;
 
 	UPROPERTY(BlueprintReadWrite, Category = "References")
@@ -76,7 +76,7 @@ public:
 #pragma region On Controller Spawn Methods
 	
 	virtual void BeginPlay() override;
-	virtual void PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails = nullptr) override;
+	virtual void PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails = nullptr, bool Restarting = false) override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_PawnSetup(UDA_CharacterMeshDetails* CharacterDetails);
@@ -144,7 +144,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSpawnWeapon(FWeaponDetails WeaponDetails);
 
-	virtual void UpdateWeaponDetailsHUD_Implementation(int Ammo) override;
 
 // When the Controller Spawns
 
@@ -172,11 +171,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_PostPossessed(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails);
 
-// Updating the Player Scoreboard
+// Updating the Player UIs
 	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;
 	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails);
 	virtual void UpdatePlayerHealthUI_Implementation(float Health);
+	virtual void UpdateWeaponDetailsHUD_Implementation(int Ammo) override;
 
+
+	UFUNCTION(Client, Reliable)
+	void Client_UpdateWeaponDetails(int Ammo);
 
 // When the player Dies
 

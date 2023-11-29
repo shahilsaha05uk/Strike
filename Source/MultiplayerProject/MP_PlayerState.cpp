@@ -60,14 +60,13 @@ void AMP_PlayerState::OnDamageTaken_Implementation(AActor* DamagedActor, float D
 			if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
 			{
 				//TODO: Call the Dead Method from the Damaged Actor
+
 				IPlayerInterface::Execute_Dead(DamagedActor, InstigatedBy);
 			}			
 			return;
 		}
 		
 		UpdatePlayerUI(DamagedActor, Health);
-
-		IPlayerStateInterface::Execute_UpdateKills(InstigatedBy->PlayerState);
 	}
 }
 
@@ -91,9 +90,43 @@ FPlayerDetails AMP_PlayerState::GetPlayerDetails_Implementation()
 	return mPlayerDetails;
 }
 
-void AMP_PlayerState::UpdateKills_Implementation()
+void AMP_PlayerState::UpdateHealth_Implementation(float Value)
 {
-	Kills++;
+	//Health = Value;
+	Server_UpdateHealth(Value);
+
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInterface::StaticClass()))
+	{
+		IPlayerInterface::Execute_UpdateHealthBar(pawn, Health);
+	}
+
+	//TODO: Call the HealthHUD update from the Controller
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn->GetOwner(), UControllerInterface::StaticClass()))
+	{
+		IControllerInterface::Execute_UpdatePlayerHealthUI(pawn->GetOwner(), Health);
+	}
+}
+
+void AMP_PlayerState::Server_UpdateHealth_Implementation(float Value)
+{
+	Health = Value;
+
+	/*Health = Value;
+
+	APawn* pawn = GetPawn();
+
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn, UPlayerInterface::StaticClass()))
+	{
+		IPlayerInterface::Execute_UpdateHealthBar(pawn, Health);
+	}
+
+	//TODO: Call the HealthHUD update from the Controller
+	if(UKismetSystemLibrary::DoesImplementInterface(pawn->GetOwner(), UControllerInterface::StaticClass()))
+	{
+		IControllerInterface::Execute_UpdatePlayerHealthUI(pawn->GetOwner(), Health);
+	}*/
 }
 
 void AMP_PlayerState::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)
@@ -108,51 +141,8 @@ void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AMP_PlayerState, Health);
 }
 
-
-// Initialisation of the Player State
-
-/*
- * the InitialisePlayerState_Implementation() method is called from the Controller On a multicast
- * 
- */
-
-void AMP_PlayerState::Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+void AMP_PlayerState::Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails, bool Restarting)
 {
-
+	
 }
-
-/*
-void AMP_PlayerState::Server_Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
-{
-	BlueprintServer_Initialise(CharacterDetails);
-}
-
-void AMP_PlayerState::Multicast_Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
-{
-	BlueprintMulticast_Initialise(CharacterDetails);
-}
-
-void AMP_PlayerState::Client_Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
-{
-	BlueprintClient_Initialise(CharacterDetails);
-}
-*/
-
-
-/*
-void AMP_PlayerState::InitialisePlayerState_Implementation(ETeam Team)
-{
-	FMatchDetails MatchDetails;
-	UGameInstance* Instance = GetGameInstance();
-	if(UKismetSystemLibrary::DoesImplementInterface(Instance, UGameInstance::StaticClass()))
-	{
-		MatchDetails = IGameInstanceInterface::Execute_GetMatchDetails(Instance);
-	}
-
-	mPlayerDetails.Team = Team;
-	mPlayerDetails.CurrentMoney = MatchDetails.StartingMoney;
-
-	BlueprintInitialisation(Team);
-}
-*/
 

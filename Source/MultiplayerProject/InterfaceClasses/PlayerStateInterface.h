@@ -26,7 +26,7 @@ class MULTIPLAYERPROJECT_API IPlayerStateInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Initialise(UDA_CharacterMeshDetails* CharacterDetails);
+	void Initialise(UDA_CharacterMeshDetails* CharacterDetails, bool Restarting);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FPlayerDetails GetPlayerDetails();
@@ -35,5 +35,6 @@ public:
 	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateKills();
+	void UpdateHealth(float Value);
+
 };

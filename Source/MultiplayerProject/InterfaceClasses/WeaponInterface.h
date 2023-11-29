@@ -26,10 +26,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Fire();
-	/*
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnFiring(FWeaponDetails WeaponDetails);
-	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StopFire();
 };

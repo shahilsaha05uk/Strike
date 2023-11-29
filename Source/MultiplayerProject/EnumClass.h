@@ -12,7 +12,8 @@ enum EWeaponType
 	None,
 	Primary,
 	Secondary,
-	Ammo
+	Ammo,
+	MediKit
 };
 
 

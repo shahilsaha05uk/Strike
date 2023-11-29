@@ -44,6 +44,8 @@ void AInputController::OnPossess(APawn* InPawn)
 	
 	Client_PostPossessed(PlayerDetails, MatchDetails);
 	Super::OnPossess(InPawn);
+
+	EnableInput(this);
 }
 
 
@@ -382,11 +384,11 @@ void AInputController::Client_PostPossessed_Implementation(FPlayerDetails Player
 
 // Before the Pawn has Spawned
 
-void AInputController::PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+void AInputController::PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails, bool Restarting)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(PlayerState, UPlayerStateInterface::StaticClass()))
 	{
-		IPlayerStateInterface::Execute_Initialise(PlayerState, CharacterDetails);
+		IPlayerStateInterface::Execute_Initialise(PlayerState, CharacterDetails, Restarting);
 		Execute_SetPlayerTeam(this, CharacterDetails->PlayerTeam);
 	}
 	
@@ -450,6 +452,13 @@ void AInputController::OnPlayerDead_Implementation(AController* InstigatorContro
 
 	Server_RequestGameModeDecision(InstigatorController);
 
+	APawn* pawn = GetPawn();
+
+	if(pawn->GetController())
+	{
+		pawn->GetController()->UnPossess();
+	}
+	
 	mPlayerRef->Destroy();
 	
 	FTimerHandle TimeHandler;
@@ -470,7 +479,7 @@ void AInputController::RestartPlayer_Implementation()
 {
 	bHasRestarted = true;
 	
-	Execute_PawnSetup(this, CharacterMeshDetails);
+	Execute_PawnSetup(this, CharacterMeshDetails, true);
 }
 
 void AInputController::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)

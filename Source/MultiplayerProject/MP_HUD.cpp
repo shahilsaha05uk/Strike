@@ -163,7 +163,7 @@ void AMP_HUD::OnDecisionMade_Implementation(UDA_CharacterMeshDetails* CharacterD
 
 	if(UKismetSystemLibrary::DoesImplementInterface(PC, UControllerInterface::StaticClass()))
 	{
-		IControllerInterface::Execute_PawnSetup(PC, CharacterDetails);
+		IControllerInterface::Execute_PawnSetup(PC, CharacterDetails, false);
 	}
 }
 

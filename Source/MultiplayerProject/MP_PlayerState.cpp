@@ -60,6 +60,7 @@ void AMP_PlayerState::OnDamageTaken_Implementation(AActor* DamagedActor, float D
 			if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor, UPlayerInterface::StaticClass()))
 			{
 				//TODO: Call the Dead Method from the Damaged Actor
+
 				IPlayerInterface::Execute_Dead(DamagedActor, InstigatedBy);
 			}			
 			return;
@@ -140,8 +141,8 @@ void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AMP_PlayerState, Health);
 }
 
-void AMP_PlayerState::Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails)
+void AMP_PlayerState::Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails, bool Restarting)
 {
-
+	
 }
 

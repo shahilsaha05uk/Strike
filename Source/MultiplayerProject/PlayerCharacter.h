@@ -171,6 +171,9 @@ public:
 	void Client_OnDead(AController* InstigatedBy);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_OnDead(AController* InstigatedBy);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintMulticast_OnDead(AController* InstigatedBy);
 
 	UFUNCTION(BlueprintCallable)

@@ -76,7 +76,7 @@ public:
 #pragma region On Controller Spawn Methods
 	
 	virtual void BeginPlay() override;
-	virtual void PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails = nullptr) override;
+	virtual void PawnSetup_Implementation(UDA_CharacterMeshDetails* CharacterDetails = nullptr, bool Restarting = false) override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_PawnSetup(UDA_CharacterMeshDetails* CharacterDetails);

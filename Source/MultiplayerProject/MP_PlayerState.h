@@ -42,7 +42,7 @@ public:
 	void UpdatePlayerUI(AActor* DamagedActor, float HealthValue);
 	
 	
-	virtual void Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails) override;
+	virtual void Initialise_Implementation(UDA_CharacterMeshDetails* CharacterDetails, bool Restarting) override;
 
 	virtual FPlayerDetails GetPlayerDetails_Implementation() override;
 

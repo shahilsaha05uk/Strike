@@ -28,7 +28,7 @@ public:
 	void RestartPlayer();
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void PawnSetup(UDA_CharacterMeshDetails* CharacterDetails = nullptr);
+	void PawnSetup(UDA_CharacterMeshDetails* CharacterDetails = nullptr, bool Restarting = false);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetPlayerTeam(ETeam Team);

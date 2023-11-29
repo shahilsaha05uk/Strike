@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MultiplayerProject/PlayerCharacter.h"
 #include "MultiplayerProject/DataAssetClasses/DA_WeaponDetails.h"
@@ -37,6 +38,8 @@ ABaseWeapon::ABaseWeapon()
 	mUIComponent->SetVisibility(false);
 	
 	bReplicates = true;
+
+	mSpread = 800.0f;
 
 	TraceRange = 20000.0f;
 	
@@ -138,8 +141,6 @@ void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 	MuzzleDuration = mWeaponSound->Duration;
 	mParticleComponent->SetNiagaraVariableFloat("Duration", MuzzleDuration);
 	mParticleComponent->SetVariableFloat("Duration", MuzzleDuration);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Fire Rate: %f"), mFireRate);
 }
 
 void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
@@ -198,31 +199,29 @@ void ABaseWeapon::Server_Fire_Implementation()
 		return;
 	}
 
-	mAmmo--;
-	Multicast_Fire();
-
 	UE_LOG(LogTemp, Warning, TEXT("Server Ammo: %d"), mAmmo);
-
-
+	
 	if(UKismetSystemLibrary::DoesImplementInterface(GetOwner(), UPlayerInterface::StaticClass()))
 	{
+		FHitResult hit;
+		
 		UCameraComponent* FollowCam = IPlayerInterface::Execute_GetFollowCamera(GetOwner());
 
 		FVector StartPos = FollowCam->GetComponentLocation();
 		
-		FVector EndPos = StartPos + (FollowCam->GetForwardVector() * TraceRange);
-		
+		FVector EndPos = SpreadTrace(StartPos + (FollowCam->GetForwardVector() * TraceRange));
+
 		TArray<AActor*> ActorsToIgnore = {this, GetOwner()};
 		
 		ActorsToIgnore.Add(GetInstigator());
 		
-		FHitResult hit;
-		
-		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hit, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPos, EndPos, TraceChannel, false, ActorsToIgnore, EDrawDebugTrace::None, hit, true);
 
 		BlueprintServer_Fire(hit);
 
 		Client_Fire();
+		mAmmo--;
+		Multicast_Fire(hit);
 	}
 	
 
@@ -240,11 +239,11 @@ void ABaseWeapon::Server_StopFire_Implementation()
 }
 
 // Multicast Fire
-void ABaseWeapon::Multicast_Fire_Implementation()
+void ABaseWeapon::Multicast_Fire_Implementation(FHitResult hit)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Multicasted Ammo: %d"), mAmmo);
 
-	Blueprint_Multicast_Fire();
+	Blueprint_Multicast_Fire(hit);
 }
 
 void ABaseWeapon::Multicast_StopFire_Implementation()
@@ -255,6 +254,16 @@ void ABaseWeapon::Multicast_StopFire_Implementation()
 
 }
 
-void ABaseWeapon::Blueprint_Multicast_Fire_Implementation()
+FVector ABaseWeapon::SpreadTrace(FVector InputTrace)
 {
+	float spread = mSpread * -1;
+
+	float x = UKismetMathLibrary::RandomFloatInRange(spread, mSpread);
+	float y = UKismetMathLibrary::RandomFloatInRange(spread, mSpread);
+	float z = UKismetMathLibrary::RandomFloatInRange(spread, mSpread);
+
+	const FVector value = FVector(x,y,z) + InputTrace;
+
+	return value;
 }
+

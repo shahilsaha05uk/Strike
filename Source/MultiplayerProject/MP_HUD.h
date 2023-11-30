@@ -10,7 +10,6 @@
 #include "MP_HUD.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResumeGameSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeamChosenSignature, UDA_CharacterMeshDetails*, CharacterDetails);
 
 UCLASS()
@@ -57,9 +56,6 @@ public:
 
 #pragma region Delegates
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Delegates")
-	FResumeGameSignature ResumeGameSignature;
-
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnTeamChosenSignature OnTeamChosen;
 

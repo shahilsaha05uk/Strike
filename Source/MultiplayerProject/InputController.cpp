@@ -130,7 +130,11 @@ void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetai
 	{
 		UPlayerHUD* PlayerHUD = Cast<UPlayerHUD>(IHUDInterface::Execute_GetWidget(hud, EWidgetType::PLAYER_HUD));
 
-		IPlayerHUDInterface::Execute_UpdateMoney(PlayerHUD, PlayerDetails.CurrentMoney);
+		if(PlayerHUD)
+		{
+			IPlayerHUDInterface::Execute_UpdateMoney(PlayerHUD, PlayerDetails.CurrentMoney);
+		}
+
 	}
 }
 

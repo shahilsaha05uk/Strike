@@ -7,10 +7,5 @@
 
 AMainMenu_GameMode::AMainMenu_GameMode()
 {
-	OnPlayerSpawnSignature.AddDynamic(this, &ThisClass::OnPlayerSpawn);
-}
 
-void AMainMenu_GameMode::OnPlayerSpawn_Implementation(APlayerCharacter* PlayerRef)
-{
-	
 }

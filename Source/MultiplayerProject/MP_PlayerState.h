@@ -24,8 +24,6 @@ public:
 	FPlayerDetails mPlayerDetails;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
-	int Kills;
-	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	float Health;
 
 	AMP_PlayerState();

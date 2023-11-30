@@ -63,8 +63,6 @@ public:
 	class UInputMappingContext* InputMappingContext;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	class UInputMappingContext* UI_MappingContext;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	bool shouldActivateMappingContext;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input Properties")
 	float mMinCamPitch;

@@ -73,8 +73,6 @@ void ABaseWeapon::Request_HUDUpdate_Implementation()
 
 void ABaseWeapon::Init_Implementation()
 {
-	bIsFiring = false;
-	
 	mInteractableDetails.ActorName = GetName();
 	mInteractableDetails.ActorReference = this;
 	mInteractableDetails.InteractType = EQUIPPABLE;
@@ -178,7 +176,7 @@ void ABaseWeapon::Client_AttachWeaponToPlayer_Implementation()
 // Fire
 void ABaseWeapon::Fire_Implementation()
 {
-	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mFireRate, true, mInFirstDelay);
+	GetWorld()->GetTimerManager().SetTimer(TimeHandler, this, &ABaseWeapon::Server_Fire, mFireRate, true, 0);
 }
 
 void ABaseWeapon::StopFire_Implementation()

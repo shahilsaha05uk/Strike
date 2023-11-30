@@ -16,16 +16,4 @@ class MULTIPLAYERPROJECT_API AMainMenu_GameMode : public AGameModeBase
 public:
 	AMainMenu_GameMode();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Properties")
-	class UMultiplayer_GameInstance* mGameInstance;
-
-	UPROPERTY(BlueprintReadWrite, BlueprintCallable, Category = "Private")
-	FOnPlayerSpawnSignature OnPlayerSpawnSignature;
-
-
-	
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnPlayerSpawn(APlayerCharacter* PlayerRef);
-	
 };

@@ -37,9 +37,6 @@ public:
 	TSubclassOf<UUserWidget> mWidgetClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	bool bIsFiring;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName mWeaponSocket;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
@@ -82,9 +79,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float MuzzleDuration;
 
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
-	
-	
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	USoundBase* mWeaponSound;
 	

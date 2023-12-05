@@ -53,15 +53,6 @@ bool ULAN_OnlineSubsystem::TryTravelToCurrentSession()
 
 void ULAN_OnlineSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
 {
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.0f,
-			FColor::Emerald,
-			FString::Printf(TEXT("Creating Session")));
-	}
-
 	if(!mSessionInterface.IsValid()) return;
 
 	const auto ExistingSession = mSessionInterface->GetNamedSession(NAME_GameSession);

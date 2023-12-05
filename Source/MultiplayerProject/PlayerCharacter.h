@@ -40,7 +40,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	FName FlagSocket;
 
-	UPROPERTY(ReplicatedUsing = OnRep_IsAiming, BlueprintReadWrite, VisibleAnywhere)
+	UPROPERTY(Replicated, BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	bool bIsDead;
@@ -55,9 +55,6 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Server_IsAiming(bool Value);
-	
-	UFUNCTION()
-	void OnRep_IsAiming();
 	
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void BlueprintOnRep_IsAiming();
@@ -116,14 +113,14 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
 	
-	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void Multicast_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
 	
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintServer_SpawnWeapon(ABaseWeapon* Weapon);
 	
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintClient_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
+	void BlueprintMulticast_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
 	
 
 	// When the player shoots

@@ -457,8 +457,8 @@ void AInputController::OnPlayerDead_Implementation(AController* InstigatorContro
 	Server_RequestGameModeDecision(InstigatorController);
 
 	APawn* pawn = GetPawn();
-
-	if(pawn->GetController())
+	AController* PC = pawn->GetController();
+	if(PC != nullptr)
 	{
 		pawn->GetController()->UnPossess();
 	}

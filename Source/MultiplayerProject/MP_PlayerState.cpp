@@ -13,7 +13,6 @@
 AMP_PlayerState::AMP_PlayerState()
 {
 	bReplicates = true;
-	Kills = 0;
 }
 
 void AMP_PlayerState::BeginPlay()

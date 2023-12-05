@@ -87,6 +87,7 @@ void APlayerCharacter::OnOverlapBegin_Implementation(UPrimitiveComponent* Primit
 		CollidedActor = Actor;
 	}
 }
+
 void APlayerCharacter::OnOverlapEnd_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I)
 {
 	CollidedActor = nullptr;
@@ -144,12 +145,16 @@ void APlayerCharacter::StopJump_Implementation()
 
 void APlayerCharacter::StartAiming_Implementation()
 {
-	Server_IsAiming(true);
+	isAiming = true;
+
+	BlueprintOnRep_IsAiming();
 }
 
 void APlayerCharacter::StopAiming_Implementation()
 {
-	Server_IsAiming(false);
+	isAiming = false;
+
+	BlueprintOnRep_IsAiming();
 }
 
 void APlayerCharacter::Interact_Implementation()
@@ -198,15 +203,9 @@ void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDe
 
 	WeaponToSpawn->AttachWeaponToPlayer(this);
 
-	BlueprintServer_SpawnWeapon(WeaponToSpawn);
-	
 	mPrimaryWeapon = WeaponToSpawn;
-	Client_SpawnWeapon(WeaponDetails, WeaponToSpawn);
-}
-
-void APlayerCharacter::Client_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon)
-{
-
+	
+	Multicast_SpawnWeapon(WeaponDetails, WeaponToSpawn);
 }
 
 ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
@@ -217,6 +216,11 @@ ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
 void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
 {
 	mPrimaryWeapon = Weapon;
+}
+
+void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon)
+{
+	BlueprintMulticast_SpawnWeapon(WeaponDetails, Weapon);
 }
 
 
@@ -343,7 +347,7 @@ void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy
 	
 	bIsDead = true;
 
-	if(mFlagRef)
+	if(mFlagRef && IsLocallyControlled())
 	{
 		Server_DropFlag();
 	}
@@ -378,14 +382,7 @@ void APlayerCharacter::RefreshPawn_Implementation()
 // When the Player Is Aiming
 void APlayerCharacter::Server_IsAiming_Implementation(bool Value)
 {
-	isAiming = Value;
 }
-
-void APlayerCharacter::OnRep_IsAiming()
-{
-	BlueprintOnRep_IsAiming();
-}
-
 // Updating the health Bar
 
 void APlayerCharacter::UpdateHealthBar_Implementation(float Health)
@@ -428,7 +425,7 @@ void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
 
 			IFlagInterface::Execute_OnPickedUp(mFlagRef, C->PlayerState);
 
-			FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+			FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
 			mFlagRef->AttachToComponent(GetMesh(), rules, FlagSocket);
 		}
 		else

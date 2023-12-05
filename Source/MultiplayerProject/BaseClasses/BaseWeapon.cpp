@@ -132,15 +132,13 @@ void ABaseWeapon::AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 	mFireRate = mWeaponDetails.TimePerShot;
 	mDamageRate = mWeaponDetails.WeaponDamage;
 	mWeaponSound = mWeaponDetails.WeaponSound;
-
 	MuzzleDuration = mWeaponSound->Duration;
-	mParticleComponent->SetNiagaraVariableFloat("Duration", MuzzleDuration);
-	mParticleComponent->SetVariableFloat("Duration", MuzzleDuration);
 }
 
 void ABaseWeapon::Server_AttachWeaponToPlayer_Implementation(AActor* OwnerPlayer)
 {
 	mWeaponDetails = WeaponAsset->WeaponDetails;
+	
 	mAmmo = mWeaponDetails.TotalBullets;
 	
 	Client_AttachWeaponToPlayer();
@@ -166,6 +164,9 @@ void ABaseWeapon::Multicast_AttachWeaponToPlayer_Implementation(AActor* OwnerPla
 	mUIComponent->DestroyComponent();
 
 	mCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	mParticleComponent->SetNiagaraVariableFloat("User.Duration", 0.01f);
+	mParticleComponent->SetVariableFloat("User.Duration", 0.01f);
 }
 
 void ABaseWeapon::Client_AttachWeaponToPlayer_Implementation()
@@ -216,9 +217,6 @@ void ABaseWeapon::Server_Fire_Implementation()
 		mAmmo--;
 		Multicast_Fire(hit);
 	}
-	
-
-
 }
 
 void ABaseWeapon::Client_Fire_Implementation()

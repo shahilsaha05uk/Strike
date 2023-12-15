@@ -5,6 +5,8 @@
 
 #include "EnhancedInputComponent.h"
 #include "InputController.h"
+#include "ActorComponentClasses/InteractableComponent.h"
+#include "BaseClasses/BaseInteractable.h"
 #include "BaseClasses/BaseWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -49,13 +51,13 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 	bUseControllerRotationYaw = true;
-
+	
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	FlagSocket = "flagSocket";
+	mInteractableComp = CreateDefaultSubobject<UInteractableComponent>("InteractableComp");
 	bReplicates = true;
 	bIsDead = false;
 }
@@ -155,28 +157,6 @@ void APlayerCharacter::StopAiming_Implementation()
 	isAiming = false;
 
 	BlueprintOnRep_IsAiming();
-}
-
-void APlayerCharacter::Interact_Implementation()
-{
-	Server_Interact();
-}
-
-#pragma endregion
-
-#pragma region When the player Interacts
-
-void APlayerCharacter::Server_Interact_Implementation()
-{
-	Client_Interact();
-}
-
-void APlayerCharacter::Client_Interact_Implementation()
-{
-	if(CollidedActor == nullptr) return;
-	
-	IInteractableInterface::Execute_Interact(CollidedActor, this);
-	CollidedActor = nullptr;
 }
 
 #pragma endregion
@@ -323,6 +303,8 @@ void APlayerCharacter::Dead_Implementation(AController* InstigatedBy)
 
 void APlayerCharacter::Client_OnDead_Implementation(AController* InstigatedBy)
 {
+	Server_Interact(DROP, FLAG);
+
 	AController* C = GetController();
 	
 	if(UKismetSystemLibrary::DoesImplementInterface(C, UControllerInterface::StaticClass()))
@@ -346,11 +328,6 @@ void APlayerCharacter::Multicast_OnDead_Implementation(AController* InstigatedBy
 	}
 	
 	bIsDead = true;
-
-	if(mFlagRef && IsLocallyControlled())
-	{
-		Server_DropFlag();
-	}
 
 	AController* CachedInstigatedBy = InstigatedBy;
 	FTimerHandle TimerHandle;
@@ -405,50 +382,6 @@ void APlayerCharacter::BlueprintMulticast_UpdateHealthBar_Implementation(float H
 	
 }
 
-// Interaction with the flag
-
-void APlayerCharacter::FlagSpawner_Implementation(AActor* FlagRef)
-{
-	if(!UKismetSystemLibrary::DoesImplementInterface(FlagRef, UFlagInterface::StaticClass())) return;
-	
-	ETeam FlagTeam = IFlagInterface::Execute_GetFlagTeam(FlagRef);
-
-	AController* C = GetController();
-	if(C != nullptr)
-	{
-		APlayerState* pState = C->PlayerState;
-		FPlayerDetails PlayerDetails = IPlayerStateInterface::Execute_GetPlayerDetails(pState);
-
-		if(PlayerDetails.Team != FlagTeam)
-		{
-			mFlagRef = FlagRef;
-
-			IFlagInterface::Execute_OnPickedUp(mFlagRef, C->PlayerState);
-
-			FAttachmentTransformRules rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
-			mFlagRef->AttachToComponent(GetMesh(), rules, FlagSocket);
-		}
-		else
-		{
-			IFlagInterface::Execute_ResetFlag(FlagRef);
-		}
-	}
-}
-
-void APlayerCharacter::DropItem_Implementation()
-{
-	Server_DropFlag();
-}
-
-void APlayerCharacter::Server_DropFlag_Implementation()
-{
-	Multicast_DropFlag();
-}
-
-void APlayerCharacter::Multicast_DropFlag_Implementation()
-{
-	BlueprintMulticast_DropFlag();
-}
 
 // On Session Ends Methods
 
@@ -459,4 +392,77 @@ void APlayerCharacter::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore
 	{
 		IControllerInterface::Execute_OnSessionEnd(PC, WinningTeam, TScore, CTScore);
 	}
+}
+
+// New changes
+void APlayerCharacter::Interact_Implementation()
+{
+	if(CollidedActor == nullptr) return;
+
+	if(UKismetSystemLibrary::DoesImplementInterface(CollidedActor, UInteractableInterface::StaticClass()))
+	{
+		const EInteractableItem ItemType = IInteractableInterface::Execute_GetInteractableItem(CollidedActor);
+		Server_Interact(INTERACT, ItemType, CollidedActor);
+	}
+
+	CollidedActor = nullptr;
+}
+
+void APlayerCharacter::DropItem_Implementation()
+{
+	Server_Interact(DROP, FLAG);
+}
+
+void APlayerCharacter::UpdateInventory_Implementation(EInteractableItem Item, ABaseInteractable* InteractableActor)
+{
+	if(CurrentInteractableItem.Contains(Item))
+	{
+		CurrentInteractableItem[Item] = InteractableActor;
+		return;
+	}
+
+	CurrentInteractableItem.Add(Item, InteractableActor);
+}
+
+ABaseInteractable* APlayerCharacter::GetInventoryItem_Implementation(EInteractableItem Item)
+{
+	if(CurrentInteractableItem.Contains(Item)) return CurrentInteractableItem[Item];
+
+	return nullptr;
+}
+
+void APlayerCharacter::Server_Interact_Implementation(EInteractAction ActionType, EInteractableItem Item, AActor* TargetActor)
+{
+	
+	switch (ActionType) {
+	case DROP:
+		{
+			ABaseInteractable* InteractableActor = Execute_GetInventoryItem(this, Item);
+			if(InteractableActor)
+			{
+				mInteractableComp->DropItem(InteractableActor, this);
+				RemoveFromInventory(InteractableActor->InteractableItem);
+			}
+		}
+		break;
+	case INTERACT:
+		if(TargetActor)
+		{
+			mInteractableComp->Interact(TargetActor, this);
+		}
+		break;
+	}
+}
+
+void APlayerCharacter::RemoveFromInventory_Implementation(EInteractableItem InteractableItem)
+{
+	if(CurrentInteractableItem.Contains(InteractableItem))
+	{
+		CurrentInteractableItem.Remove(InteractableItem);
+	}
+}
+
+void APlayerCharacter::OnAttachActor_Implementation(EInteractableItem ItemType, ABaseInteractable* NewActor)
+{
+	UpdateInventory(ItemType, NewActor);
 }

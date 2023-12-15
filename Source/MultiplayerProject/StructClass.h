@@ -144,12 +144,9 @@ public:
 	FString ActorName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TEnumAsByte<EInteractType> InteractType;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AActor* ActorReference;
 
-	FInteractableDetails(): ActorName(""), InteractType(PICKUP), ActorReference(nullptr)
+	FInteractableDetails(): ActorName(""), ActorReference(nullptr)
 	{
 	}
 };

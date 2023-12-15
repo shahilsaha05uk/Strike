@@ -73,9 +73,7 @@ void ABaseWeapon::Request_HUDUpdate_Implementation()
 
 void ABaseWeapon::Init_Implementation()
 {
-	mInteractableDetails.ActorName = GetName();
-	mInteractableDetails.ActorReference = this;
-	mInteractableDetails.InteractType = EQUIPPABLE;
+
 }
 
 void ABaseWeapon::OnComponentBeginOverlap_Implementation(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
@@ -97,18 +95,19 @@ void ABaseWeapon::OnComponentEndOverlap_Implementation(UPrimitiveComponent* Prim
 	}
 }
 
-FInteractableDetails ABaseWeapon::GetInteractableDetails_Implementation()
-{
-	return 	mInteractableDetails;
-}
-
-void ABaseWeapon::Interact_Implementation(AActor* OwnerPlayer)
+void ABaseWeapon::Interact_Implementation(ACharacter* OwnerPlayer)
 {
 	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
 	{
 		IPlayerInterface::Execute_SpawnWeapon(OwnerPlayer, WeaponAsset->WeaponDetails);
+		mUIComponent->SetVisibility(false);
 		this->Destroy();
 	}
+}
+
+EInteractableItem ABaseWeapon::GetInteractableItem_Implementation()
+{
+	return WEAPON;
 }
 
 void ABaseWeapon::Server_AddAmmo_Implementation(int Value)
@@ -254,4 +253,3 @@ FVector ABaseWeapon::SpreadTrace(FVector InputTrace)
 
 	return value;
 }
-

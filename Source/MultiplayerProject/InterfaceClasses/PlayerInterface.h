@@ -26,9 +26,6 @@ public:
 
 	// Only for debugging
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void FlagSpawner(AActor* FlagRef);
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UCameraComponent* GetFollowCamera();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UMeshComponent* GetMeshComponent();
@@ -49,6 +46,10 @@ public:
 
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	ABaseInteractable* GetInventoryItem(EInteractableItem Item);
+
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UpdateHealthBar(float Health);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -59,5 +60,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSessionEnd(ETeam WinningTeam, int TScore, int CTScore);
 
-
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnAttachActor(EInteractableItem ItemType, ABaseInteractable* NewActor);
 };

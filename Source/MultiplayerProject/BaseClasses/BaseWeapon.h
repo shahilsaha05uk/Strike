@@ -108,9 +108,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnComponentEndOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I);
 
-	virtual FInteractableDetails GetInteractableDetails_Implementation() override;
-	virtual void Interact_Implementation(AActor* OwnerPlayer) override;
+	virtual void Interact_Implementation(ACharacter* OwnerPlayer) override;
 
+	virtual EInteractableItem GetInteractableItem_Implementation() override;
+
+	
 	// -------------------------------------------------------------------------------------
 
 	UFUNCTION(Server, Reliable)

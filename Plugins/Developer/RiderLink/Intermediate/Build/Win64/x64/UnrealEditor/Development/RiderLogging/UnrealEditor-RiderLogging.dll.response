@@ -34,6 +34,7 @@
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
 "G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
+"G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\RiderLogging.cpp.obj"
 "G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
 "G:\FINAL YEAR PROJECTS\Multiplayer Project\Year4_Multiplayer_Project\MultiplayerProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RD\UnrealEditor-RD.lib"

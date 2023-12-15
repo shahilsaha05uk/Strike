@@ -62,4 +62,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnAttachActor(EInteractableItem ItemType, ABaseInteractable* NewActor);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnWeaponSpawn();
 };

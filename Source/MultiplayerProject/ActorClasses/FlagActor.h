@@ -78,4 +78,3 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnBaseCollision(AActor* TeamBaseRef, AActor* FlagRef, ACharacter* OwningPlayer);
 };
-

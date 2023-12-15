@@ -6,12 +6,18 @@
 // Sets default values
 void ABaseInteractable::Interact_Implementation(ACharacter* OwnerPlayer)
 {
-
+	switch (InteractableItem) {
+	case FLAG:
+		UE_LOG(LogTemp, Warning, TEXT("Interacted with: Flag"));
+		break;
+	case WEAPON:
+		UE_LOG(LogTemp, Warning, TEXT("Interacted with: Weapon"));
+		break;
+	}
 }
 
 void ABaseInteractable::DropItem_Implementation(ACharacter* OwnerPlayer)
 {
-
 }
 
 void ABaseInteractable::AttachToPlayer_Implementation(ACharacter* OwnerPlayer)

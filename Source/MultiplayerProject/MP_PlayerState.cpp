@@ -80,7 +80,7 @@ void AMP_PlayerState::UpdatePlayerUI_Implementation(AActor* DamagedActor, float 
 	//TODO: Call the HealthHUD update from the Controller
 	if(UKismetSystemLibrary::DoesImplementInterface(DamagedActor->GetOwner(), UControllerInterface::StaticClass()))
 	{
-		IControllerInterface::Execute_UpdatePlayerHealthUI(DamagedActor->GetOwner(), HealthValue);
+		IControllerInterface::Execute_UpdatePlayerHUDDetails(DamagedActor->GetOwner(), HEALTH_Val, FString::FromInt(HealthValue));
 	}
 }
 
@@ -104,7 +104,7 @@ void AMP_PlayerState::UpdateHealth_Implementation(float Value)
 	//TODO: Call the HealthHUD update from the Controller
 	if(UKismetSystemLibrary::DoesImplementInterface(pawn->GetOwner(), UControllerInterface::StaticClass()))
 	{
-		IControllerInterface::Execute_UpdatePlayerHealthUI(pawn->GetOwner(), Health);
+		IControllerInterface::Execute_UpdatePlayerHUDDetails(pawn->GetOwner(), HEALTH_Val, FString::FromInt(Health));
 	}
 }
 

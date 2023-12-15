@@ -151,7 +151,6 @@ public:
 	}
 };
 
-
 UCLASS()
 class MULTIPLAYERPROJECT_API UStructClass : public UBlueprintFunctionLibrary
 {

@@ -33,6 +33,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetPlayerTeam(ETeam Team);
 
+	/*
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateScoreboard(int Value, ETeam Team);
 
@@ -44,9 +45,13 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateWeaponDetailsHUD(int Ammo);
+	*/
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnPlayerDead(AController* InstigatorController);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdatePlayerHUDDetails(EHUDValue ValueType, const FString& Value);
 
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

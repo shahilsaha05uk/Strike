@@ -53,6 +53,17 @@ enum EInteractAction
 	DROP,
 };
 
+UENUM(Blueprintable, BlueprintType)
+enum EHUDValue
+{
+	AMMO_Val,
+	MONEY_Val,
+	HEALTH_Val,
+	TARGET_Val,
+	T_SCORE_Val,
+	CT_SCORE_Val,
+};
+
 
 
 UCLASS()

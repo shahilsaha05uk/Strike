@@ -29,5 +29,4 @@ public:
 	virtual ETeam GetTeam_Implementation() override;
 	virtual EInteractableItem GetInteractableItem_Implementation() override;
 
-	
 };

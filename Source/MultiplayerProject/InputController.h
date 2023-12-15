@@ -94,7 +94,6 @@ public:
 
 #pragma endregion
 
-
 #pragma region Player Actions
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -168,17 +167,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_PostPossessed(FPlayerDetails PlayerDetails, FMatchDetails MatchDetails);
-
-// Updating the Player UIs
-	virtual void UpdateScoreboard_Implementation(int Value, ETeam Team) override;
-	virtual void UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails);
-	virtual void UpdatePlayerHealthUI_Implementation(float Health);
-	virtual void UpdateWeaponDetailsHUD_Implementation(int Ammo) override;
-
-
-	UFUNCTION(Client, Reliable)
-	void Client_UpdateWeaponDetails(int Ammo);
-
+	
+	
 // When the player Dies
 
 	virtual void OnPlayerDead_Implementation(AController* InstigatorController) override;
@@ -199,5 +189,13 @@ public:
 // On session End
 
 	virtual void OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore) override;
+	
+	virtual void UpdatePlayerHUDDetails_Implementation(EHUDValue ValueType, const FString& Value) override;
+
+	UFUNCTION(Client, Reliable)
+	void Client_UpdatePlayerHUDDetails(EHUDValue ValueType, const FString& Value);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BlueprintClient_UpdatePlayerHUDDetails(EHUDValue ValueType, const FString& Value);
 };
 

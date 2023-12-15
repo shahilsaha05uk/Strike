@@ -26,8 +26,18 @@ class MULTIPLAYERPROJECT_API IInteractableInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	FInteractableDetails GetInteractableDetails();
+	EInteractableItem GetInteractableItem();
+
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Interact(ACharacter* OwnerPlayer);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Interact(AActor* OwnerPlayer);
+	void DropItem(ACharacter* OwnerPlayer);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AttachToPlayer(ACharacter* OwnerPlayer);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DetachFromPlayer(ACharacter* OwnerPlayer);
 };

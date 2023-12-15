@@ -38,31 +38,20 @@ enum ETeam
 	COUNTER_TERRORIST
 };
 
+
 UENUM(Blueprintable, BlueprintType)
-enum EFlag
+enum EInteractableItem
 {
-	CT_FLAG,
-	T_FLAG
+	FLAG,
+	WEAPON,
 };
 
 UENUM(Blueprintable, BlueprintType)
-enum EInteractType
+enum EInteractAction
 {
-	EQUIPPABLE,
-	PICKUP,
-	COLLECTIBLE
+	INTERACT,
+	DROP,
 };
-
-UENUM(Blueprintable, BlueprintType)
-enum EFlagStatus
-{
-	IN_ORIGINAL_PLACE,
-	CAPTURED,
-	RETRIEVED,
-	DROPPED,
-	IN_OPPONENT_BASE
-};
-
 
 
 

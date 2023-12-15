@@ -3,10 +3,13 @@
 
 #include "FlagActor.h"
 
+#include "GameplayDebuggerTypes.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "MultiplayerProject/PlayerCharacter.h"
 #include "MultiplayerProject/InterfaceClasses/PlayerInterface.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AFlagActor::AFlagActor()
@@ -22,7 +25,8 @@ AFlagActor::AFlagActor()
 
 	mFlagMesh = CreateDefaultSubobject<UStaticMeshComponent>("Flag Mesh");
 	mFlagMesh->SetupAttachment(RootComponent);
-
+	mFlagMesh->SetIsReplicated(true);
+	
 	mBoxComp = CreateDefaultSubobject<UBoxComponent>("Box Comp");
 	mBoxComp->SetupAttachment(mFlagMesh);
 	mBoxComp->SetBoxExtent(FVector(9.0f, 8.0f, 152.0f));
@@ -30,18 +34,114 @@ AFlagActor::AFlagActor()
 	mBoxComp->OnComponentEndOverlap.AddDynamic(this, &AFlagActor::OnBoxColliderEndOverlap);
 
 	FlagSocket = "flagSocket";
+
+	InteractableItem = FLAG;
+
+	bReplicates = true;
+	SetReplicates(true);
+	
 }
 
 void AFlagActor::BeginPlay()
 {
 	mBoxComp->SetVisibility(false);
-	
 	mInitialTransform = mRoot->GetComponentTransform();
 
 	Super::BeginPlay();
 }
 
-void AFlagActor::OnDropped_Implementation()
+void AFlagActor::OnSphereColliderBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+}
+
+void AFlagActor::OnSphereColliderEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+}
+
+void AFlagActor::OnBoxColliderBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void AFlagActor::OnBoxColliderEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+}
+
+// New Changes
+void AFlagActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFlagActor, RootFlagRef);
+	DOREPLIFETIME(AFlagActor, BaseRef);
+}
+
+
+// Interact Item
+void AFlagActor::Interact_Implementation(ACharacter* OwnerPlayer)
+{
+	if(RootFlagRef == nullptr)
+	{
+		AFlagActor* SpawnedFlagRef = SpawnForPlayer();
+		SpawnedFlagRef->RootFlagRef = this;
+
+		Multicast_Interact(OwnerPlayer, SpawnedFlagRef, false);
+		
+		IPlayerInterface::Execute_OnAttachActor(OwnerPlayer, FLAG, SpawnedFlagRef);
+	}
+	else
+	{
+		Multicast_Interact(OwnerPlayer, this, true);
+		
+		IPlayerInterface::Execute_OnAttachActor(OwnerPlayer, FLAG, this);
+	}
+}
+
+void AFlagActor::Multicast_Interact_Implementation(ACharacter* TargetActor, AFlagActor* FlagRef, bool Visibility)
+{
+	if(FlagRef)
+	{
+		Execute_AttachToPlayer(FlagRef, TargetActor);
+	}
+
+	mFlagMesh->SetVisibility(Visibility, true);
+}
+
+// Drop Item
+void AFlagActor::DropItem_Implementation(ACharacter* OwnerPlayer)
+{
+	Multicast_DropItem(OwnerPlayer, this, BaseRef);
+}
+
+void AFlagActor::Multicast_DropItem_Implementation(ACharacter* TargetActor, AActor* FlagRef, AActor* BaseActor)
+{
+	if(TargetActor) Execute_DetachFromPlayer(FlagRef, TargetActor);
+
+	if(BaseActor != nullptr)
+	{
+		RootFlagRef->mFlagMesh->SetVisibility(true, true);
+
+		OnBaseCollision(BaseActor, RootFlagRef, TargetActor);	// If the Flag is within the bounds
+		
+		Destroy();
+	}
+}
+
+// Supporting Methods
+AFlagActor* AFlagActor::SpawnForPlayer_Implementation()
+{
+	return nullptr;
+}
+
+void AFlagActor::OnBaseCollision_Implementation(AActor* TeamBaseRef, AActor* FlagRef, ACharacter* OwningPlayer)
+{
+}
+
+void AFlagActor::AttachToPlayer_Implementation(ACharacter* OwnerPlayer)
+{
+}
+
+void AFlagActor::DetachFromPlayer_Implementation(ACharacter* OwnerPlayer)
 {
 	mBoxComp->SetVisibility(true);
 
@@ -55,54 +155,3 @@ void AFlagActor::OnDropped_Implementation()
 	mRoot->SetWorldLocation(tmpLoc, false, nullptr, ETeleportType::None);
 	mRoot->SetWorldRotation(FRotator::ZeroRotator, false, nullptr, ETeleportType::None);
 }
-
-void AFlagActor::OnPickedUp_Implementation(APlayerState* PlayerState)
-{
-	mPlayerStateRef = PlayerState;
-}
-
-ETeam AFlagActor::GetFlagTeam_Implementation()
-{
-	return mFlagTeam;
-}
-
-void AFlagActor::Interact_Implementation(AActor* OwnerPlayer)
-{
-	if(UKismetSystemLibrary::DoesImplementInterface(OwnerPlayer, UPlayerInterface::StaticClass()))
-	{
-		IPlayerInterface::Execute_FlagSpawner(OwnerPlayer, this);
-	}
-}
-
-FInteractableDetails AFlagActor::GetInteractableDetails_Implementation()
-{
-	return {};
-}
-
-void AFlagActor::ResetFlag_Implementation()
-{
-	mRoot->SetWorldTransform(mInitialTransform);
-}
-
-
-void AFlagActor::OnSphereColliderBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-
-}
-
-void AFlagActor::OnSphereColliderEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-}
-
-void AFlagActor::OnBoxColliderBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-}
-
-void AFlagActor::OnBoxColliderEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-}
-

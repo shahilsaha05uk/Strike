@@ -29,6 +29,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Pickup Property")
 	class ABaseWeapon* mPrimaryWeapon;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup Property")
+	class UInteractableComponent* mInteractableComp;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Properties")
 	FTransform InitialCamTransform;
 
@@ -37,8 +40,6 @@ public:
 	class AInputController* mControllerRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
 	class AHUD* mHudRef;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "References")
-	FName FlagSocket;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, VisibleAnywhere)
 	bool isAiming;
@@ -46,11 +47,6 @@ public:
 	bool bIsDead;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool bIsFiring;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	AActor* CollidedActor;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	AActor* mFlagRef;
-
 	virtual void RefreshPawn_Implementation() override;
 
 	UFUNCTION(Server, Reliable)
@@ -98,8 +94,6 @@ public:
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	
-	virtual void FlagSpawner_Implementation(AActor* FlagRef) override;
 public:
 
 	// Updating the Weapon Properties
@@ -143,12 +137,6 @@ public:
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_StopShoot();
 	
-	// Interaction
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_Interact();
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Client_Interact();
-
 	// Updating Overhead UI
 	virtual void UpdateHealthBar_Implementation(float Health) override;
 
@@ -178,16 +166,28 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnDeadTimerFinished(AController* InstigatedBy);
 
-	// Flag Interaction
-	UFUNCTION(Server, Reliable)
-	void Server_DropFlag();
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_DropFlag();
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_DropFlag();
-
 	// On Session End
-
 	virtual void OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore) override;
+
+	// New Changes
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TMap<TEnumAsByte<EInteractableItem>, class ABaseInteractable*> CurrentInteractableItem;
+
+	virtual ABaseInteractable* GetInventoryItem_Implementation(EInteractableItem Item) override;
+
+	UFUNCTION(Server, Reliable)
+	void Server_Interact(EInteractAction ActionType, EInteractableItem Item, AActor* TargetActor = nullptr);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void RemoveFromInventory(EInteractableItem InteractableItem);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateInventory(EInteractableItem Item, ABaseInteractable* InteractableActor);
+	
+	virtual void OnAttachActor_Implementation(EInteractableItem ItemType, ABaseInteractable* NewActor) override;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	AActor* CollidedActor;
+
+
 };

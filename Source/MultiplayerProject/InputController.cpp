@@ -123,34 +123,6 @@ void AInputController::OnShooting_Implementation(int& AmmoValue)
 	
 }
 
-void AInputController::UpdatePlayerHUD_Implementation(FPlayerDetails PlayerDetails)
-{
-	AHUD* hud = GetHUD();
-	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
-	{
-		UPlayerHUD* PlayerHUD = Cast<UPlayerHUD>(IHUDInterface::Execute_GetWidget(hud, EWidgetType::PLAYER_HUD));
-
-		if(PlayerHUD)
-		{
-			IPlayerHUDInterface::Execute_UpdateMoney(PlayerHUD, PlayerDetails.CurrentMoney);
-		}
-
-	}
-}
-
-void AInputController::UpdatePlayerHealthUI_Implementation(float Health)
-{
-	AHUD* hud = GetHUD();
-
-	if(hud)
-	{
-		UBaseWidget* pHUD = IHUDInterface::Execute_GetWidget(hud, EWidgetType::PLAYER_HUD);
-		
-		IPlayerHUDInterface::Execute_UpdateHealth(pHUD, Health);
-	}
-}
-
-
 void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
 {
 	APawn* pawn = GetPawn();
@@ -161,7 +133,7 @@ void AInputController::OnSpawnWeapon_Implementation(FWeaponDetails WeaponDetails
 	}
 
 	mPlayerState->mPlayerDetails.CurrentMoney -= WeaponDetails.WeaponCost;
-	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
+	//Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
 
 // Input Action Methods
@@ -279,7 +251,7 @@ void AInputController::AddAmmo_Implementation(int Value)
 	}
 
 	mPlayerState->mPlayerDetails.CurrentMoney -= Value;
-	Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
+	//Execute_UpdatePlayerHUD(this, mPlayerState->mPlayerDetails);
 }
 #pragma endregion
 
@@ -414,40 +386,6 @@ void AInputController::Multicast_PawnSetup_Implementation(UDA_CharacterMeshDetai
 	BlueprintMulticast_PawnSetup(CharacterDetails);
 }
 
-
-// Show Scoreboard
-
-void AInputController::UpdateWeaponDetailsHUD_Implementation(int Ammo)
-{
-	Client_UpdateWeaponDetails(Ammo);
-}
-
-void AInputController::Client_UpdateWeaponDetails_Implementation(int Ammo)
-{
-	AHUD* Hud = GetHUD();
-	if(UKismetSystemLibrary::DoesImplementInterface(Hud, UHUDInterface::StaticClass()))
-	{
-		UBaseWidget* bWidget = IHUDInterface::Execute_GetWidget(Hud, EWidgetType::PLAYER_HUD);
-		if(!bWidget) return;
-		IPlayerHUDInterface::Execute_UpdateAmmo(bWidget, Ammo);
-	}
-}
-
-void AInputController::UpdateScoreboard_Implementation(int Value, ETeam Team)
-{
-	AHUD* hud = GetHUD();
-	if(UKismetSystemLibrary::DoesImplementInterface(hud, UHUDInterface::StaticClass()))
-	{
-		UBaseWidget* pHud = IHUDInterface::Execute_GetWidget(hud, PLAYER_HUD);
-
-		if(UKismetSystemLibrary::DoesImplementInterface(pHud, UPlayerHUDInterface::StaticClass()))
-		{
-			IPlayerHUDInterface::Execute_UpdateScore(pHud, Value, Team);
-		}
-	}
-}
-
-
 // When the player Dies
 
 void AInputController::OnPlayerDead_Implementation(AController* InstigatorController)
@@ -490,4 +428,16 @@ void AInputController::RestartPlayer_Implementation()
 void AInputController::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)
 {
 	
+}
+
+void AInputController::UpdatePlayerHUDDetails_Implementation(EHUDValue ValueType, const FString& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Update HUD Details"));
+
+	Client_UpdatePlayerHUDDetails(ValueType, Value);
+}
+
+void AInputController::Client_UpdatePlayerHUDDetails_Implementation(EHUDValue ValueType, const FString& Value)
+{
+	BlueprintClient_UpdatePlayerHUDDetails(ValueType, Value);
 }

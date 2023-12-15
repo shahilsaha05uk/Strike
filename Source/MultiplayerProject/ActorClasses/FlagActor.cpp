@@ -80,6 +80,8 @@ void AFlagActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 // Interact Item
 void AFlagActor::Interact_Implementation(ACharacter* OwnerPlayer)
 {
+	Super::Interact_Implementation(OwnerPlayer);
+	
 	if(RootFlagRef == nullptr)
 	{
 		AFlagActor* SpawnedFlagRef = SpawnForPlayer();

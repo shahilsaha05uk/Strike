@@ -99,23 +99,9 @@ public:
 	// Updating the Weapon Properties
 	virtual void AddAmmo_Implementation(int Value) override;
 
-	// Weapon Related methods
 	virtual void SpawnWeapon_Implementation(FWeaponDetails WeaponDetails) override;
-	virtual ABaseWeapon* GetWeapon_Implementation() override;
-	virtual void SetWeapon_Implementation(ABaseWeapon* Weapon) override;
-
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SpawnWeapon(FWeaponDetails WeaponDetails);
-	
-	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void Multicast_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
-	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintServer_SpawnWeapon(ABaseWeapon* Weapon);
-	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintMulticast_SpawnWeapon(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon);
-	
 
 	// When the player shoots
 	UFUNCTION(Server, Unreliable, BlueprintCallable)
@@ -130,10 +116,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintClient_OnStopShoot();
 	
-	
-	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
-	void Multicast_Shoot();
-
 	UFUNCTION(NetMulticast, Unreliable, BlueprintCallable)
 	void Multicast_StopShoot();
 	
@@ -189,5 +171,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	AActor* CollidedActor;
 
+	virtual void OnWeaponSpawn_Implementation() override;
 
 };

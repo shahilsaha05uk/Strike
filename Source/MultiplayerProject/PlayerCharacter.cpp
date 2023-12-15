@@ -161,58 +161,11 @@ void APlayerCharacter::StopAiming_Implementation()
 
 #pragma endregion
 
-#pragma region When the player Spawns weapon
-
-void APlayerCharacter::SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
-{
-	Server_SpawnWeapon(WeaponDetails);
-}
-
-void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
-{
-	if(mPrimaryWeapon) mPrimaryWeapon->Destroy();
-	
-	FActorSpawnParameters SpawnsParams;
-	SpawnsParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
-
-	ABaseWeapon* WeaponToSpawn = Cast<ABaseWeapon>(GetWorld()->SpawnActor(WeaponDetails.WeaponAsset, &GetActorTransform(), SpawnsParams));
-
-	WeaponToSpawn->SetOwner(this);
-
-	WeaponToSpawn->SetInstigator(this);
-
-	WeaponToSpawn->AttachWeaponToPlayer(this);
-
-	mPrimaryWeapon = WeaponToSpawn;
-	
-	Multicast_SpawnWeapon(WeaponDetails, WeaponToSpawn);
-}
-
-ABaseWeapon* APlayerCharacter::GetWeapon_Implementation()
-{
-	return mPrimaryWeapon;
-}
-
-void APlayerCharacter::SetWeapon_Implementation(ABaseWeapon* Weapon)
-{
-	mPrimaryWeapon = Weapon;
-}
-
-void APlayerCharacter::Multicast_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails, ABaseWeapon* Weapon)
-{
-	BlueprintMulticast_SpawnWeapon(WeaponDetails, Weapon);
-}
-
-
-#pragma endregion
-
 #pragma region When the Player Shoots
 
 void APlayerCharacter::StartShooting_Implementation()
 {
 	Server_Shoot();
-
-	BlueprintClient_OnShoot();
 }
 
 void APlayerCharacter::OnShooting_Implementation(int val)
@@ -221,7 +174,7 @@ void APlayerCharacter::OnShooting_Implementation(int val)
 
 	if(UKismetSystemLibrary::DoesImplementInterface(C, UControllerInterface::StaticClass()))
 	{
-		IControllerInterface::Execute_UpdateWeaponDetailsHUD(C, val);
+		IControllerInterface::Execute_UpdatePlayerHUDDetails(C, AMMO_Val, FString::FromInt(val));
 	}
 }
 
@@ -234,16 +187,6 @@ void APlayerCharacter::StopShooting_Implementation()
 
 void APlayerCharacter::Server_Shoot_Implementation()
 {
-	Multicast_Shoot();
-}
-
-void APlayerCharacter::Server_StopShoot_Implementation()
-{
-	Multicast_StopShoot();
-}
-
-void APlayerCharacter::Multicast_Shoot_Implementation()
-{
 	if(mPrimaryWeapon == nullptr) return;
 
 	if(UKismetSystemLibrary::DoesImplementInterface(mPrimaryWeapon, UWeaponInterface::StaticClass()))
@@ -251,7 +194,14 @@ void APlayerCharacter::Multicast_Shoot_Implementation()
 		IWeaponInterface::Execute_Fire(mPrimaryWeapon);
 		bIsFiring = true;
 	}
+	
 }
+
+void APlayerCharacter::Server_StopShoot_Implementation()
+{
+	Multicast_StopShoot();
+}
+
 
 void APlayerCharacter::Multicast_StopShoot_Implementation()
 {
@@ -266,27 +216,12 @@ void APlayerCharacter::Multicast_StopShoot_Implementation()
 #pragma endregion
 
 // Updating the Weapon Properties
-
 void APlayerCharacter::AddAmmo_Implementation(int Value)
 {
 	if(mPrimaryWeapon == nullptr) return;
 
 	mPrimaryWeapon->Server_AddAmmo(Value);
 }
-
-#pragma region Getters and Setters
-
-UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
-{
-	return FollowCamera;
-}
-
-UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
-{
-	return GetMesh();
-}
-
-#pragma endregion 
 
 // When the Player Dies
 bool APlayerCharacter::IsDead_Implementation()
@@ -309,7 +244,7 @@ void APlayerCharacter::Client_OnDead_Implementation(AController* InstigatedBy)
 	
 	if(UKismetSystemLibrary::DoesImplementInterface(C, UControllerInterface::StaticClass()))
 	{
-		IControllerInterface::Execute_UpdateWeaponDetailsHUD(C, 0);
+		IControllerInterface::Execute_UpdatePlayerHUDDetails(C, AMMO_Val, FString::FromInt(0));
 	}
 	BlueprintClient_OnDead(InstigatedBy);
 }
@@ -360,8 +295,8 @@ void APlayerCharacter::RefreshPawn_Implementation()
 void APlayerCharacter::Server_IsAiming_Implementation(bool Value)
 {
 }
-// Updating the health Bar
 
+// Updating the health Bar
 void APlayerCharacter::UpdateHealthBar_Implementation(float Health)
 {
 	Server_UpdateHealthBar(Health);
@@ -382,9 +317,7 @@ void APlayerCharacter::BlueprintMulticast_UpdateHealthBar_Implementation(float H
 	
 }
 
-
 // On Session Ends Methods
-
 void APlayerCharacter::OnSessionEnd_Implementation(ETeam WinningTeam, int TScore, int CTScore)
 {
 	AController* PC = GetController();
@@ -466,3 +399,38 @@ void APlayerCharacter::OnAttachActor_Implementation(EInteractableItem ItemType, 
 {
 	UpdateInventory(ItemType, NewActor);
 }
+
+void APlayerCharacter::OnWeaponSpawn_Implementation()
+{
+	ABaseInteractable* Weapon = Execute_GetInventoryItem(this, WEAPON);
+
+	mPrimaryWeapon = Cast<ABaseWeapon>(Weapon);
+	
+}
+
+void APlayerCharacter::SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	Server_SpawnWeapon(WeaponDetails);
+}
+
+void APlayerCharacter::Server_SpawnWeapon_Implementation(FWeaponDetails WeaponDetails)
+{
+	FActorSpawnParameters spawnParams;
+	ABaseWeapon* Weapon = GetWorld()->SpawnActor<ABaseWeapon>(WeaponDetails.WeaponAsset, FVector::ZeroVector, FRotator::ZeroRotator, spawnParams);
+	Weapon->WeaponSetup(this, Weapon);
+}
+
+#pragma region Getters and Setters
+
+UCameraComponent* APlayerCharacter::GetFollowCamera_Implementation()
+{
+	return FollowCamera;
+}
+
+UMeshComponent* APlayerCharacter::GetMeshComponent_Implementation()
+{
+	return GetMesh();
+}
+
+#pragma endregion 
+

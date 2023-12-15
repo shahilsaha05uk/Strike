@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseInteractable.h"
 #include "GameFramework/Actor.h"
 #include "MultiplayerProject/StructClass.h"
-#include "MultiplayerProject/InterfaceClasses/InteractableInterface.h"
 #include "MultiplayerProject/InterfaceClasses/WeaponInterface.h"
 #include "NiagaraComponent.h"
+#include "MultiplayerProject/DataAssetClasses/DA_WeaponDetails.h"
 #include "BaseWeapon.generated.h"
 
 UCLASS()
-class MULTIPLAYERPROJECT_API ABaseWeapon : public AActor, public IInteractableInterface, public IWeaponInterface
+class MULTIPLAYERPROJECT_API ABaseWeapon : public ABaseInteractable, public IWeaponInterface
 {
 	GENERATED_BODY()
 
@@ -70,7 +71,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float mSpread;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	float mFireRate;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
@@ -87,6 +88,12 @@ public:
 	
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
 	int mAmmo;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Weapon Properties")
+	bool bIsPickedUp;
+
+
+	
 public:
 	// Engine methods
 	
@@ -109,33 +116,33 @@ public:
 	void OnComponentEndOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I);
 
 	virtual void Interact_Implementation(ACharacter* OwnerPlayer) override;
-
-	virtual EInteractableItem GetInteractableItem_Implementation() override;
-
+	virtual void DropItem_Implementation(ACharacter* OwnerPlayer) override;
+	virtual void AttachToPlayer_Implementation(ACharacter* OwnerPlayer) override;
+	virtual void DetachFromPlayer_Implementation(ACharacter* OwnerPlayer) override;
 	
 	// -------------------------------------------------------------------------------------
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	ABaseWeapon* SpawnForPlayer(ACharacter* OwnerPlayer, FWeaponDetails WeaponDetails);
+
+	UFUNCTION(Client, Reliable)
+	void Client_Interact(ACharacter* OwnerPlayer, ABaseWeapon* WeaponRef, bool UIVisibility);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_Interact(ACharacter* OwnerPlayer, ABaseWeapon* WeaponRef, bool UIVisibility);
+	
+	
 	UFUNCTION(Server, Reliable)
 	void Server_AddAmmo(int Value);
 
 	
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void WeaponSetup(ACharacter* OwnerPlayer, ABaseWeapon* Weapon);	// Should only be called from a server method
+
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayWeaponSound();
-	
-	// Attaching the weapon
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void AttachWeaponToPlayer(AActor* OwnerPlayer);
-
-	UFUNCTION(Server, Reliable)
-	void Server_AttachWeaponToPlayer(AActor* OwnerPlayer);
-
-	UFUNCTION(Client, Reliable)
-	void Client_AttachWeaponToPlayer();
-
-	
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_AttachWeaponToPlayer(AActor* OwnerPlayer);
-
 	
 	// Fire
 
@@ -172,4 +179,12 @@ public:
 
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	FVector SpreadTrace(FVector InputTrace);
+
+
+	// New Changes
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateWeaponProperties(FWeaponDetails WeaponDetails, ABaseWeapon* WeaponRef);
+	UFUNCTION(Client, Reliable)
+	void Client_UpdateWeaponProperties(FWeaponDetails WeaponDetails, ABaseWeapon* WeaponRef);
+	
 };

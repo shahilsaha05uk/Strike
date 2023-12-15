@@ -3,10 +3,9 @@
 	{
 		"Module.RiderLink.cpp.obj": [
 			"ProtocolFactory.cpp.obj",
+			"RiderLink.cpp.obj",
 			"UE4TypesMarshallers.cpp.obj",
 			"instantiations_UE4Library.cpp.obj",
-			"instantiations_RdEditorRoot.cpp.obj",
-			"RiderLink.cpp.obj",
 			"BlueprintFunction.Pregenerated.cpp.obj",
 			"BlueprintHighlighter.Pregenerated.cpp.obj",
 			"BlueprintReference.Pregenerated.cpp.obj",
@@ -32,6 +31,7 @@
 			"UE4Library.Pregenerated.cpp.obj",
 			"UnableToDisplayScriptCallStack.Pregenerated.cpp.obj",
 			"UnrealLogEvent.Pregenerated.cpp.obj",
+			"instantiations_RdEditorRoot.cpp.obj",
 			"LiveCodingModel.Pregenerated.cpp.obj",
 			"RdEditorModel.Pregenerated.cpp.obj",
 			"RdEditorRoot.Pregenerated.cpp.obj"
